@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f3f3f3;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #2196F3;
+    }
+
+    .input-group {
+      margin: 20px 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #757575;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #2196F3;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Age Calculator</h1>
+    <div class="input-group">
+      <label for="birthdate">Enter your birthdate:</label>
+      <input type="date" id="birthdate">
+    </div>
+    <button onclick="calculateAge()">Calculate</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function calculateAge() {
+      var birthdate = new Date(document.getElementById("birthdate").value);
+      var today = new Date();
+      var age = today.getFullYear() - birthdate.getFullYear();
+      var months = today.getMonth() - birthdate.getMonth();
+      var days = today.getDate() - birthdate.getDate();
+
+      if (days < 0) {
+        months--;
+        var lastMonth = new Date(today);
+        lastMonth.setMonth(today.getMonth() - 1);
+        days = (today - lastMonth) / (24 * 60 * 60 * 1000);
+      }
+
+      if (months < 0) {
+        age--;
+        months += 12;
+      }
+
+      var result = `
+        <p>Your age is ${age} years, ${months} months, and ${days} days.</p>
+      `;
+
+      document.getElementById("result").innerHTML = result;
+    }
+  </script>
+</body>
+</html>
