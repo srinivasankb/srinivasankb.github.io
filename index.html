@@ -1,13 +1,164 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Apps by Srinivasan KB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Apps by Srini</title>
+    <style>
+        /* Reset default margin and padding for better layout */
+        body, h1, ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Overall page styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        h1 {
+            color: #007BFF;
+            font-size: 1.5em;
+            margin: 20px 0;
+        }
+
+        /* Search and filter styles */
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 0 10px 10px 10px;
+        }
+
+        .searchBox {
+            width: 70%;
+            padding: 10px;
+            border: none;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .categoryFilter {
+            width: 30%;
+            padding: 5px;
+            font-size: 1em;
+        }
+
+        /* App list styles */
+        #appList {
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+            flex: 1;
+            padding: 0 10px;
+        }
+
+        .appItem {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .appDetails {
+            flex: 1;
+        }
+
+        .appName {
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .appDescription {
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .openButton {
+            background-color: #007BFF;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Footer styles */
+        footer {
+            color: #777;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Apps by Srinivasan KB</h1>
-    <ul>
-        <li><a href="https://apps.srinivasan.online/wamsg">WhatsApp Direct</a></li>
-        <li><a href="https://apps.srinivasan.online/ip">Find your IP Address</a></li>
+    <h1>Apps by Srini</h1>
+    <div class="search-container">
+        <input type="text" id="searchInput" class="searchBox" placeholder="Search for apps...">
+        <select id="categoryFilter" class="categoryFilter">
+            <option value="all">All Categories</option>
+            <option value="communication">Communication</option>
+            <option value="utility">Utility</option>
+            <!-- Add more category options as needed -->
+        </select>
+    </div>
+    <ul id="appList">
+        <!-- App items will be added here dynamically using JavaScript -->
     </ul>
+    <footer>
+        Created by <a href="https://www.srinivasan.online/" target="_blank">Srinivasan KB</a>
+    </footer>
+  <script>
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const appList = document.getElementById('appList');
+        let appData = [
+            { name: 'WhatsApp Direct', category: 'communication', description: 'Send direct messages on WhatsApp.', url: 'https://apps.srinivasan.online/wamsg' },
+            { name: 'Find your IP Address', category: 'utility', description: 'Discover your current IP address.', url: 'https://apps.srinivasan.online/ip' },
+            // Add more app data here
+        ];
+
+        // Function to filter and display apps based on the search input and category filter
+        function displayApps() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedCategory = categoryFilter.value;
+
+            appList.innerHTML = '';
+
+            appData.forEach(app => {
+                if ((app.name.toLowerCase().includes(searchTerm) || app.description.toLowerCase().includes(searchTerm)) &&
+                    (selectedCategory === 'all' || app.category === selectedCategory)) {
+                    const appItem = document.createElement('li');
+                    appItem.classList.add('appItem');
+                    appItem.innerHTML = `
+                        <div class="appDetails">
+                            <div class="appName">${app.name}</div>
+                            <div class="appDescription">${app.description}</div>
+                        </div>
+                        <button class="openButton" onclick="window.open('${app.url}', '_blank')">Open</button>
+                    `;
+                    appList.appendChild(appItem);
+                }
+            });
+        }
+
+        // Listen for changes in the search input and category filter
+        searchInput.addEventListener('input', displayApps);
+        categoryFilter.addEventListener('change', displayApps);
+
+        // Initial display of apps (all apps from all categories)
+        displayApps();
+    </script>
 </body>
 </html>
