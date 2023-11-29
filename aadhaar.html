@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Verhoeff's Check</title>
+    <style>
+        /* Base Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            text-align: center; /* Center-align the content */
+        }
+
+        table {
+            margin: 0 auto;
+            text-align: left; /* Left-align table contents */
+        }
+
+        td {
+            padding: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        input[type="button"] {
+            padding: 10px 20px;
+            background-color: #0074d9;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Header Styles */
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #0074d9;
+        }
+         h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #0074d9;
+        }
+
+
+        /* Button Hover Effect */
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        // JavaScript code for Verhoeff's Check
+        var FnF = new Array();
+        FnF[0] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        FnF[1] = [1, 5, 7, 6, 2, 8, 3, 0, 9, 4];
+        for (var i = 2; i < 8; i++) {
+            FnF[i] = [];
+            for (var j = 0; j < 10; j++)
+                FnF[i][j] = FnF[i - 1][FnF[1][j]];
+        }
+
+        var Dihedral = [
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            [1, 2, 3, 4, 0, 6, 7, 8, 9, 5],
+            [2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+            [3, 4, 0, 1, 2, 8, 9, 5, 6, 7],
+            [4, 0, 1, 2, 3, 9, 5, 6, 7, 8],
+            [5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+            [6, 5, 9, 8, 7, 1, 0, 4, 3, 2],
+            [7, 6, 5, 9, 8, 2, 1, 0, 4, 3],
+            [8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+            [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+        ];
+
+        var InverseD5 = [0, 4, 3, 2, 1, 5, 6, 7, 8, 9];
+
+        function VerhoeffCheck() {
+            var check = 0;
+            var IdValue = document.form.numcd.value;
+            for (var i = IdValue.length - 1; i >= 0; i--)
+                check = Dihedral[check][FnF[(IdValue.length - i - 1) % 8][IdValue.charAt(i)]];
+            if (check !== 0)
+                document.form.out.value = "INVALID";
+            else
+                document.form.out.value = "VALID";
+        }
+
+        function VerhoeffCompute() {
+            var IdValue = document.form.num.value;
+            var check = 0;
+            for (var i = IdValue.length - 1; i >= 0; i--)
+                check = Dihedral[check][FnF[(IdValue.length - i) % 8][IdValue.charAt(i)]];
+            document.form.numcd.value = document.form.num.value + InverseD5[check];
+        }
+
+        function handleInput() {
+            var aadhaarInput = document.form.numcd;
+            var checkButton = document.getElementById("checkBtn");
+            if (aadhaarInput.value.length === 12) {
+                checkButton.disabled = false;
+            } else {
+                checkButton.disabled = true;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Aadhaar Number Validation</h1>
+    <h2>Using Verhoeff's Dihedral Algorithm</h2>
+    <form name="form">
+        <table>
+            <tr>
+                <td>Aadhaar Number</td>
+                <td>
+                    <input name="numcd" type="text" maxlength="12" placeholder="12 Digit Aadhaar Number" oninput="handleInput()">
+                </td>
+                <td>
+                    <input id="checkBtn" type="button" value="Check" onclick="VerhoeffCheck()" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td>Result (Valid / Invalid)</td>
+                <td>
+                    <input name="out" type="text" size="6" readonly>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
