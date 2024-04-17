@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Error 404</title>
+<title>Srini is not here!</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
 <style>
 * {
     transition: all 0.6s;
@@ -14,7 +15,7 @@ html {
 }
 
 body {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Roboto', sans-serif; /* Applying Roboto font */
     color: #888;
     margin: 0;
 }
@@ -38,6 +39,29 @@ body {
     animation: type .5s alternate infinite;
 }
 
+.fof p {
+    margin-top: 20px;
+}
+
+.btn {
+    display: inline-block;
+    background-color: #ddd; /* Grey color */
+    color: black; /* Text color */
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700; /* Bold font weight */
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #ccc; /* Darker grey on hover */
+}
+
 @keyframes type {
     from {
         box-shadow: inset -3px 0px 0px #888;
@@ -52,7 +76,8 @@ body {
 
 <div id="main">
     <div class="fof">
-        <h1>Error 404</h1>
+        <h1>Error 404</h1><br>
+        <a href="https://srinivasan.online/" class="btn">Take me to Srini!</a>
     </div>
 </div>
 
