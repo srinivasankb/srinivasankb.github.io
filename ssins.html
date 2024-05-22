@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2487.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Premium Calculator&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: Arial, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f4f4f4;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #333;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.container {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #fff;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 20px 40px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 80%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>max-width: 600px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>h1 {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #0066cc;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>form {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>label {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>input, select, button {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid #ccc;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 4px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 16px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>button {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #0066cc;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #fff;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: background-color 0.3s;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>button:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #004999;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.result {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: bold;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.member {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.member label {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex: 1;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.member input {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex: 2;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.member button {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #ff6666;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: background-color 0.3s;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.member button:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #cc0000;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;Premium Calculator&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;form id="premiumForm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="joiningDate"&gt;Enter Employee Joining Date:&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="date" id="joiningDate" name="joiningDate"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;label for="topup"&gt;Select Topup Value:&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;select id="topup" name="topup"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;option value="2"&gt;2 Lakh&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;option value="4"&gt;4 Lakh&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;option value="7"&gt;7 Lakh&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div id="familyMembers"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="member" id="member1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label for="age1"&gt;Enter Age of Family Member 1:&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="number" id="age1" name="age1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button type="button" onclick="removeFamilyMember(1)"&gt;Delete&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="member" id="member2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;label for="age2"&gt;Enter Age of Family Member 2:&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="number" id="age2" name="age2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button type="button" onclick="removeFamilyMember(2)"&gt;Delete&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button type="button" onclick="addFamilyMember()"&gt;Add Family Member&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button type="button" onclick="calculatePremium()"&gt;Calculate Premium&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/form&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="result"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Total Additional Premium: &lt;span id="totalPremium"&gt;0&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let memberCount = 2;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const premiumData = {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"2": {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"0-25": 1280,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"26-30": 1409,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"31-35": 1709,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"36-40": 2262,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"41-45": 2916,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"46-50": 3712,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"51-55": 5040,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"56-60": 6261,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"61-65": 8222,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"66-70": 10836,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"71-75": 14226,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"76-80": 18423,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"81-85": 22745,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"Above 80": 27637</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"4": {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"0-25": 1468,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"26-30": 1616,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"31-35": 1960,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"36-40": 2594,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"41-45": 3344,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"46-50": 4257,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"51-55": 5486,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"56-60": 7187,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"61-65": 9492,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"66-70": 12427,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"71-75": 16315,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"76-80": 21195,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"81-85": 26098,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"Above 80": 31696</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>"7": {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"0-25": 1918,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"26-30": 2111,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"31-35": 2560,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"36-40": 3389,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"41-45": 4368,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"46-50": 5561,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"51-55": 7167,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"56-60": 9486,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"61-65": 12317,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"66-70": 16233,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"71-75": 21312,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"76-80": 27600,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"81-85": 34402,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>"Above 80": 41405</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function getPremium(age, topup) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 25) return premiumData[topup]["0-25"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 30) return premiumData[topup]["26-30"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 35) return premiumData[topup]["31-35"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 40) return premiumData[topup]["36-40"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 45) return premiumData[topup]["41-45"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 50) return premiumData[topup]["46-50"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 55) return premiumData[topup]["51-55"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 60) return premiumData[topup]["56-60"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 65) return premiumData[topup]["61-65"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 70) return premiumData[topup]["66-70"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 75) return premiumData[topup]["71-75"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 80) return premiumData[topup]["76-80"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (age &lt;= 85) return premiumData[topup]["81-85"];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return premiumData[topup]["Above 80"];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function calculatePremium() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const topup = document.getElementById("topup").value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const joiningDateValue = document.getElementById("joiningDate").value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const joiningDate = new Date(joiningDateValue);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const currentDate = new Date();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let totalPremium = 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (joiningDateValue &amp;&amp; (currentDate - joiningDate) &lt;= 365 * 24 * 60 * 60 * 1000) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const joiningMonth = joiningDate.getMonth() + 1; // getMonth() returns 0-11</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const remainingMonths = 12 - joiningMonth + 1;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>for (let i = 1; i &lt;= memberCount; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const ageInput = document.getElementById(`age${i}`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (ageInput &amp;&amp; ageInput.value) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>const age = parseInt(ageInput.value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>totalPremium += (getPremium(age, topup) / 12) * remainingMonths;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>for (let i = 1; i &lt;= memberCount; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const ageInput = document.getElementById(`age${i}`);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (ageInput &amp;&amp; ageInput.value) {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>const age = parseInt(ageInput.value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>totalPremium += getPremium(age, topup);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById("totalPremium").innerText = totalPremium.toFixed(2);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function addFamilyMember() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>memberCount++;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const familyMembersDiv = document.getElementById("familyMembers");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const newMemberDiv = document.createElement("div");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>newMemberDiv.className = "member";</p>
+<p class="p1"><span class="Apple-converted-space">            </span>newMemberDiv.id = `member${memberCount}`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>newMemberDiv.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;label for="age${memberCount}"&gt;Enter Age of Family Member ${memberCount}:&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input type="number" id="age${memberCount}" name="age${memberCount}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button type="button" onclick="removeFamilyMember(${memberCount})"&gt;Delete&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>familyMembersDiv.appendChild(newMemberDiv);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function removeFamilyMember(memberId) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const memberDiv = document.getElementById(`member${memberId}`);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (memberDiv) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>memberDiv.remove();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
