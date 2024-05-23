@@ -232,12 +232,30 @@
                 <button type="button" onclick="removeFamilyMember(${memberCount})">Delete</button>
             `;
             familyMembersDiv.appendChild(newMemberDiv);
+            updateMemberLabels();
         }
 
         function removeFamilyMember(memberId) {
             const memberDiv = document.getElementById(`member${memberId}`);
             if (memberDiv) {
                 memberDiv.remove();
+                memberCount--;
+                updateMemberLabels();
+            }
+        }
+
+        function updateMemberLabels() {
+            const familyMembersDiv = document.getElementById("familyMembers");
+            const members = familyMembersDiv.getElementsByClassName("member");
+            for (let i = 0; i < members.length; i++) {
+                const label = members[i].getElementsByTagName("label")[0];
+                label.textContent = `Enter Age of Family Member ${i + 1}:`;
+                const input = members[i].getElementsByTagName("input")[0];
+                input.id = `age${i + 1}`;
+                input.name = `age${i + 1}`;
+                const button = members[i].getElementsByTagName("button")[0];
+                button.setAttribute('onclick', `removeFamilyMember(${i + 1})`);
+                members[i].id = `member${i + 1}`;
             }
         }
     </script>
