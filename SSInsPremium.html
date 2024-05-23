@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #0066cc;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        input, select, button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #0066cc;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #004999;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .member {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .member label {
+            flex: 1;
+        }
+        .member input {
+            flex: 2;
+        }
+        .member button {
+            background-color: #ff6666;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .member button:hover {
+            background-color: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Premium Calculator</h1>
+        <form id="premiumForm">
+            <label for="joiningDate">Enter Employee Joining Date:</label>
+            <input type="date" id="joiningDate" name="joiningDate">
+            <label for="topup">Select Topup Value:</label>
+            <select id="topup" name="topup">
+                <option value="2">2 Lakh</option>
+                <option value="4">4 Lakh</option>
+                <option value="7">7 Lakh</option>
+            </select>
+            <div id="familyMembers">
+                <div class="member" id="member1">
+                    <label for="age1">Enter Age of Family Member 1:</label>
+                    <input type="number" id="age1" name="age1">
+                    <button type="button" onclick="removeFamilyMember(1)">Delete</button>
+                </div>
+                <div class="member" id="member2">
+                    <label for="age2">Enter Age of Family Member 2:</label>
+                    <input type="number" id="age2" name="age2">
+                    <button type="button" onclick="removeFamilyMember(2)">Delete</button>
+                </div>
+            </div>
+            <button type="button" onclick="addFamilyMember()">Add Family Member</button>
+            <button type="button" onclick="calculatePremium()">Calculate Premium</button>
+        </form>
+        <div class="result">
+            Total Additional Premium: <span id="totalPremium">0</span>
+        </div>
+    </div>
+
+    <script>
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const firstDayOfYear = new Date(currentYear, 0, 1).toISOString().split('T')[0];
+        document.getElementById("joiningDate").value = firstDayOfYear;
+
+        let memberCount = 2;
+
+        const premiumData = {
+            "2": {
+                "0-25": 1280,
+                "26-30": 1409,
+                "31-35": 1709,
+                "36-40": 2262,
+                "41-45": 2916,
+                "46-50": 3712,
+                "51-55": 5040,
+                "56-60": 6261,
+                "61-65": 8222,
+                "66-70": 10836,
+                "71-75": 14226,
+                "76-80": 18423,
+                "81-85": 22745,
+                "Above 80": 27637
+            },
+            "4": {
+                "0-25": 1468,
+                "26-30": 1616,
+                "31-35": 1960,
+                "36-40": 2594,
+                "41-45": 3344,
+                "46-50": 4257,
+                "51-55": 5486,
+                "56-60": 7187,
+                "61-65": 9492,
+                "66-70": 12427,
+                "71-75": 16315,
+                "76-80": 21195,
+                "81-85": 26098,
+                "Above 80": 31696
+            },
+            "7": {
+                "0-25": 1918,
+                "26-30": 2111,
+                "31-35": 2560,
+                "36-40": 3389,
+                "41-45": 4368,
+                "46-50": 5561,
+                "51-55": 7167,
+                "56-60": 9486,
+                "61-65": 12317,
+                "66-70": 16233,
+                "71-75": 21312,
+                "76-80": 27600,
+                "81-85": 34402,
+                "Above 80": 41405
+            }
+        };
+
+        function getPremium(age, topup) {
+            if (age <= 25) return premiumData[topup]["0-25"];
+            if (age <= 30) return premiumData[topup]["26-30"];
+            if (age <= 35) return premiumData[topup]["31-35"];
+            if (age <= 40) return premiumData[topup]["36-40"];
+            if (age <= 45) return premiumData[topup]["41-45"];
+            if (age <= 50) return premiumData[topup]["46-50"];
+            if (age <= 55) return premiumData[topup]["51-55"];
+            if (age <= 60) return premiumData[topup]["56-60"];
+            if (age <= 65) return premiumData[topup]["61-65"];
+            if (age <= 70) return premiumData[topup]["66-70"];
+            if (age <= 75) return premiumData[topup]["71-75"];
+            if (age <= 80) return premiumData[topup]["76-80"];
+            if (age <= 85) return premiumData[topup]["81-85"];
+            return premiumData[topup]["Above 80"];
+        }
+
+        function calculatePremium() {
+            const topup = document.getElementById("topup").value;
+            const joiningDate = new Date(document.getElementById("joiningDate").value);
+            const currentYear = new Date().getFullYear();
+            const joiningYear = joiningDate.getFullYear();
+            let totalPremium = 0;
+
+            if (joiningYear === currentYear) {
+                const joiningMonth = joiningDate.getMonth() + 1; // getMonth() returns 0-11
+                const remainingMonths = 12 - joiningMonth + 1;
+
+                for (let i = 1; i <= memberCount; i++) {
+                    const ageInput = document.getElementById(`age${i}`);
+                    if (ageInput && ageInput.value) {
+                        const age = parseInt(ageInput.value) || 0;
+                        totalPremium += (getPremium(age, topup) / 12) * remainingMonths;
+                    }
+                }
+            } else {
+                for (let i = 1; i <= memberCount; i++) {
+                    const ageInput = document.getElementById(`age${i}`);
+                    if (ageInput && ageInput.value) {
+                        const age = parseInt(ageInput.value) || 0;
+                        totalPremium += getPremium(age, topup);
+                    }
+                }
+            }
+
+            document.getElementById("totalPremium").innerText = totalPremium.toFixed(2);
+        }
+
+        function addFamilyMember() {
+            memberCount++;
+            const familyMembersDiv = document.getElementById("familyMembers");
+            const newMemberDiv = document.createElement("div");
+            newMemberDiv.className = "member";
+            newMemberDiv.id = `member${memberCount}`;
+            newMemberDiv.innerHTML = `
+                <label for="age${memberCount}">Enter Age of Family Member ${memberCount}:</label>
+                <input type="number" id="age${memberCount}" name="age${memberCount}">
+                <button type="button" onclick="removeFamilyMember(${memberCount})">Delete</button>
+            `;
+            familyMembersDiv.appendChild(newMemberDiv);
+        }
+
+        function removeFamilyMember(memberId) {
+            const memberDiv = document.getElementById(`member${memberId}`);
+            if (memberDiv) {
+                memberDiv.remove();
+            }
+        }
+    </script>
+</body>
+</html>
