@@ -144,70 +144,71 @@
     <footer>
         Created by <a href="https://srinivasan.online/" target="_blank">Srinivasan KB</a>
     </footer>
-    <script>
-        document.getElementById('textForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            let text = document.getElementById('inputText').value;
-            
-            let ignoreSpaces = document.getElementById('ignoreSpaces').checked;
-            let ignorePunctuation = document.getElementById('ignorePunctuation').checked;
-            let ignoreNumbers = document.getElementById('ignoreNumbers').checked;
-            
-            if (ignoreSpaces) {
-                text = text.replace(/\s+/g, '');
-            }
-            if (ignorePunctuation) {
-                text = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '');
-            }
-            if (ignoreNumbers) {
-                text = text.replace(/[0-9]/g, '');
-            }
-            
-            let letters = text.replace(/[^a-zA-Z]/g, '');
-            let letterCount = letters.length;
-            
-            let words = text.trim().split(/\s+/);
-            let wordCount = words.length;
-            if (words[0] === "") wordCount = 0;
-            
-            let charCount = text.length;
-            
-            let vowels = text.match(/[aeiouAEIOU]/g);
-            let vowelCount = vowels ? vowels.length : 0;
-            let consonants = text.match(/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/g);
-            let consonantCount = consonants ? consonantCount.length : 0;
-            
-            let sentences = text.match(/[^.!?]*[.!?]/g);
-            let sentenceCount = sentences ? sentences.length : 0;
-            
-            let paragraphs = text.split(/\n+/);
-            let paragraphCount = paragraphs.length;
-            
-            let totalWordLength = words.reduce((sum, word) => sum + word.length, 0);
-            let averageWordLength = wordCount ? (totalWordLength / wordCount).toFixed(2) : 0;
-            
-            document.getElementById('letterCount').textContent = 'Total Letters: ' + letterCount;
-            document.getElementById('wordCount').textContent = 'Total Words: ' + wordCount;
-            document.getElementById('charCount').textContent = 'Total Characters: ' + charCount;
-            document.getElementById('vowelCount').textContent = 'Total Vowels: ' + vowelCount;
-            document.getElementById('consonantCount').textContent = 'Total Consonants: ' + consonantCount;
-            document.getElementById('sentenceCount').textContent = 'Total Sentences: ' + sentenceCount;
-            document.getElementById('paragraphCount').textContent = 'Total Paragraphs: ' + paragraphCount;
-            document.getElementById('averageWordLength').textContent = 'Average Word Length: ' + averageWordLength;
-        });
+<script>
+    document.getElementById('textForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        let text = document.getElementById('inputText').value;
+        
+        let ignoreSpaces = document.getElementById('ignoreSpaces').checked;
+        let ignorePunctuation = document.getElementById('ignorePunctuation').checked;
+        let ignoreNumbers = document.getElementById('ignoreNumbers').checked;
+        
+        if (ignoreSpaces) {
+            text = text.replace(/\s+/g, '');
+        }
+        if (ignorePunctuation) {
+            text = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '');
+        }
+        if (ignoreNumbers) {
+            text = text.replace(/[0-9]/g, '');
+        }
+        
+        let letters = text.replace(/[^a-zA-Z]/g, '');
+        let letterCount = letters.length;
+        
+        let words = text.trim().split(/\s+/);
+        let wordCount = words.length;
+        if (words[0] === "") wordCount = 0;
+        
+        let charCount = text.length;
+        
+        let vowels = text.match(/[aeiouAEIOU]/g);
+        let vowelCount = vowels ? vowels.length : 0;
+        let consonants = text.match(/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/g);
+        let consonantCount = consonants ? consonants.length : 0;
+        
+        let sentences = text.match(/[^.!?]*[.!?]/g);
+        let sentenceCount = sentences ? sentences.length : 0;
+        
+        let paragraphs = text.split(/\n+/);
+        let paragraphCount = paragraphs.length;
+        
+        let totalWordLength = words.reduce((sum, word) => sum + word.length, 0);
+        let averageWordLength = wordCount ? (totalWordLength / wordCount).toFixed(2) : 0;
+        
+        document.getElementById('letterCount').textContent = 'Total Letters: ' + letterCount;
+        document.getElementById('wordCount').textContent = 'Total Words: ' + wordCount;
+        document.getElementById('charCount').textContent = 'Total Characters: ' + charCount;
+        document.getElementById('vowelCount').textContent = 'Total Vowels: ' + vowelCount;
+        document.getElementById('consonantCount').textContent = 'Total Consonants: ' + consonantCount;
+        document.getElementById('sentenceCount').textContent = 'Total Sentences: ' + sentenceCount;
+        document.getElementById('paragraphCount').textContent = 'Total Paragraphs: ' + paragraphCount;
+        document.getElementById('averageWordLength').textContent = 'Average Word Length: ' + averageWordLength;
+    });
 
-        document.getElementById('resetButton').addEventListener('click', function() {
-            document.getElementById('textForm').reset();
-            document.getElementById('letterCount').textContent = 'Total Letters: 0';
-            document.getElementById('wordCount').textContent = 'Total Words: 0';
-            document.getElementById('charCount').textContent = 'Total Characters: 0';
-            document.getElementById('vowelCount').textContent = 'Total Vowels: 0';
-            document.getElementById('consonantCount').textContent = 'Total Consonants: 0';
-            document.getElementById('sentenceCount').textContent = 'Total Sentences: 0';
-            document.getElementById('paragraphCount').textContent = 'Total Paragraphs: 0';
-            document.getElementById('averageWordLength').textContent = 'Average Word Length: 0';
-        });
-    </script>
+    document.getElementById('resetButton').addEventListener('click', function() {
+        document.getElementById('textForm').reset();
+        document.getElementById('letterCount').textContent = 'Total Letters: 0';
+        document.getElementById('wordCount').textContent = 'Total Words: 0';
+        document.getElementById('charCount').textContent = 'Total Characters: 0';
+        document.getElementById('vowelCount').textContent = 'Total Vowels: 0';
+        document.getElementById('consonantCount').textContent = 'Total Consonants: 0';
+        document.getElementById('sentenceCount').textContent = 'Total Sentences: 0';
+        document.getElementById('paragraphCount').textContent = 'Total Paragraphs: 0';
+        document.getElementById('averageWordLength').textContent = 'Average Word Length: 0';
+    });
+</script>
+
 </body>
 </html>
