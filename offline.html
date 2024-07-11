@@ -6,32 +6,75 @@
     <title>Employee Pulse Survey</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         h1 {
             color: #333;
+            text-align: center;
+            margin-bottom: 20px;
         }
         form {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group {
             margin-bottom: 20px;
         }
         label {
+            font-weight: bold;
+            margin-bottom: 8px;
             display: block;
-            margin-top: 10px;
         }
-        textarea {
+        input[type="text"], textarea {
             width: 100%;
-            height: 100px;
-            margin-top: 10px;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
         }
-        button {
-            margin-top: 20px;
+        .radio-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+        .radio-group label {
+            margin-right: 15px;
+        }
+        button[type="submit"], .show-btn, .back-to-survey, .download-btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover, .show-btn:hover, .back-to-survey:hover, .download-btn:hover {
+            background-color: #0056b3;
+        }
+        .survey-container {
+            display: block;
+        }
+        .responses-container {
+            display: none;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
-            display: none; /* Initially hide the table */
         }
         th, td {
             border: 1px solid #ccc;
@@ -41,76 +84,77 @@
         th {
             background-color: #f4f4f4;
         }
-        .download-btn {
-            margin-top: 20px;
-        }
-        .responses-container {
-            display: none;
-        }
-        .show-btn {
-            display: block;
-            margin-top: 20px;
-        }
     </style>
 </head>
 <body>
-    <h1>Employee Pulse Survey</h1>
-    <div class="survey-container">
-        <form id="pulseSurveyForm">
-            <label for="employeeId">Employee ID:</label>
-            <input type="text" id="employeeId" name="employeeId" required><br><br>
+    <div class="container">
+        <h1>Employee Pulse Survey</h1>
+        <div class="survey-container">
+            <form id="pulseSurveyForm">
+                <div class="form-group">
+                    <label for="employeeId">Employee ID:</label>
+                    <input type="text" id="employeeId" name="employeeId" required>
+                </div>
 
-            <label for="workEnvironment">How would you rate the current work environment?</label>
-            <div class="radio-group">
-                <input type="radio" id="excellent" name="workEnvironment" value="Excellent" required>
-                <label for="excellent">Excellent</label>
-                <input type="radio" id="good" name="workEnvironment" value="Good">
-                <label for="good">Good</label>
-                <input type="radio" id="fair" name="workEnvironment" value="Fair">
-                <label for="fair">Fair</label>
-                <input type="radio" id="poor" name="workEnvironment" value="Poor">
-                <label for="poor">Poor</label>
-            </div><br>
+                <div class="form-group">
+                    <label>How would you rate the current work environment?</label>
+                    <div class="radio-group">
+                        <input type="radio" id="excellent" name="workEnvironment" value="Excellent" required>
+                        <label for="excellent">Excellent</label>
+                        <input type="radio" id="good" name="workEnvironment" value="Good">
+                        <label for="good">Good</label>
+                        <input type="radio" id="fair" name="workEnvironment" value="Fair">
+                        <label for="fair">Fair</label>
+                        <input type="radio" id="poor" name="workEnvironment" value="Poor">
+                        <label for="poor">Poor</label>
+                    </div>
+                </div>
 
-            <label for="teamCollaboration">Rate the level of collaboration within your team:</label>
-            <div class="radio-group">
-                <input type="radio" id="very_high" name="teamCollaboration" value="Very High" required>
-                <label for="very_high">Very High</label>
-                <input type="radio" id="high" name="teamCollaboration" value="High">
-                <label for="high">High</label>
-                <input type="radio" id="moderate" name="teamCollaboration" value="Moderate">
-                <label for="moderate">Moderate</label>
-                <input type="radio" id="low" name="teamCollaboration" value="Low">
-                <label for="low">Low</label>
-            </div><br><br>
+                <div class="form-group">
+                    <label>Rate the level of collaboration within your team:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="very_high" name="teamCollaboration" value="Very High" required>
+                        <label for="very_high">Very High</label>
+                        <input type="radio" id="high" name="teamCollaboration" value="High">
+                        <label for="high">High</label>
+                        <input type="radio" id="moderate" name="teamCollaboration" value="Moderate">
+                        <label for="moderate">Moderate</label>
+                        <input type="radio" id="low" name="teamCollaboration" value="Low">
+                        <label for="low">Low</label>
+                    </div>
+                </div>
 
-            <label for="comments">Additional comments:</label>
-            <textarea id="comments" name="comments"></textarea><br><br>
+                <div class="form-group">
+                    <label for="comments">Additional comments:</label>
+                    <textarea id="comments" name="comments"></textarea>
+                </div>
 
-            <button type="submit">Submit</button>
-        </form>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="responses-container">
+            <h2>Survey Responses</h2>
+            <table id="responsesTable">
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Work Environment</th>
+                        <th>Team Collaboration</th>
+                        <th>Comments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Responses will be added here -->
+                </tbody>
+            </table>
+
+            <button class="download-btn" id="downloadCSV">Download CSV</button>
+            <button class="back-to-survey">Back to Survey</button>
+        </div>
+
+        <button class="show-btn" id="showResponsesBtn">Show Responses</button>
     </div>
-
-    <div class="responses-container">
-        <h2>Survey Responses</h2>
-        <table id="responsesTable">
-            <thead>
-                <tr>
-                    <th>Employee ID</th>
-                    <th>Work Environment</th>
-                    <th>Team Collaboration</th>
-                    <th>Comments</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Responses will be added here -->
-            </tbody>
-        </table>
-
-        <button class="download-btn" id="downloadCSV">Download CSV</button>
-    </div>
-
-    <button class="show-btn" id="showResponsesBtn">Show Responses</button>
 
     <script>
         document.getElementById('pulseSurveyForm').addEventListener('submit', function(event) {
@@ -153,7 +197,13 @@
 
             document.querySelector('.responses-container').style.display = 'block';
             document.querySelector('.survey-container').style.display = 'none';
-            this.style.display = 'none'; // Hide the show button after displaying responses
+            document.querySelector('.show-btn').style.display = 'none'; // Hide the show button after displaying responses
+        });
+
+        document.querySelector('.back-to-survey').addEventListener('click', function() {
+            document.querySelector('.responses-container').style.display = 'none';
+            document.querySelector('.survey-container').style.display = 'block';
+            document.querySelector('.show-btn').style.display = 'block'; // Show the show button again
         });
 
         // Download responses as CSV
