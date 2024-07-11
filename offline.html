@@ -142,6 +142,7 @@
                         <th>Work Environment</th>
                         <th>Team Collaboration</th>
                         <th>Comments</th>
+                        <th>Timestamp</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -164,6 +165,7 @@
             const workEnvironment = document.querySelector('input[name="workEnvironment"]:checked');
             const teamCollaboration = document.querySelector('input[name="teamCollaboration"]:checked');
             const comments = document.getElementById('comments').value;
+            const timestamp = new Date().toLocaleString(); // Get current timestamp
 
             if (!employeeId || !workEnvironment || !teamCollaboration) {
                 alert('Please fill in all fields and select ratings.');
@@ -174,7 +176,8 @@
                 employeeId: employeeId,
                 workEnvironment: workEnvironment.value,
                 teamCollaboration: teamCollaboration.value,
-                comments: comments 
+                comments: comments,
+                timestamp: timestamp // Include timestamp in response object
             };
 
             let responses = JSON.parse(localStorage.getItem('pulseSurveyResponses')) || [];
@@ -191,7 +194,7 @@
 
             responses.forEach(response => {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td>${response.employeeId}</td><td>${response.workEnvironment}</td><td>${response.teamCollaboration}</td><td>${response.comments}</td>`;
+                row.innerHTML = `<td>${response.employeeId}</td><td>${response.workEnvironment}</td><td>${response.teamCollaboration}</td><td>${response.comments}</td><td>${response.timestamp}</td>`;
                 tableBody.appendChild(row);
             });
 
@@ -215,8 +218,8 @@
             }
 
             const csvContent = "data:text/csv;charset=utf-8,"
-                + "Employee ID,Work Environment,Team Collaboration,Comments\n"
-                + responses.map(response => `${response.employeeId},${response.workEnvironment},${response.teamCollaboration},"${response.comments}"`).join("\n");
+                + "Employee ID,Work Environment,Team Collaboration,Comments,Timestamp\n"
+                + responses.map(response => `${response.employeeId},${response.workEnvironment},${response.teamCollaboration},"${response.comments}",${response.timestamp}`).join("\n");
 
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
