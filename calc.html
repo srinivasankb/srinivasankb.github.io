@@ -16,7 +16,7 @@
         }
 
         #calculator {
-            width: 320px;
+            width: 320px; /* Default width */
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
@@ -77,6 +77,10 @@
             background-color: #ff3b30;
         }
 
+        .button.decimal {
+            background-color: #007aff; /* Changed color to blue for visibility */
+        }
+
         #buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -87,6 +91,36 @@
         .button {
             height: 70px;
             width: 70px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 400px) {
+            #calculator {
+                width: 90%; /* Make calculator take 90% of the screen on small devices */
+                padding: 15px; /* Reduced padding */
+            }
+
+            #display {
+                font-size: 24px; /* Smaller font size for display */
+            }
+
+            .button {
+                height: 60px; /* Smaller button height */
+                width: 60px; /* Smaller button width */
+                font-size: 20px; /* Smaller font size for buttons */
+            }
+        }
+
+        @media (max-width: 320px) {
+            .button {
+                height: 50px; /* Further reduce button height */
+                width: 50px; /* Further reduce button width */
+                font-size: 18px; /* Further reduce font size for buttons */
+            }
+
+            #display {
+                font-size: 20px; /* Further reduce font size for display */
+            }
         }
     </style>
 </head>
@@ -108,7 +142,7 @@
             <button class="button number" onclick="inputValue('3')">3</button>
             <button class="button operator" onclick="inputValue('-')">−</button>
             <button class="button number" onclick="inputValue('0')">0</button>
-            <button class="button" onclick="inputValue('.')">.</button>
+            <button class="button decimal" onclick="inputValue('.')">.</button>
             <button class="button operator" onclick="calculate()">=</button>
             <button class="button operator" onclick="inputValue('+')">+</button>
             <button class="button clear" onclick="clearDisplay()">C</button>
