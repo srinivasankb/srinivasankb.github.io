@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Srini's Calculator</title>
+    <link rel="manifest" href="manifest.json"> <!-- Link to manifest -->
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #e0e0e0;
+            margin: 0;
+        }
+
+        #calculator {
+            width: 320px; /* Default width */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            background-color: #333;
+            position: relative;
+        }
+
+        #calculator h2 {
+            font-size: 14px;
+            color: #fff;
+            text-align: center;
+            margin: 0 0 10px 0;
+        }
+
+        #display {
+            width: 95%;
+            height: 60px;
+            text-align: right;
+            font-size: 28px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #222;
+            color: #fff;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .button {
+            font-size: 24px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.1s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .button.number {
+            background-color: #444;
+        }
+
+        .button.operator {
+            background-color: #ff9500;
+        }
+
+        .button.clear {
+            background-color: #ff3b30;
+        }
+
+        .button.decimal {
+            background-color: #007aff; /* Changed color to blue for visibility */
+        }
+
+        #buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        /* Ensure all buttons have the same size */
+        .button {
+            height: 70px;
+            width: 70px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 400px) {
+            #calculator {
+                width: 90%; /* Make calculator take 90% of the screen on small devices */
+                padding: 15px; /* Reduced padding */
+            }
+
+            #display {
+                font-size: 24px; /* Smaller font size for display */
+            }
+
+            .button {
+                height: 60px; /* Smaller button height */
+                width: 60px; /* Smaller button width */
+                font-size: 20px; /* Smaller font size for buttons */
+            }
+        }
+
+        @media (max-width: 320px) {
+            .button {
+                height: 50px; /* Further reduce button height */
+                width: 50px; /* Further reduce button width */
+                font-size: 18px; /* Further reduce font size for buttons */
+            }
+
+            #display {
+                font-size: 20px; /* Further reduce font size for display */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="calculator">
+        <h2>Srini's Calc</h2>
+        <input type="text" id="display" readonly>
+        <div id="buttons">
+            <button class="button number" onclick="inputValue('7')">7</button>
+            <button class="button number" onclick="inputValue('8')">8</button>
+            <button class="button number" onclick="inputValue('9')">9</button>
+            <button class="button operator" onclick="inputValue('/')">÷</button>
+            <button class="button number" onclick="inputValue('4')">4</button>
+            <button class="button number" onclick="inputValue('5')">5</button>
+            <button class="button number" onclick="inputValue('6')">6</button>
+            <button class="button operator" onclick="inputValue('*')">×</button>
+            <button class="button number" onclick="inputValue('1')">1</button>
+            <button class="button number" onclick="inputValue('2')">2</button>
+            <button class="button number" onclick="inputValue('3')">3</button>
+            <button class="button operator" onclick="inputValue('-')">−</button>
+            <button class="button number" onclick="inputValue('0')">0</button>
+            <button class="button decimal" onclick="inputValue('.')">.</button>
+            <button class="button operator" onclick="calculate()">=</button>
+            <button class="button operator" onclick="inputValue('+')">+</button>
+            <button class="button clear" onclick="clearDisplay()">C</button>
+        </div>
+    </div>
+
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.error('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        const display = document.getElementById('display');
+
+        // Input value function
+        function inputValue(value) {
+            display.value += value;
+        }
+
+        // Clear display function
+        function clearDisplay() {
+            display.value = '';
+        }
+
+        // Calculate function with error handling
+        function calculate() {
+            try {
+                const result = eval(display.value.replace('×', '*').replace('÷', '/'));
+                if (result === Infinity || result === -Infinity || isNaN(result)) {
+                    throw new Error("Invalid operation");
+                }
+                display.value = result;
+            } catch {
+                display.value = 'Invalid input';
+                setTimeout(clearDisplay, 2000); // Clear message after 2 seconds
+            }
+        }
+
+        // Listen for keyboard inputs
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if ((key >= '0' && key <= '9') || key === '+' || key === '-' || key === '*' || key === '/' || key === '.') {
+                inputValue(key);
+            } else if (key === 'Enter') {
+                calculate();
+            } else if (key === 'Escape') {
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                display.value = display.value.slice(0, -1); // Remove last character
+            }
+        });
+    </script>
+</body>
+</html>
