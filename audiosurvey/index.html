@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SurveySparrow Feedback</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>SurveySparrow Feedback Survey</h1>
+        
+        <div id="questionsList" class="questions-list">
+            <h2>Please Answer All Questions</h2>
+            <div class="questions-grid">
+                <div class="question-card" data-index="0">
+                    <p>How do you use SurveySparrow, and what goals are you achieving with it?</p>
+                </div>
+                <div class="question-card" data-index="1">
+                    <p>What challenges have you faced while creating or analyzing surveys?</p>
+                </div>
+                <div class="question-card" data-index="2">
+                    <p>How useful are the reporting and analytics features? What improvements would help?</p>
+                </div>
+                <div class="question-card" data-index="3">
+                    <p>Which integrations do you use or wish SurveySparrow had?</p>
+                </div>
+                <div class="question-card" data-index="4">
+                    <p>How likely are you to recommend SurveySparrow, and why?</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="recordingSection" class="recording-section hidden">
+            <button class="back-btn" id="backBtn">&larr; Back</button>
+            <div class="current-question">
+                <h2 id="currentQuestionTitle"></h2>
+                <p id="currentQuestionText"></p>
+            </div>
+            <div class="instructions">
+                <p>Press and hold <kbd>Space</kbd> to record</p>
+            </div>
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span class="status-text">Ready to record</span>
+            </div>
+            <div class="controls">
+                <button id="toggleBtn" class="control-btn primary-btn">Start Recording</button>
+            </div>
+            <div id="output" class="transcript-container"></div>
+            <button id="submitAnswer" class="control-btn primary-btn">Submit Answer</button>
+        </div>
+
+        <div id="emailSection" class="email-section hidden">
+            <h2>Thank You for Your Feedback!</h2>
+            <div class="email-form">
+                <input type="email" id="emailInput" placeholder="Enter your email" required>
+                <button id="submitEmail" class="control-btn primary-btn">Submit</button>
+            </div>
+        </div>
+
+        <div id="thankYouSection" class="thank-you-section hidden">
+            <h2>Thank You for Your Participation!</h2>
+            <p>Your feedback is valuable to us.</p>
+            <div class="controls">
+                <button id="downloadResponses" class="control-btn secondary-btn">Download Responses</button>
+                <button id="restartSurvey" class="control-btn primary-btn">Take Survey Again</button>
+            </div>
+        </div>
+    </div>
+
+    <button class="settings-icon" id="settingsIcon">
+        ⚙️
+    </button>
+
+    <div id="settingsModal" class="settings-modal hidden">
+        <div class="settings-content">
+            <h2>Settings</h2>
+            <div class="settings-form">
+                <input type="password" id="apiKeyInput" placeholder="Enter your OpenAI API key">
+                <div class="buttons">
+                    <button id="cancelSettings" class="control-btn secondary-btn">Cancel</button>
+                    <button id="saveSettings" class="control-btn primary-btn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
