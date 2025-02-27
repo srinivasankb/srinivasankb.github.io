@@ -4,7 +4,7 @@ const SLACK_REDIRECT_URI = window.location.origin + '/slack-callback.html';
 
 // Initialize Slack authentication
 document.getElementById('slackSignInBtn').addEventListener('click', () => {
-    const authUrl = `https://slack.com/oauth/v2/authorize?client_id=${SLACK_CLIENT_ID}&user_scope=identity.basic,identity.email&redirect_uri=${encodeURIComponent(SLACK_REDIRECT_URI)}`;
+    const authUrl = `https://slack.com/oauth/v2/authorize?client_id=127456554000.4802444521424&user_scope=identity.basic,identity.email&redirect_uri=${encodeURIComponent(SLACK_REDIRECT_URI)}`;
     window.location.href = authUrl;
 });
 
