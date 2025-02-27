@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Details Extractor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+    <div class="left-panel">
+        <h1>Invoice Details Extractor</h1>
+        <div class="slack-auth">
+            <button id="slackSignInBtn" class="slack-signin-btn">
+                <img src="https://platform.slack-edge.com/img/sign_in_with_slack.png" srcset="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" alt="Sign in with Slack" />
+            </button>
+        </div>
+        <div class="employee-info">
+            <div class="input-group">
+                <label for="employeeName">Employee Name</label>
+                <input type="text" id="employeeName" placeholder="Enter your name" readonly>
+            </div>
+            <div class="input-group">
+                <label for="employeeId">Employee ID</label>
+                <input type="text" id="employeeId" placeholder="Enter your ID">
+            </div>
+            <div class="input-group">
+                <label for="employeeEmail">Email</label>
+                <input type="email" id="employeeEmail" placeholder="Your email" readonly>
+            </div>
+        </div>
+        <div class="upload-container">
+            <div class="upload-area" id="dropZone">
+                <input type="file" id="fileInput" accept=".pdf,image/*" hidden>
+                <div class="upload-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p>Drag & Drop your file here or <span class="browse-btn">Browse</span></p>
+                    <p class="file-support">Supports: PDF, Images</p>
+                </div>
+            </div>
+        </div>
+        <div class="result-container" id="resultContainer" style="display: none;">
+            <h2>Extracted Details</h2>
+            <div class="result-grid">
+                <div class="result-item">
+                    <label>Bill Total</label>
+                    <input type="number" id="billTotal" class="editable-input" value="-">
+                </div>
+                <div class="result-item">
+                    <label>Date</label>
+                    <input type="text" id="date" class="editable-input" value="-">
+                </div>
+                <div class="result-item">
+                    <label>Invoice Number</label>
+                    <input type="text" id="invoiceNumber" class="editable-input" value="-">
+                </div>
+                <div class="result-item">
+                    <label>Description</label>
+                    <input type="text" id="description" class="editable-input" value="-">
+                </div>
+                <div class="result-item">
+                    <label>Category</label>
+                    <select id="category" class="editable-input">
+                        <option value="-">-</option>
+                        <option value="Food">Food</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Processing your document...</p>
+        </div>
+        <button id="submitBtn" class="submit-btn">Submit Reimbursement Request</button>
+    </div>
+    <div class="right-panel">
+        <img id="documentPreview" class="document-preview" style="display: none;">
+        <embed id="pdfPreview" class="document-preview" style="display: none;" type="application/pdf">
+    </div>
+</div>
+    <script src="script.js"></script>
+</body>
+</html>
