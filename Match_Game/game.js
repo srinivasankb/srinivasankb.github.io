@@ -5,6 +5,8 @@ class ImageDescriber {
     constructor() {
         this.initializeElements();
         this.setupEventListeners();
+        this.currentFacingMode = 'user';
+        this.availableCameras = [];
     }
 
     initializeElements() {
@@ -12,14 +14,45 @@ class ImageDescriber {
         this.canvasElement = document.getElementById('camera-canvas');
         this.canvas = this.canvasElement.getContext('2d');
         this.captureBtn = document.getElementById('capture-btn');
+        this.switchCameraBtn = document.getElementById('switch-camera-btn');
         this.resultText = document.getElementById('result-text');
         this.captureBtn.disabled = true; // Disable button initially
     }
 
     setupEventListeners() {
         this.captureBtn.addEventListener('click', () => this.captureImage());
-        // Remove window load event listener since we'll call startCamera directly
-        this.startCamera();
+        this.switchCameraBtn.addEventListener('click', () => this.switchCamera());
+        this.checkAvailableCameras();
+    }
+
+    async checkAvailableCameras() {
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            this.availableCameras = devices.filter(device => device.kind === 'videoinput');
+            
+            // Show switch camera button only if multiple cameras are available
+            this.switchCameraBtn.style.display = this.availableCameras.length > 1 ? 'block' : 'none';
+            
+            // Start the camera after checking available devices
+            await this.startCamera();
+        } catch (error) {
+            console.error('Error checking available cameras:', error);
+            this.resultText.textContent = '❌ Unable to detect cameras';
+        }
+    }
+
+    async switchCamera() {
+        // Toggle facing mode
+        this.currentFacingMode = this.currentFacingMode === 'user' ? 'environment' : 'user';
+        
+        // Stop current stream
+        if (this.videoElement.srcObject) {
+            const tracks = this.videoElement.srcObject.getTracks();
+            tracks.forEach(track => track.stop());
+        }
+        
+        // Restart camera with new facing mode
+        await this.startCamera();
     }
 
     async startCamera() {
@@ -40,7 +73,7 @@ class ImageDescriber {
 
             const stream = await navigator.mediaDevices.getUserMedia({ 
                 video: {
-                    facingMode: 'user',
+                    facingMode: this.currentFacingMode,
                     width: { ideal: 1280 },
                     height: { ideal: 720 }
                 } 
