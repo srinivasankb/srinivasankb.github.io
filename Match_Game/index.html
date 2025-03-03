@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Camera for Kids</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <h1>Magic Camera 📸</h1>
+        <div class="camera-container">
+            <video id="camera-feed" autoplay playsinline></video>
+            <canvas id="camera-canvas" style="display: none;"></canvas>
+        </div>
+        <div class="controls">
+            <button id="capture-btn" class="capture-btn">Take Picture! 📸</button>
+        </div>
+        <div class="result-container">
+            <p id="result-text" class="result-text"></p>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
