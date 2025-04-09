@@ -261,7 +261,8 @@
         const triggers = document.querySelectorAll(".smoothscroll");
 
         triggers.forEach(function(trigger) {
-            trigger.addEventListener("click", function() {
+            trigger.addEventListener("click", function(e) {
+                e.preventDefault();
                 const target = trigger.getAttribute("href");
 
                 Jump(target, {
