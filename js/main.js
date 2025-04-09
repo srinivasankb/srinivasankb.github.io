@@ -254,29 +254,10 @@
     }; // end ssAlertBoxes
 
 
-   /* Smoothscroll
+   /* Scroll
     * ------------------------------------------------------ */
     const ssSmoothScroll = function () {
-        
-        const triggers = document.querySelectorAll(".smoothscroll");
-
-        triggers.forEach(function(trigger) {
-            trigger.addEventListener("click", function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const target = trigger.getAttribute("href");
-                const targetElement = document.querySelector(target);
-                
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
+        // Removed smooth scroll implementation
     }; // end ssSmoothScroll
 
 
