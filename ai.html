@@ -27,28 +27,31 @@
       background: #ffffff;
     }
 
-    .chat-header {
-      background: #00796b;
+    .top-banner {
+      background-color: #00796b;
       color: white;
       padding: 16px;
       text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
     }
 
-    .chat-header h1 {
+    .top-banner h1 {
       margin: 0;
       font-size: 20px;
     }
 
-    .chat-header p {
+    .top-banner p {
       margin: 4px 0 0;
-      font-size: 14px;
+      font-size: 13px;
       opacity: 0.9;
     }
 
     .messages {
       flex: 1;
-      padding: 16px;
+      padding: 80px 16px 16px; /* padding-top adjusted for banner */
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -60,7 +63,7 @@
       padding: 10px 14px;
       border-radius: 20px;
       line-height: 1.5;
-      display: inline-flex;
+      display: flex;
       align-items: flex-end;
       word-wrap: break-word;
     }
@@ -75,27 +78,15 @@
       align-self: flex-start;
       background-color: #f1f1f1;
       border-bottom-left-radius: 0;
-      position: relative;
-      padding-left: 45px;
-    }
-
-    .bot::before {
-      content: '';
-      background: url('https://srinivasan.online/images/avatars/srinivasan_kb.png') no-repeat center center / cover;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      position: absolute;
-      left: 8px;
-      bottom: 8px;
     }
 
     .input-area {
-      padding: 16px;
+      padding: 10px 16px;
       border-top: 1px solid #e0e0e0;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      background: white;
     }
 
     .starters {
@@ -172,7 +163,7 @@
     }
 
     @keyframes blink {
-      0%, 80%, 100 {
+      0%, 80%, 100% {
         transform: scale(0);
       }
       40% {
@@ -182,28 +173,34 @@
 
     @media (max-width: 600px) {
       .chat-container {
-        border-radius: 0;
         height: 100vh;
       }
-
       .message {
-        font-size: 15px;
+        font-size: 14px;
+      }
+      input[type="text"] {
+        font-size: 14px;
+      }
+      .send-btn {
+        font-size: 14px;
+        padding: 10px 14px;
       }
     }
   </style>
 </head>
 <body>
   <div class="chat-container">
-    <div class="chat-header">
+    <div class="top-banner">
       <h1>Ask Srini's AI</h1>
-      <p>Ask Srini's AI your questions about Srini to know about him</p>
+      <p>Want to know more about Srini? Just ask his AI Agent!</p>
     </div>
     <div class="messages" id="chat"></div>
     <div class="input-area">
       <div class="starters" id="starters">
         <button class="starter-btn">What is your education qualification?</button>
         <button class="starter-btn">Where do you work currently?</button>
-        <button class="starter-btn">Have your built any AI products?</button>
+        <button class="starter-btn">Have you worked on AI products?</button>
+        <button class="starter-btn">How can I contact your?</button>
       </div>
       <div class="chat-input">
         <input type="text" id="userInput" placeholder="Type a message..." />
