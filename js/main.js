@@ -263,11 +263,17 @@
         triggers.forEach(function(trigger) {
             trigger.addEventListener("click", function(e) {
                 e.preventDefault();
+                e.stopPropagation();
+                
                 const target = trigger.getAttribute("href");
-
-                Jump(target, {
-                    duration: 1200,
-                });
+                const targetElement = document.querySelector(target);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
         });
 
