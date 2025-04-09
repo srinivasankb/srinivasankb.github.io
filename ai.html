@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Srinivasan AI Chat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e8f0f9, #fdfdfd);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+    }
+
+    .chat-header {
+      background: #00796b;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .chat-header h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .chat-header p {
+      margin: 4px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      margin: 10px 0;
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 20px;
+      line-height: 1.5;
+      display: inline-flex;
+      align-items: flex-end;
+      word-wrap: break-word;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #d2f8ce;
+      border-bottom-right-radius: 0;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: #f1f1f1;
+      border-bottom-left-radius: 0;
+      position: relative;
+      padding-left: 45px;
+    }
+
+    .bot::before {
+      content: '';
+      background: url('https://srinivasan.online/images/avatars/srinivasan_kb.png') no-repeat center center / cover;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      position: absolute;
+      left: 8px;
+      bottom: 8px;
+    }
+
+    .input-area {
+      padding: 16px;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .starters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+    }
+
+    .starter-btn {
+      background: #e1ecf4;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      border: none;
+      transition: background 0.3s;
+    }
+
+    .starter-btn:hover {
+      background: #cbe1f1;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #ccc;
+      border-radius: 24px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    button.send-btn {
+      background: #00796b;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 24px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: background 0.3s;
+    }
+
+    button.send-btn:hover {
+      background: #004d40;
+    }
+
+    .loading {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .loading span {
+      width: 6px;
+      height: 6px;
+      background: #999;
+      border-radius: 50%;
+      animation: blink 1s infinite ease-in-out;
+    }
+
+    .loading span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loading span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes blink {
+      0%, 80%, 100 {
+        transform: scale(0);
+      }
+      40% {
+        transform: scale(1);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .chat-container {
+        border-radius: 0;
+        height: 100vh;
+      }
+
+      .message {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <h1>Ask Srini's AI</h1>
+      <p>Ask Srini's AI your questions about Srini to know about him</p>
+    </div>
+    <div class="messages" id="chat"></div>
+    <div class="input-area">
+      <div class="starters" id="starters">
+        <button class="starter-btn">What is your education qualification?</button>
+        <button class="starter-btn">Where do you work currently?</button>
+        <button class="starter-btn">Tell me about your hobbies.</button>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="userInput" placeholder="Type a message..." />
+        <button class="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const starters = document.getElementById('starters');
+    let startersUsed = false;
+
+    function addMessage(content, sender = 'bot') {
+      const message = document.createElement('div');
+      message.className = `message ${sender}`;
+      message.innerHTML = content;
+      chat.appendChild(message);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function showLoading() {
+      const loading = document.createElement('div');
+      loading.className = 'message bot';
+      loading.id = 'loading';
+      loading.innerHTML = '<div class="loading"><span></span><span></span><span></span></div>';
+      chat.appendChild(loading);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function removeLoading() {
+      const loading = document.getElementById('loading');
+      if (loading) chat.removeChild(loading);
+    }
+
+    async function sendMessage(text) {
+      const input = document.getElementById('userInput');
+      const messageText = text || input.value.trim();
+      if (!messageText) return;
+      addMessage(messageText, 'user');
+      input.value = '';
+      showLoading();
+
+      if (!startersUsed) {
+        starters.style.maxHeight = '0';
+        starters.style.opacity = '0';
+        startersUsed = true;
+      }
+
+      try {
+        const res = await fetch(`https://n8n-tool.servicesparrow.app/webhook/srini?q=${encodeURIComponent(messageText)}`);
+        const data = await res.text();
+        removeLoading();
+        addMessage(data);
+      } catch (err) {
+        removeLoading();
+        addMessage('Something went wrong. Please try again.');
+      }
+    }
+
+    document.querySelectorAll('.starter-btn').forEach(btn => {
+      btn.addEventListener('click', () => sendMessage(btn.textContent));
+    });
+
+    document.getElementById('userInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
