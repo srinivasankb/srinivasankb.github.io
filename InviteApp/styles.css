@@ -102,3 +102,41 @@ input:focus, textarea:focus {
 ::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
 }
+
+
+/* Add responsive text sizing */
+.event-container, .event-details {
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.event-title {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  word-wrap: break-word;
+}
+
+.event-description {
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+/* Responsive grid layout */
+.event-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* Responsive buttons */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.action-buttons button {
+  flex: 1 1 auto;
+  min-width: 120px;
+}
