@@ -52,7 +52,7 @@ function validateRequiredFields() {
     return isValid;
 }
 
-async function generateEventLink() {
+function generateEventLink() {
     if (!validateRequiredFields()) return;
     const host = document.getElementById('host').value.trim();
     const title = document.getElementById('title').value.trim();
@@ -87,31 +87,10 @@ async function generateEventLink() {
 
     const encrypted = CryptoJS.AES.encrypt(JSON.stringify(eventData), 'event-key').toString();
     const base64 = btoa(encrypted).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-    // Add URL shortening function
-    async function shortenURL(longURL) {
-      try {
-        const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longURL)}`);
-        return await response.text();
-      } catch (error) {
-        console.error('URL shortening failed:', error);
-        return longURL; // Fallback to original URL
-      }
-    }
-    
-    // Modify event link generation
-    const longURL = `https://srinivasan.online/InviteApp/event.html#${base64}`;
-    const shortURL = await shortenURL(longURL);
-    
-    // Make both URLs available
-    const eventLinks = {
-      longURL: longURL,
-      shortURL: shortURL
-    };
+    const eventLink = `https://srinivasan.online/InviteApp/event.html#${base64}`;
 
     const linkInput = document.getElementById('linkInput');
-    // You might want to display both links now, perhaps in separate input fields or a modal.
-    // For now, I'll set the input to the short URL as an example.
-    linkInput.value = shortURL; // Or longURL, or display both
+    linkInput.value = eventLink;
 
     document.getElementById('eventLink').classList.remove('hidden');
     linkInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
