@@ -140,33 +140,3 @@ window.addEventListener('load', () => {
         `;
     }
 });
-
-
-// Add this to event page initialization
-const countdownElement = document.createElement('div');
-countdownElement.id = 'countdown';
-document.body.insertBefore(countdownElement, document.body.firstChild);
-
-function updateCountdown(endTime) {
-  const now = new Date();
-  const end = new Date(endTime);
-  const diff = end - now;
-
-  if (diff <= 0) {
-    countdownElement.textContent = 'Event has already started or is over';
-    return;
-  }
-
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-  countdownElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
-}
-
-// Call this when loading event details
-if (eventData.endTime) {
-  updateCountdown(eventData.endTime);
-  setInterval(() => updateCountdown(eventData.endTime), 1000);
-}

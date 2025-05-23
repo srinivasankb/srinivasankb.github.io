@@ -74,13 +74,6 @@ function generateEventLink() {
         return;
     }
 
-    const endTimeInput = document.createElement('input');
-    endTimeInput.type = 'datetime-local';
-    endTimeInput.id = 'endTime';
-    endTimeInput.placeholder = 'End Time (optional)';
-    form.insertBefore(endTimeInput, submitButton);
-
-    // Modify event data object to include endTime
     const eventData = {
         host,
         title,
