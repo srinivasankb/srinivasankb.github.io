@@ -24,17 +24,19 @@ const themes = {
 };
 
 function selectTheme(theme) {
-    document.getElementById('selectedTheme').value = theme;
+    // Remove selected class from all options
     document.querySelectorAll('.theme-option').forEach(option => {
-        option.style.transition = 'all 0.3s ease';
         option.classList.remove('selected');
-        option.style.transform = 'scale(1)';
     });
+    
+    // Add selected class to the clicked option
     const selectedOption = document.querySelector(`[data-theme="${theme}"]`);
     if (selectedOption) {
         selectedOption.classList.add('selected');
-        selectedOption.style.transform = 'scale(1.05)';
     }
+    
+    // Update the hidden input value
+    document.getElementById('selectedTheme').value = theme;
 }
 
 function validateRequiredFields() {
@@ -52,7 +54,7 @@ function validateRequiredFields() {
     return isValid;
 }
 
-function generateEventLink() {
+async function generateEventLink() {
     if (!validateRequiredFields()) return;
     const host = document.getElementById('host').value.trim();
     const title = document.getElementById('title').value.trim();
@@ -99,13 +101,16 @@ function generateEventLink() {
     };
     
     // Modified eventLink generation with error handling
-    const eventLink = await shortenUrl(`https://srinivasan.online/InviteApp/event.html#${base64}`);
-
-    const linkInput = document.getElementById('linkInput');
-    linkInput.value = eventLink;
-
-    document.getElementById('eventLink').classList.remove('hidden');
-    linkInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    try {
+        const eventLink = await shortenUrl(`https://srinivasan.online/InviteApp/event.html#${base64}`);
+        const linkInput = document.getElementById('linkInput');
+        linkInput.value = eventLink;
+        document.getElementById('eventLink').classList.remove('hidden');
+        linkInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (error) {
+        console.error('Error generating event link:', error);
+        alert('Failed to generate event link. Please try again.');
+    }
 }
 
 function copyLink() {
