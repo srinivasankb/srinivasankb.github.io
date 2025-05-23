@@ -65,42 +65,6 @@ function displayEventDetails(eventData) {
     const container = document.getElementById('eventContainer');
     container.classList.remove('opacity-0');
     container.classList.add('opacity-100');
-
-    // Start countdown timer
-    startCountdown(eventData.date, eventData.time);
-}
-
-function startCountdown(eventDate, eventTime) {
-    const countdownElement = document.getElementById('countdown');
-    const eventDateTime = new Date(`${eventDate}T${eventTime}`).getTime();
-
-    console.log('Event Date:', eventDate);
-    console.log('Event Time:', eventTime);
-    console.log('Parsed Event DateTime (ms):', eventDateTime);
-
-    const updateCountdown = () => {
-        const now = new Date().getTime();
-        const distance = eventDateTime - now;
-
-        console.log('Current Time (ms):', now);
-        console.log('Distance (ms):', distance);
-
-        if (distance < 0) {
-            countdownElement.textContent = 'Event already started';
-            clearInterval(interval);
-            return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        countdownElement.textContent = `Starts in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-    };
-
-    updateCountdown(); // Initial call to display immediately
-    const interval = setInterval(updateCountdown, 1000);
 }
 
 function addToCalendar() {
