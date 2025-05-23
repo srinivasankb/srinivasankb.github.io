@@ -88,11 +88,17 @@ function generateEventLink() {
     const encrypted = CryptoJS.AES.encrypt(JSON.stringify(eventData), 'event-key').toString();
     const base64 = btoa(encrypted).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
     const shortenUrl = async (url) => {
-      const response = await fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(url));
-      return await response.text();
+      try {
+        const response = await fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(url));
+        if (!response.ok) throw new Error('URL shortening failed');
+        return await response.text();
+      } catch (error) {
+        console.error('URL shortening error:', error);
+        return url; // Fallback to original URL if shortening fails
+      }
     };
     
-    // Modify eventLink generation
+    // Modified eventLink generation with error handling
     const eventLink = await shortenUrl(`https://srinivasan.online/InviteApp/event.html#${base64}`);
 
     const linkInput = document.getElementById('linkInput');
