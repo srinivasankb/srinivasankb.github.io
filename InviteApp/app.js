@@ -87,7 +87,7 @@ function generateEventLink() {
 
     const encrypted = CryptoJS.AES.encrypt(JSON.stringify(eventData), 'event-key').toString();
     const base64 = btoa(encrypted).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-    const eventLink = `${window.location.protocol}//${window.location.host}/event.html#${base64}`;
+    const eventLink = `https://srinivasan.online/InviteApp/event.html#${base64}`;
 
     const linkInput = document.getElementById('linkInput');
     linkInput.value = eventLink;
