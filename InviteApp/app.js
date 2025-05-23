@@ -87,7 +87,13 @@ function generateEventLink() {
 
     const encrypted = CryptoJS.AES.encrypt(JSON.stringify(eventData), 'event-key').toString();
     const base64 = btoa(encrypted).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-    const eventLink = `https://srinivasan.online/InviteApp/event.html#${base64}`;
+    const shortenUrl = async (url) => {
+      const response = await fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(url));
+      return await response.text();
+    };
+    
+    // Modify eventLink generation
+    const eventLink = await shortenUrl(`https://srinivasan.online/InviteApp/event.html#${base64}`);
 
     const linkInput = document.getElementById('linkInput');
     linkInput.value = eventLink;
