@@ -52,7 +52,7 @@ function validateRequiredFields() {
     return isValid;
 }
 
-function generateEventLink() {
+async function generateEventLink() {
     if (!validateRequiredFields()) return;
     const host = document.getElementById('host').value.trim();
     const title = document.getElementById('title').value.trim();
@@ -109,7 +109,9 @@ function generateEventLink() {
     };
 
     const linkInput = document.getElementById('linkInput');
-    linkInput.value = eventLink;
+    // You might want to display both links now, perhaps in separate input fields or a modal.
+    // For now, I'll set the input to the short URL as an example.
+    linkInput.value = shortURL; // Or longURL, or display both
 
     document.getElementById('eventLink').classList.remove('hidden');
     linkInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
