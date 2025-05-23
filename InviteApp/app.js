@@ -24,19 +24,17 @@ const themes = {
 };
 
 function selectTheme(theme) {
-    // Remove selected class from all options
+    document.getElementById('selectedTheme').value = theme;
     document.querySelectorAll('.theme-option').forEach(option => {
+        option.style.transition = 'all 0.3s ease';
         option.classList.remove('selected');
+        option.style.transform = 'scale(1)';
     });
-    
-    // Add selected class to the clicked option
     const selectedOption = document.querySelector(`[data-theme="${theme}"]`);
     if (selectedOption) {
         selectedOption.classList.add('selected');
+        selectedOption.style.transform = 'scale(1.05)';
     }
-    
-    // Update the hidden input value
-    document.getElementById('selectedTheme').value = theme;
 }
 
 function validateRequiredFields() {
@@ -54,7 +52,7 @@ function validateRequiredFields() {
     return isValid;
 }
 
-async function generateEventLink() {
+function generateEventLink() {
     if (!validateRequiredFields()) return;
     const host = document.getElementById('host').value.trim();
     const title = document.getElementById('title').value.trim();
@@ -89,28 +87,32 @@ async function generateEventLink() {
 
     const encrypted = CryptoJS.AES.encrypt(JSON.stringify(eventData), 'event-key').toString();
     const base64 = btoa(encrypted).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-    const shortenUrl = async (url) => {
+    // Add URL shortening function
+    async function shortenURL(longURL) {
       try {
-        const response = await fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(url));
-        if (!response.ok) throw new Error('URL shortening failed');
+        const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longURL)}`);
         return await response.text();
       } catch (error) {
-        console.error('URL shortening error:', error);
-        return url; // Fallback to original URL if shortening fails
+        console.error('URL shortening failed:', error);
+        return longURL; // Fallback to original URL
       }
-    };
-    
-    // Modified eventLink generation with error handling
-    try {
-        const eventLink = await shortenUrl(`https://srinivasan.online/InviteApp/event.html#${base64}`);
-        const linkInput = document.getElementById('linkInput');
-        linkInput.value = eventLink;
-        document.getElementById('eventLink').classList.remove('hidden');
-        linkInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } catch (error) {
-        console.error('Error generating event link:', error);
-        alert('Failed to generate event link. Please try again.');
     }
+    
+    // Modify event link generation
+    const longURL = `https://srinivasan.online/InviteApp/event.html#${base64}`;
+    const shortURL = await shortenURL(longURL);
+    
+    // Make both URLs available
+    const eventLinks = {
+      longURL: longURL,
+      shortURL: shortURL
+    };
+
+    const linkInput = document.getElementById('linkInput');
+    linkInput.value = eventLink;
+
+    document.getElementById('eventLink').classList.remove('hidden');
+    linkInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function copyLink() {
