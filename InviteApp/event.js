@@ -74,9 +74,16 @@ function startCountdown(eventDate, eventTime) {
     const countdownElement = document.getElementById('countdown');
     const eventDateTime = new Date(`${eventDate}T${eventTime}`).getTime();
 
+    console.log('Event Date:', eventDate);
+    console.log('Event Time:', eventTime);
+    console.log('Parsed Event DateTime (ms):', eventDateTime);
+
     const updateCountdown = () => {
         const now = new Date().getTime();
         const distance = eventDateTime - now;
+
+        console.log('Current Time (ms):', now);
+        console.log('Distance (ms):', distance);
 
         if (distance < 0) {
             countdownElement.textContent = 'Event already started';
