@@ -1,0 +1,117 @@
+{
+    "profile": {
+      "name": "Srinivasan KB",
+      "title": "Product Manager",
+      "location": "Bangalore, India",
+      "email": "hello@srinivasan.online",
+      "phone": "+91 90422 84142",
+      "website": "https://srinivasan.online",
+      "summary": "Product Manager at SurveySparrow, leading cross-functional teams to build innovative, user-centric B2B SaaS products that enhance customer experiences."
+    },
+    "education": [
+      {
+        "degree": "MBA",
+        "field": "Marketing & Operations",
+        "institution": "University of Madras",
+        "completion_date": "April 2018"
+      },
+      {
+        "degree": "BE",
+        "field": "Electrical & Electronics Engineering",
+        "institution": "PSR Engineering College",
+        "completion_date": "April 2016"
+      }
+    ],
+    "experience": [
+      {
+        "company": "SurveySparrow",
+        "position": "Product Manager",
+        "start_date": "January 2023",
+        "end_date": "Present",
+        "responsibilities": [
+          "Led the Ticket Management module, delivering features like Workflows, SLAs, and a Frontline Mobile App.",
+          "Spearheaded integrations with Microsoft Dynamics 365, MS Teams, and Salesforce.",
+          "Launched AppNest, the in-product app marketplace, and led the Developer Program.",
+          "Enhanced core integrations and oversaw the Mobile App for offline surveys."
+        ]
+      },
+      {
+        "company": "OkCredit",
+        "position": "Associate Product Manager",
+        "start_date": "December 2021",
+        "end_date": "January 2023",
+        "responsibilities": [
+          "Contributed to the inception and growth of OkCredit’s BNPL product, scaling it to over 12,000 active users.",
+          "Improved feature adoption by 4% through targeted communication and engagement initiatives.",
+          "Conducted user research for a new peer-to-peer lending product."
+        ]
+      },
+      {
+        "company": "OkCredit",
+        "position": "Regional Expert",
+        "start_date": "June 2020",
+        "end_date": "December 2021",
+        "responsibilities": [
+          "Managed growth and retention for Tamil Nadu region, serving 200,000+ merchants.",
+          "Led localization and user research initiatives, engaging with over 250 users.",
+          "Achieved a 38% reduction in CPA through targeted ad copy and registration flow optimizations."
+        ]
+      },
+      {
+        "company": "ShareChat",
+        "position": "Community Expert",
+        "start_date": "June 2019",
+        "end_date": "June 2020",
+        "responsibilities": [
+          "Instrumental in launching Group and Audio Chat features.",
+          "Facilitated requirement gathering from beta users and contributed to PAN India launch campaign planning.",
+          "Developed launch playbook for Group feature, catering to 14 million daily active users."
+        ]
+      },
+      {
+        "company": "Clootrack",
+        "position": "Digital Marketing Manager",
+        "start_date": "February 2019",
+        "end_date": "June 2019",
+        "responsibilities": [
+          "Managed conversion and lead generation campaigns for software products.",
+          "Achieved a 15% increase in leads within three months through strategic optimization."
+        ]
+      },
+      {
+        "company": "Ansio",
+        "position": "Digital Marketing Executive",
+        "start_date": "May 2018",
+        "end_date": "November 2018",
+        "responsibilities": [
+          "Launched and scaled app marketing strategy from 0 to 12,000 users in 6 months.",
+          "Achieved a 140% reduction in CPI through strategic planning and execution."
+        ]
+      }
+    ],
+    "skills": [
+      "Product Management",
+      "Agile Methodologies",
+      "User Engagement Strategies",
+      "Data-Driven Product Optimization",
+      "AI Integration",
+      "User Research",
+      "Requirement Gathering",
+      "Growth and Retention Strategies"
+    ],
+    "tools": [
+      "JIRA",
+      "Notion",
+      "Slack",
+      "Confluence",
+      "Figma",
+      "Google Analytics"
+    ],
+    "social_links": {
+      "linkedin": "https://www.linkedin.com/in/srinivasan-kb",
+      "github": "https://github.com/srinivasan-kb",
+      "twitter": "https://twitter.com/srini_pm"
+    },
+    "current_focus": "Driving B2B SaaS product innovation at SurveySparrow, leveraging extensive experience in Product Management to deliver industry-leading solutions and elevate customer experiences."
+  }
+  
