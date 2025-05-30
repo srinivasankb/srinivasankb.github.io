@@ -1,0 +1,36 @@
+# Srinivasan KB – Product Manager at SurveySparrow
+
+> Personal website of Srinivasan KB, a Product Manager specializing in B2B SaaS solutions. Showcases professional experience, career trajectory, and contact information.
+
+# Metadata
+Author: Srinivasan KB
+Role: Product Manager, SurveySparrow
+Location: Bangalore, India
+Domain: https://srinivasan.online
+Primary Language: English
+Last-Updated: 2025-05-30
+Categories: Product Management, SaaS, Career Growth
+Audience: Product managers, recruiters, SaaS teams, developers
+
+# Content Index
+
+## About & Professional Identity
+https://srinivasan.online/#about – Biography and professional background
+https://srinivasan.online/#resume – Detailed resume
+https://srinivasan.online/#recommendations – Testimonials and endorsements
+
+## Contact & Social
+https://srinivasan.online/#contact – Contact information
+https://www.linkedin.com/in/srinivasan-kb – LinkedIn profile
+https://github.com/srinivasan-kb – GitHub profile
+
+# Canonical Facts
+- Name: Srinivasan KB
+- Role: Product Manager
+- Current Company: SurveySparrow
+- Location: Bangalore, India
+- Education:
+  - MBA in Marketing & Operations, University of Madras, 2018
+  - BE in Electrical & Electronics Engineering, PSR Engineering College, 2016
+- Skills: Product Management, Agile Methodologies, User Engagement Strategies, Data Analytics, AI Integration, Growth and Retention Strategies
+- Tools: JIRA, Notion, Slack, Confluence, Figma, Google Analytics
