@@ -273,8 +273,9 @@
     initMap();
 
     function copyDigiPin() {
-      const digiPinText = document.getElementById('digiPinOutput').innerText.replace('DIGIPIN: ', '');
-      navigator.clipboard.writeText(digiPinText).then(() => {
+      const digiPinText = document.getElementById('digiPinOutput').innerText.replace('DIGIPIN: ', '').split(' ')[0];
+       const fullUrl = `https://srinivasan.online/digipin/?p=${digiPinText}`;
+       navigator.clipboard.writeText(fullUrl).then(() => {
         const copyButton = document.getElementById('copyButton');
         if (copyButton) {
           copyButton.classList.add('text-green-500');
