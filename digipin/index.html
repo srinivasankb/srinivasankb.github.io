@@ -3,11 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DIGIPIN Encoder & Decoder</title>
+  <title>DIGIPIN : Know Your Digipin | Encode and Decode Digipin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <meta name="description" content="DIGIPIN Encoder & Decoder - Convert geographic coordinates to DIGIPINs and vice versa. Locate places on a map using DIGIPIN.">
+  <meta name="keywords" content="DIGIPIN, encoder, decoder, latitude, longitude, map, India Post, geolocation, online tool">
+  <meta property="og:title" content="DIGIPIN Encoder & Decoder">
+  <meta property="og:description" content="Convert geographic coordinates to DIGIPINs and vice versa. Locate places on a map using DIGIPIN.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://srinivasan.online/digipin/">
+  <meta property="og:image" content="https://srinivasan.online/images/Srinivasan_KB_Cover.png"> <!-- Replace with an actual image for your site -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DIGIPIN Encoder & Decoder">
+  <meta name="twitter:description" content="Convert geographic coordinates to DIGIPINs and vice versa. Locate places on a map using DIGIPIN.">
+  <meta name="twitter:image" content="https://srinivasan.online/images/Srinivasan_KB_Cover.png"> <!-- Replace with an actual image for your site -->
+  <link rel="canonical" href="https://srinivasan.online/digipin/">
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen p-6">
   <div class="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
@@ -15,14 +27,16 @@
       <h1 class="text-2xl font-bold mb-6">DIGIPIN Encoder & Decoder</h1>
 
       <div class="flex mb-6 border-b">
-        <button onclick="switchTab('encode')" id="encodeTab" class="px-4 py-2 font-semibold border-b-2 border-blue-600">Encode</button>
-        <button onclick="switchTab('decode')" id="decodeTab" class="px-4 py-2 font-semibold border-b-2 border-transparent">Decode</button>
+        <button onclick="switchTab('encode')" id="encodeTab" class="px-4 py-2 font-semibold border-b-2 border-blue-600">Get DIGIPIN</button>
+        <button onclick="switchTab('decode')" id="decodeTab" class="px-4 py-2 font-semibold border-b-2 border-transparent">Get Location</button>
       </div>
 
       <div id="encodeSection" class="mb-6">
         <div class="relative">
-          <input id="latInput" type="number" placeholder="Latitude" class="w-full mb-2 p-2 border rounded" />
-          <input id="lonInput" type="number" placeholder="Longitude" class="w-full mb-2 p-2 border rounded" />
+          <input id="latInput" type="number" placeholder="Latitude" class="w-full mb-2 p-2 border rounded" oninput="validateInput('latInput', 'latError')" />
+          <p id="latError" class="text-red-500 text-xs italic hidden mb-2">Latitude must be between 2.5 and 38.5</p>
+          <input id="lonInput" type="number" placeholder="Longitude" class="w-full mb-2 p-2 border rounded" oninput="validateInput('lonInput', 'lonError')" />
+          <p id="lonError" class="text-red-500 text-xs italic hidden mb-2">Longitude must be between 63.5 and 99.5</p>
           <button onclick="getCurrentLocation()" class="absolute right-2 top-2 text-blue-600 hover:text-blue-800" title="Use current location">
             <i class="fas fa-location-dot text-xl"></i>
           </button>
@@ -31,13 +45,15 @@
       </div>
 
       <div id="decodeSection" class="mb-6 hidden">
-        <input id="digiPinInput" type="text" placeholder="DIGIPIN (e.g. FM4-K3L-T8C)" class="w-full mb-2 p-2 border rounded" />
+        <input id="digiPinInput" type="text" placeholder="DIGIPIN (e.g. FM4-K3L-T8C)" class="w-full mb-2 p-2 border rounded" oninput="validateDigiPinInput()" />
+        <p id="digiPinError" class="text-red-500 text-xs italic hidden mb-2">Invalid DIGIPIN format</p>
         <button onclick="decodeDigiPin()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Get Coordinates</button>
       </div>
 
       <div class="mb-6">
         <p id="digiPinOutput" class="mt-2 text-green-600 font-mono flex items-center"></p>
         <p id="coordsOutput" class="mt-2 text-indigo-600 font-mono"></p>
+        <button onclick="clearOutputs()" class="mt-4 w-full bg-gray-300 text-gray-800 py-2 rounded hover:bg-gray-400">Clear</button>
       </div>
     </div>
 
@@ -68,6 +84,7 @@
 
     let map;
     let currentMarker;
+    let indiaGeoJsonLayer; // Declare a variable to hold the GeoJSON layer
 
     function initMap() {
       map = L.map('map');
@@ -76,9 +93,37 @@
         maxZoom: 19
       }).addTo(map);
 
-      const centerLat = (BOUNDS.minLat + BOUNDS.maxLat) / 2;
-      const centerLon = (BOUNDS.minLon + BOUNDS.maxLon) / 2;
-      map.setView([centerLat, centerLon], 5);
+      // Load and add GeoJSON for India
+      fetch('/india.geojson')
+        .then(response => response.json())
+        .then(data => {
+          indiaGeoJsonLayer = L.geoJson(data, {
+            style: function (feature) {
+              return {
+                color: '#0000FF', // Blue color for boundaries
+                weight: 1,
+                opacity: 0.5,
+                fillColor: '#ADD8E6', // Light blue fill
+                fillOpacity: 0.2
+              };
+            },
+            onEachFeature: function (feature, layer) {
+              // Optional: Add a popup with feature name if available
+              if (feature.properties && feature.properties.NAME) {
+                layer.bindPopup(feature.properties.NAME);
+              }
+            }
+          }).addTo(map);
+
+          // Fit map to GeoJSON bounds
+          map.fitBounds(indiaGeoJsonLayer.getBounds());
+        })
+        .catch(error => console.error('Error loading GeoJSON:', error));
+
+      // Remove initial setView as fitBounds will handle it
+      // const centerLat = (BOUNDS.minLat + BOUNDS.maxLat) / 2;
+      // const centerLon = (BOUNDS.minLon + BOUNDS.maxLon) / 2;
+      // map.setView([centerLat, centerLon], 5);
     }
 
     function switchTab(tab) {
@@ -100,8 +145,17 @@
       }
 
       // Clear outputs when switching tabs
-      document.getElementById('digiPinOutput').innerText = '';
+      document.getElementById('digiPinOutput').innerHTML = '';
       document.getElementById('coordsOutput').innerText = '';
+      document.getElementById('digiPinInput').value = '';
+      document.getElementById('latInput').value = '';
+      document.getElementById('lonInput').value = '';
+      document.getElementById('latInput').classList.remove('border-red-500');
+      document.getElementById('lonInput').classList.remove('border-red-500');
+      document.getElementById('digiPinInput').classList.remove('border-red-500');
+      document.getElementById('latError').classList.add('hidden');
+      document.getElementById('lonError').classList.add('hidden');
+      document.getElementById('digiPinError').classList.add('hidden');
       if (currentMarker) {
         currentMarker.remove();
       }
@@ -235,7 +289,70 @@
       currentMarker = L.marker([latNum, lonNum]).addTo(map);
     }
 
+    function validateInput(inputId, errorId) {
+      const input = document.getElementById(inputId);
+      const error = document.getElementById(errorId);
+      const value = parseFloat(input.value);
+
+      let isValid = true;
+      if (inputId === 'latInput') {
+        if (isNaN(value) || value < BOUNDS.minLat || value > BOUNDS.maxLat) {
+          isValid = false;
+        }
+      } else if (inputId === 'lonInput') {
+        if (isNaN(value) || value < BOUNDS.minLon || value > BOUNDS.maxLon) {
+          isValid = false;
+        }
+      }
+
+      if (!isValid) {
+        input.classList.add('border-red-500');
+        error.classList.remove('hidden');
+      } else {
+        input.classList.remove('border-red-500');
+        error.classList.add('hidden');
+      }
+      return isValid;
+    }
+
+    function validateDigiPinInput() {
+      const input = document.getElementById('digiPinInput');
+      const error = document.getElementById('digiPinError');
+      const digiPin = input.value.trim();
+      const isValid = /^[A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{4}$/.test(digiPin.toUpperCase());
+
+      if (!isValid && digiPin.length > 0) {
+        input.classList.add('border-red-500');
+        error.classList.remove('hidden');
+      } else {
+        input.classList.remove('border-red-500');
+        error.classList.add('hidden');
+      }
+      return isValid;
+    }
+
+    function clearOutputs() {
+      document.getElementById('latInput').value = '';
+      document.getElementById('lonInput').value = '';
+      document.getElementById('digiPinInput').value = '';
+      document.getElementById('digiPinOutput').innerHTML = '';
+      document.getElementById('coordsOutput').innerText = '';
+      document.getElementById('latInput').classList.remove('border-red-500');
+      document.getElementById('lonInput').classList.remove('border-red-500');
+      document.getElementById('digiPinInput').classList.remove('border-red-500');
+      document.getElementById('latError').classList.add('hidden');
+      document.getElementById('lonError').classList.add('hidden');
+      document.getElementById('digiPinError').classList.add('hidden');
+      if (currentMarker) {
+        currentMarker.remove();
+      }
+      map.setView([(BOUNDS.minLat + BOUNDS.maxLat) / 2, (BOUNDS.minLon + BOUNDS.maxLon) / 2], 5);
+    }
+
     function encodeDigiPin() {
+      if (!validateInput('latInput', 'latError') || !validateInput('lonInput', 'lonError')) {
+        return;
+      }
       const lat = parseFloat(document.getElementById('latInput').value);
       const lon = parseFloat(document.getElementById('lonInput').value);
       try {
@@ -254,6 +371,9 @@
     }
 
     function decodeDigiPin() {
+      if (!validateDigiPinInput()) {
+        return;
+      }
       const digiPin = document.getElementById('digiPinInput').value.trim();
       try {
         const coords = getLatLngFromDigiPin(digiPin);
