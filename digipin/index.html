@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DIGIPIN Encoder & Decoder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen p-6">
+  <div class="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
+    <div class="w-full lg:w-2/5 bg-white p-8 rounded-2xl shadow-xl">
+      <h1 class="text-2xl font-bold mb-6">DIGIPIN Encoder & Decoder</h1>
+
+      <div class="flex mb-6 border-b">
+        <button onclick="switchTab('encode')" id="encodeTab" class="px-4 py-2 font-semibold border-b-2 border-blue-600">Encode</button>
+        <button onclick="switchTab('decode')" id="decodeTab" class="px-4 py-2 font-semibold border-b-2 border-transparent">Decode</button>
+      </div>
+
+      <div id="encodeSection" class="mb-6">
+        <div class="relative">
+          <input id="latInput" type="number" placeholder="Latitude" class="w-full mb-2 p-2 border rounded" />
+          <input id="lonInput" type="number" placeholder="Longitude" class="w-full mb-2 p-2 border rounded" />
+          <button onclick="getCurrentLocation()" class="absolute right-2 top-2 text-blue-600 hover:text-blue-800" title="Use current location">
+            <i class="fas fa-location-dot text-xl"></i>
+          </button>
+        </div>
+        <button onclick="encodeDigiPin()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Get DIGIPIN</button>
+      </div>
+
+      <div id="decodeSection" class="mb-6 hidden">
+        <input id="digiPinInput" type="text" placeholder="DIGIPIN (e.g. FM4-K3L-T8C)" class="w-full mb-2 p-2 border rounded" />
+        <button onclick="decodeDigiPin()" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Get Coordinates</button>
+      </div>
+
+      <div class="mb-6">
+        <p id="digiPinOutput" class="mt-2 text-green-600 font-mono"></p>
+        <p id="coordsOutput" class="mt-2 text-indigo-600 font-mono"></p>
+      </div>
+    </div>
+
+    <div class="w-full lg:w-3/5 h-[50vh] lg:h-[calc(100vh-3rem)]">
+      <div id="map" class="w-full h-full rounded-2xl shadow-xl"></div>
+    </div>
+  </div>
+
+  <footer class="text-center text-xs text-gray-500 mt-8 mb-4">
+    <p>This page is not associated with any official organization. Created by <a href="https://www.srinivasan.online" class="text-blue-600 hover:text-blue-800">Srinivasan KB</a>.</p>
+    <p class="mt-1">For more details about DIGIPIN, visit the <a href="https://www.indiapost.gov.in/VAS/Pages/digipin.aspx" class="text-blue-600 hover:text-blue-800">official India Post website</a>.</p>
+  </footer>
+
+  <script>
+    const DIGIPIN_GRID = [
+      ['F', 'C', '9', '8'],
+      ['J', '3', '2', '7'],
+      ['K', '4', '5', '6'],
+      ['L', 'M', 'P', 'T']
+    ];
+
+    const BOUNDS = {
+      minLat: 2.5,
+      maxLat: 38.5,
+      minLon: 63.5,
+      maxLon: 99.5
+    };
+
+    let map;
+    let currentMarker;
+
+    function initMap() {
+      map = L.map('map');
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }).addTo(map);
+
+      const centerLat = (BOUNDS.minLat + BOUNDS.maxLat) / 2;
+      const centerLon = (BOUNDS.minLon + BOUNDS.maxLon) / 2;
+      map.setView([centerLat, centerLon], 5);
+    }
+
+    function switchTab(tab) {
+      const encodeTab = document.getElementById('encodeTab');
+      const decodeTab = document.getElementById('decodeTab');
+      const encodeSection = document.getElementById('encodeSection');
+      const decodeSection = document.getElementById('decodeSection');
+
+      if (tab === 'encode') {
+        encodeTab.classList.add('border-blue-600');
+        decodeTab.classList.remove('border-blue-600');
+        encodeSection.classList.remove('hidden');
+        decodeSection.classList.add('hidden');
+      } else {
+        decodeTab.classList.add('border-blue-600');
+        encodeTab.classList.remove('border-blue-600');
+        decodeSection.classList.remove('hidden');
+        encodeSection.classList.add('hidden');
+      }
+
+      // Clear outputs when switching tabs
+      document.getElementById('digiPinOutput').innerText = '';
+      document.getElementById('coordsOutput').innerText = '';
+      if (currentMarker) {
+        currentMarker.remove();
+      }
+    }
+
+    function getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            
+            if (lat < BOUNDS.minLat || lat > BOUNDS.maxLat || lon < BOUNDS.minLon || lon > BOUNDS.maxLon) {
+              alert('Your current location is outside the supported area.');
+              return;
+            }
+
+            document.getElementById('latInput').value = lat;
+            document.getElementById('lonInput').value = lon;
+            encodeDigiPin();
+          },
+          (error) => {
+            alert('Error getting location: ' + error.message);
+          }
+        );
+      } else {
+        alert('Geolocation is not supported by your browser');
+      }
+    }
+
+    function getDigiPin(lat, lon) {
+      if (lat < BOUNDS.minLat || lat > BOUNDS.maxLat) throw new Error('Latitude out of range');
+      if (lon < BOUNDS.minLon || lon > BOUNDS.maxLon) throw new Error('Longitude out of range');
+
+      let minLat = BOUNDS.minLat;
+      let maxLat = BOUNDS.maxLat;
+      let minLon = BOUNDS.minLon;
+      let maxLon = BOUNDS.maxLon;
+
+      let digiPin = '';
+
+      for (let level = 1; level <= 10; level++) {
+        const latDiv = (maxLat - minLat) / 4;
+        const lonDiv = (maxLon - minLon) / 4;
+
+        let row = 3 - Math.floor((lat - minLat) / latDiv);
+        let col = Math.floor((lon - minLon) / lonDiv);
+
+        row = Math.max(0, Math.min(row, 3));
+        col = Math.max(0, Math.min(col, 3));
+
+        digiPin += DIGIPIN_GRID[row][col];
+
+        if (level === 3 || level === 6) digiPin += '-';
+
+        maxLat = minLat + latDiv * (4 - row);
+        minLat = minLat + latDiv * (3 - row);
+
+        minLon = minLon + lonDiv * col;
+        maxLon = minLon + lonDiv;
+      }
+
+      return digiPin;
+    }
+
+    function getLatLngFromDigiPin(digiPin) {
+      const pin = digiPin.replace(/-/g, '');
+      if (pin.length !== 10) throw new Error('Invalid DIGIPIN');
+
+      let minLat = BOUNDS.minLat;
+      let maxLat = BOUNDS.maxLat;
+      let minLon = BOUNDS.minLon;
+      let maxLon = BOUNDS.maxLon;
+
+      for (let i = 0; i < 10; i++) {
+        const char = pin[i];
+        let found = false;
+        let ri = -1, ci = -1;
+
+        for (let r = 0; r < 4; r++) {
+          for (let c = 0; c < 4; c++) {
+            if (DIGIPIN_GRID[r][c] === char) {
+              ri = r;
+              ci = c;
+              found = true;
+              break;
+            }
+          }
+          if (found) break;
+        }
+
+        if (!found) throw new Error('Invalid character in DIGIPIN');
+
+        const latDiv = (maxLat - minLat) / 4;
+        const lonDiv = (maxLon - minLon) / 4;
+
+        const lat1 = maxLat - latDiv * (ri + 1);
+        const lat2 = maxLat - latDiv * ri;
+        const lon1 = minLon + lonDiv * ci;
+        const lon2 = minLon + lonDiv * (ci + 1);
+
+        minLat = lat1;
+        maxLat = lat2;
+        minLon = lon1;
+        maxLon = lon2;
+      }
+
+      const centerLat = (minLat + maxLat) / 2;
+      const centerLon = (minLon + maxLon) / 2;
+
+      return {
+        latitude: centerLat.toFixed(6),
+        longitude: centerLon.toFixed(6)
+      };
+    }
+
+    function showMap(lat, lon) {
+      const latNum = parseFloat(lat);
+      const lonNum = parseFloat(lon);
+
+      if (!map) {
+        initMap();
+      }
+
+      if (currentMarker) {
+        currentMarker.remove();
+      }
+
+      map.setView([latNum, lonNum], 15);
+      currentMarker = L.marker([latNum, lonNum]).addTo(map);
+    }
+
+    function encodeDigiPin() {
+      const lat = parseFloat(document.getElementById('latInput').value);
+      const lon = parseFloat(document.getElementById('lonInput').value);
+      try {
+        const digiPin = getDigiPin(lat, lon);
+        document.getElementById('digiPinOutput').innerText = `DIGIPIN: ${digiPin}`;
+        document.getElementById('coordsOutput').innerText = `Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}`;
+        showMap(lat, lon);
+      } catch (err) {
+        document.getElementById('digiPinOutput').innerText = `Error: ${err.message}`;
+        document.getElementById('coordsOutput').innerText = '';
+      }
+    }
+
+    function decodeDigiPin() {
+      const digiPin = document.getElementById('digiPinInput').value.trim();
+      try {
+        const coords = getLatLngFromDigiPin(digiPin);
+        document.getElementById('coordsOutput').innerText = `Lat: ${coords.latitude}, Lon: ${coords.longitude}`;
+        document.getElementById('digiPinOutput').innerText = `DIGIPIN: ${digiPin.toUpperCase()}`;
+        showMap(coords.latitude, coords.longitude);
+      } catch (err) {
+        document.getElementById('coordsOutput').innerText = `Error: ${err.message}`;
+        document.getElementById('digiPinOutput').innerText = '';
+      }
+    }
+
+    initMap();
+  </script>
+</body>
+</html>
