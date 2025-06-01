@@ -36,7 +36,7 @@
       </div>
 
       <div class="mb-6">
-        <p id="digiPinOutput" class="mt-2 text-green-600 font-mono"></p>
+        <p id="digiPinOutput" class="mt-2 text-green-600 font-mono flex items-center"></p>
         <p id="coordsOutput" class="mt-2 text-indigo-600 font-mono"></p>
       </div>
     </div>
@@ -224,6 +224,7 @@
 
       if (!map) {
         initMap();
+
       }
 
       if (currentMarker) {
@@ -239,7 +240,7 @@
       const lon = parseFloat(document.getElementById('lonInput').value);
       try {
         const digiPin = getDigiPin(lat, lon);
-          document.getElementById('digiPinOutput').innerText = `DIGIPIN: ${digiPin}`;
+          document.getElementById('digiPinOutput').innerHTML = `DIGIPIN: ${digiPin} <button id="copyButton" onclick="copyDigiPin()" class="ml-2 text-blue-600 hover:text-blue-800 hidden"><i class="fas fa-copy"></i></button>`;
           const copyButton = document.getElementById('copyButton');
           if (copyButton) {
             copyButton.classList.remove('hidden');
@@ -257,7 +258,7 @@
       try {
         const coords = getLatLngFromDigiPin(digiPin);
         document.getElementById('coordsOutput').innerText = `Lat: ${coords.latitude}, Lon: ${coords.longitude}`;
-        document.getElementById('digiPinOutput').innerText = `DIGIPIN: ${digiPin.toUpperCase()}`;
+        document.getElementById('digiPinOutput').innerHTML = `DIGIPIN: ${digiPin.toUpperCase()} <button id="copyButton" onclick="copyDigiPin()" class="ml-2 text-blue-600 hover:text-blue-800 hidden"><i class="fas fa-copy"></i></button>`;
         const copyButton = document.getElementById('copyButton');
         if (copyButton) {
           copyButton.classList.remove('hidden');
@@ -270,6 +271,42 @@
     }
 
     initMap();
+
+    function copyDigiPin() {
+      const digiPinText = document.getElementById('digiPinOutput').innerText.replace('DIGIPIN: ', '');
+      navigator.clipboard.writeText(digiPinText).then(() => {
+        const copyButton = document.getElementById('copyButton');
+        if (copyButton) {
+          copyButton.classList.add('text-green-500');
+          copyButton.classList.remove('text-blue-600');
+          copyButton.classList.remove('hover:text-blue-800');
+          copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          setTimeout(() => {
+            copyButton.classList.remove('text-green-500');
+            copyButton.classList.add('text-blue-600');
+            copyButton.classList.add('hover:text-blue-800');
+            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+          }, 2000);
+        }
+      }).catch(err => {
+        console.error('Failed to copy DIGIPIN: ', err);
+      });
+    }
+
+    // Check URL parameters on page load
+    window.addEventListener('load', function() {
+      console.log('Page loaded. Checking URL parameters...');
+      const urlParams = new URLSearchParams(window.location.search);
+      const digipin = urlParams.get('p');
+      if (digipin) {
+        console.log('DIGIPIN parameter found in URL:', digipin);
+        switchTab('decode');
+        document.getElementById('digiPinInput').value = digipin;
+        decodeDigiPin();
+      } else {
+        console.log('No DIGIPIN parameter found in URL.');
+      }
+    });
   </script>
 </body>
 </html>
