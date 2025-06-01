@@ -239,8 +239,12 @@
       const lon = parseFloat(document.getElementById('lonInput').value);
       try {
         const digiPin = getDigiPin(lat, lon);
-        document.getElementById('digiPinOutput').innerText = `DIGIPIN: ${digiPin}`;
-        document.getElementById('coordsOutput').innerText = `Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}`;
+          document.getElementById('digiPinOutput').innerText = `DIGIPIN: ${digiPin}`;
+          const copyButton = document.getElementById('copyButton');
+          if (copyButton) {
+            copyButton.classList.remove('hidden');
+          }
+          document.getElementById('coordsOutput').innerText = `Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}`;
         showMap(lat, lon);
       } catch (err) {
         document.getElementById('digiPinOutput').innerText = `Error: ${err.message}`;
@@ -254,6 +258,10 @@
         const coords = getLatLngFromDigiPin(digiPin);
         document.getElementById('coordsOutput').innerText = `Lat: ${coords.latitude}, Lon: ${coords.longitude}`;
         document.getElementById('digiPinOutput').innerText = `DIGIPIN: ${digiPin.toUpperCase()}`;
+        const copyButton = document.getElementById('copyButton');
+        if (copyButton) {
+          copyButton.classList.remove('hidden');
+        }
         showMap(coords.latitude, coords.longitude);
       } catch (err) {
         document.getElementById('coordsOutput').innerText = `Error: ${err.message}`;
