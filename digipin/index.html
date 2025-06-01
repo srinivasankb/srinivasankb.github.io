@@ -350,23 +350,50 @@
     }
 
     function encodeDigiPin() {
-      if (!validateInput('latInput', 'latError') || !validateInput('lonInput', 'lonError')) {
+      const latInput = document.getElementById('latInput');
+      const lonInput = document.getElementById('lonInput');
+      const lat = parseFloat(latInput.value);
+      const lon = parseFloat(lonInput.value);
+    
+      // First check basic bounds
+      if (lat < BOUNDS.minLat || lat > BOUNDS.maxLat || lon < BOUNDS.minLon || lon > BOUNDS.maxLon) {
+        alert('Coordinates must be within India boundaries');
         return;
       }
-      const lat = parseFloat(document.getElementById('latInput').value);
-      const lon = parseFloat(document.getElementById('lonInput').value);
+    
+      // Then check if point is within GeoJSON boundaries
+      if (indiaGeoJsonLayer) {
+        const point = L.latLng(lat, lon);
+        let isInside = false;
+        
+        indiaGeoJsonLayer.eachLayer(function(layer) {
+          if (layer.getBounds().contains(point)) {
+            isInside = true;
+          }
+        });
+        
+        if (!isInside) {
+          alert('Coordinates must be within India boundaries');
+          return;
+        }
+      }
+    
       try {
         const digiPin = getDigiPin(lat, lon);
-          document.getElementById('digiPinOutput').innerHTML = `DIGIPIN: ${digiPin} <button id="copyButton" onclick="copyDigiPin()" class="ml-2 text-blue-600 hover:text-blue-800 hidden"><i class="fas fa-copy"></i></button>`;
-          const copyButton = document.getElementById('copyButton');
-          if (copyButton) {
-            copyButton.classList.remove('hidden');
-          }
-          document.getElementById('coordsOutput').innerText = `Lat: ${lat.toFixed(6)}, Lon: ${lon.toFixed(6)}`;
-        showMap(lat, lon);
-      } catch (err) {
-        document.getElementById('digiPinOutput').innerText = `Error: ${err.message}`;
-        document.getElementById('coordsOutput').innerText = '';
+        document.getElementById('digiPinOutput').innerHTML = 
+          `<span class="mr-2">${digiPin}</span>` +
+          `<button onclick="copyToClipboard('${digiPin}')" class="text-blue-600 hover:text-blue-800">` +
+          `<i class="fas fa-copy"></i></button>`;
+        
+        document.getElementById('coordsOutput').innerText = `${lat}, ${lon}`;
+        
+        if (currentMarker) {
+          currentMarker.remove();
+        }
+        currentMarker = L.marker([lat, lon]).addTo(map);
+        map.setView([lat, lon], 12);
+      } catch (error) {
+        alert(error.message);
       }
     }
 
