@@ -251,7 +251,7 @@
       }
 
       try {
-        const res = await fetch(`https://n8n-tool.servicesparrow.app/webhook/srini?q=${encodeURIComponent(messageText)}`);
+        const res = await fetch(`https://n8n.srinikb.in/webhook/srini-ai?q=${encodeURIComponent(messageText)}`);
         const data = await res.text();
         removeLoading();
         addMessage(data);
