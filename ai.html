@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Srinivasan AI Chat</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    // Configure marked.js to open links in a new tab
+    const renderer = new marked.Renderer();
+    const originalLinkRenderer = renderer.link;
+    renderer.link = (href, title, text) => {
+      const html = originalLinkRenderer.call(renderer, href, title, text);
+      return html.replace(/^<a /, '<a target="_blank" rel="noopener noreferrer" ');
+    };
+    marked.setOptions({
+      renderer: renderer
+    });
+  </script>
   <style>
     * {
       box-sizing: border-box;
@@ -64,14 +77,39 @@
       border-radius: 20px;
       line-height: 1.5;
       display: flex;
-      align-items: flex-end;
+      flex-direction: column; /* Changed to column to stack content and timestamp */
+      align-items: flex-start; /* Default for bot, overridden for user */
       word-wrap: break-word;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    .message.user {
+      align-items: flex-end;
+    }
+
+    .message div {
+      margin-bottom: 5px; /* Space between message content and timestamp */
+    }
+
+    .timestamp {
+      font-size: 0.7em;
+      color: #888;
+      align-self: flex-end; /* Align timestamp to the right within the message bubble */
     }
 
     .user {
       align-self: flex-end;
       background-color: #d2f8ce;
       border-bottom-right-radius: 0;
+    }
+
+    .user .timestamp {
+      align-self: flex-end;
+    }
+
+    .bot .timestamp {
+      align-self: flex-start;
     }
 
     .bot {
@@ -147,11 +185,11 @@
     }
 
     .loading span {
-      width: 6px;
-      height: 6px;
-      background: #999;
+      width: 8px;
+      height: 8px;
+      background: #00796b;
       border-radius: 50%;
-      animation: blink 1s infinite ease-in-out;
+      animation: bounce 1.4s infinite ease-in-out both;
     }
 
     .loading span:nth-child(2) {
@@ -162,12 +200,19 @@
       animation-delay: 0.4s;
     }
 
-    @keyframes blink {
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bounce {
       0%, 80%, 100% {
         transform: scale(0);
+        background-color: #00796b;
       }
       40% {
         transform: scale(1);
+        background-color: #004d40;
       }
     }
 
@@ -217,7 +262,10 @@
     function addMessage(content, sender = 'bot') {
       const message = document.createElement('div');
       message.className = `message ${sender}`;
-      message.innerHTML = content;
+      const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      // Regex to find URLs and wrap them in anchor tags
+      const renderedContent = marked.parse(content);
+      message.innerHTML = `<div>${renderedContent}</div><span class="timestamp">${timestamp}</span>`;
       chat.appendChild(message);
       chat.scrollTop = chat.scrollHeight;
     }
@@ -252,9 +300,50 @@
 
       try {
         const res = await fetch(`https://n8n.srinikb.in/webhook/srini-ai?q=${encodeURIComponent(messageText)}`);
-        const data = await res.text();
         removeLoading();
-        addMessage(data);
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let receivedData = '';
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.className = 'message bot';
+        const botContentDiv = document.createElement('div');
+        const botTimestampSpan = document.createElement('span');
+        botTimestampSpan.className = 'timestamp';
+        botMessageDiv.appendChild(botContentDiv);
+        botMessageDiv.appendChild(botTimestampSpan);
+        chat.appendChild(botMessageDiv);
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          try {
+            const jsonChunks = chunk.split('\n').filter(line => line.trim() !== '');
+            for (const jsonChunk of jsonChunks) {
+              const parsed = JSON.parse(jsonChunk);
+              if (parsed.type === 'item') {
+                receivedData += parsed.content;
+                // Trim the receivedData before parsing to remove unnecessary spaces
+                const renderedContent = marked.parse(receivedData.trim());
+                botContentDiv.innerHTML = renderedContent;
+                botTimestampSpan.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                chat.scrollTop = chat.scrollHeight;
+              } else if (parsed.type === 'end') {
+                return; // End of stream
+              }
+            }
+          } catch (e) {
+            console.error('Error parsing JSON chunk:', e, 'Chunk:', chunk);
+            // Fallback for non-JSON or malformed chunks, append as plain text
+            receivedData += chunk;
+            // Trim the receivedData before parsing to remove unnecessary spaces
+            const renderedContent = marked.parse(receivedData.trim());
+            botContentDiv.innerHTML = renderedContent;
+             botTimestampSpan.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            chat.scrollTop = chat.scrollHeight;
+          }
+        }
       } catch (err) {
         removeLoading();
         addMessage('Something went wrong. Please try again.');
