@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CDS Code Block Theme Simulator</title>
+  <style>
+    :root {
+      --code-bg: #f8f9fa;
+      --code-fg: #24292e;
+      --token-comment: #132F7C;
+      --token-punctuation: #D02670;
+      --token-property: #7C1FCB;
+      --token-selector: #8F6905;
+      --token-operator: #1A6CDA;
+      --token-keyword: #BC11D6;
+      --token-function: #007C7A;
+      --token-regex: #BB4E00;
+    }
+
+    [data-theme="dark"] {
+      --code-bg: #1e1e1e;
+      --code-fg: #d4d4d4;
+      --token-comment: #6386E7;
+      --token-punctuation: #EF4B92;
+      --token-property: #B978F4;
+      --token-selector: #C18D07;
+      --token-operator: #71AAF4;
+      --token-keyword: #E15CF6;
+      --token-function: #03A7A4;
+      --token-regex: #FB6800;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+      background: var(--code-bg);
+      color: var(--code-fg);
+      transition: background 0.2s, color 0.2s;
+    }
+    [data-theme="light"] .app { background: #f0f2f5; color: #24292e; }
+    [data-theme="dark"] .app { background: #0d1117; color: #d4d4d4; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      padding: 1rem;
+      border-right: 1px solid rgba(0,0,0,0.08);
+      background: var(--code-bg);
+      overflow-y: auto;
+    }
+    [data-theme="dark"] .sidebar { border-color: rgba(255,255,255,0.1); background: #161b22; }
+
+    .sidebar h2 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 0.75rem 0;
+      opacity: 0.8;
+    }
+
+    .theme-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .theme-row span { font-size: 0.85rem; font-weight: 500; }
+    .switch-wrap {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .switch-wrap input {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .switch-track {
+      position: absolute;
+      inset: 0;
+      background: #adb5bd;
+      border-radius: 26px;
+      transition: background 0.2s;
+    }
+    [data-theme="dark"] .switch-track { background: #495057; }
+    .switch-knob {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 3px;
+      left: 3px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+      pointer-events: none;
+    }
+    .switch-wrap input:checked + .switch-track .switch-knob { transform: translateX(22px); }
+    .theme-label { font-size: 0.8rem; }
+
+    .palette-section { margin-top: 1.5rem; }
+    .palette-section .editing { font-size: 0.7rem; opacity: 0.8; margin-bottom: 0.5rem; }
+    .palette-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+    }
+    .palette-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+    [data-theme="dark"] .palette-swatch { border-color: rgba(255,255,255,0.2); }
+    .palette-item label {
+      min-width: 90px;
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+    .palette-item input[type="text"] {
+      width: 72px;
+      font-size: 0.75rem;
+      font-family: inherit;
+      padding: 4px 6px;
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 4px;
+      background: #fff;
+      color: #222;
+    }
+    [data-theme="dark"] .palette-item input[type="text"] {
+      background: #21262d;
+      border-color: rgba(255,255,255,0.2);
+      color: #e6edf3;
+    }
+    .palette-item input[type="text"]:invalid { border-color: #dc3545; }
+    .palette-item input[type="color"] {
+      width: 28px;
+      height: 28px;
+      padding: 2px;
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 6px;
+      cursor: pointer;
+      background: transparent;
+      flex-shrink: 0;
+    }
+    [data-theme="dark"] .palette-item input[type="color"] { border-color: rgba(255,255,255,0.2); }
+    .palette-item input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+    .palette-item input[type="color"]::-webkit-color-swatch { border-radius: 4px; border: none; }
+    .reset-btn {
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,0.2);
+      background: transparent;
+      color: inherit;
+    }
+    [data-theme="dark"] .reset-btn { border-color: rgba(255,255,255,0.2); }
+    .reset-btn:hover { opacity: 0.9; }
+
+    /* Main content */
+    .main {
+      flex: 1;
+      overflow: auto;
+      padding: 1.5rem 2rem 2rem;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .header h1 { font-size: 1.25rem; font-weight: 600; margin: 0; }
+    .code-section { margin-bottom: 1.5rem; }
+    .code-section h2 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: 0 0 0.4rem 0;
+      opacity: 0.9;
+    }
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    [data-theme="light"] .code-block { background: #fff; }
+    [data-theme="dark"] .code-block { background: #161b22; border-color: rgba(255,255,255,0.08); }
+
+    .c { color: var(--token-comment); }
+    .p { color: var(--token-punctuation); }
+    .prop { color: var(--token-property); }
+    .tag { color: var(--token-property); }
+    .bool { color: var(--token-property); }
+    .num { color: var(--token-property); }
+    .const { color: var(--token-property); }
+    .del { color: var(--token-property); }
+    .sel { color: var(--token-selector); }
+    .attr { color: var(--token-selector); }
+    .str { color: var(--token-selector); }
+    .builtin { color: var(--token-selector); }
+    .ins { color: var(--token-selector); }
+    .op { color: var(--token-operator); }
+    .kw { color: var(--token-keyword); }
+    .atrule { color: var(--token-keyword); }
+    .attrval { color: var(--token-keyword); }
+    .fn { color: var(--token-function); }
+    .cls { color: var(--token-function); }
+    .re { color: var(--token-regex); }
+    .important { color: var(--token-regex); }
+    .var { color: var(--token-regex); }
+  </style>
+  <style id="palette-overrides"></style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h2>Theme</h2>
+      <div class="theme-row">
+        <span class="theme-label">Light</span>
+        <div class="switch-wrap">
+          <input type="checkbox" id="themeSwitch" aria-label="Toggle dark mode">
+          <div class="switch-track">
+            <span class="switch-knob"></span>
+          </div>
+        </div>
+        <span class="theme-label">Dark</span>
+      </div>
+
+      <div class="palette-section">
+        <h2>Palette</h2>
+        <p class="editing" id="editingLabel">Editing: Light</p>
+        <div id="paletteEditor"></div>
+        <button type="button" class="reset-btn" id="resetPalette">Reset to defaults</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="header">
+        <h1>CDS Code Block Theme Simulator</h1>
+      </div>
+
+      <div class="code-section">
+        <h2>cURL</h2>
+        <pre class="code-block"><code><span class="kw">curl</span> <span class="str">'-X'</span> <span class="str">'POST'</span> <span class="str">'https://api.example.com/v1/users'</span> <span class="p">\</span>
+  <span class="str">'-H'</span> <span class="str">'Content-Type: application/json'</span> <span class="p">\</span>
+  <span class="str">'-d'</span> <span class="str">'{"name": "Alice", "age": 30}'</span></code></pre>
+      </div>
+
+      <div class="code-section">
+        <h2>JavaScript</h2>
+        <pre class="code-block"><code><span class="c">// comment, prolog, doctype, cdata</span>
+<span class="kw">const</span> <span class="var">API_URL</span> <span class="op">=</span> <span class="str">'https://api.example.com'</span><span class="p">;</span>
+<span class="kw">let</span> <span class="var">count</span> <span class="op">=</span> <span class="num">0</span><span class="p">;</span>
+
+<span class="kw">async function</span> <span class="fn">getUser</span>(<span class="var">id</span>) <span class="p">{</span>
+  <span class="kw">const</span> <span class="var">res</span> <span class="op">=</span> <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${API_URL}/users/${id}`</span>)<span class="p">;</span>
+  <span class="kw">if</span> <span class="p">(</span><span class="op">!</span><span class="var">res</span><span class="p">.</span><span class="prop">ok</span><span class="p">)</span> <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">'Failed'</span>)<span class="p">;</span>
+  <span class="kw">return</span> <span class="var">res</span><span class="p">.</span><span class="fn">json</span>()<span class="p">;</span>
+<span class="p">}</span>
+<span class="var">re</span> <span class="op">=</span> <span class="str">/\d+/g</span><span class="p">;</span>  <span class="c">// regex, variable</span></code></pre>
+      </div>
+
+      <div class="code-section">
+        <h2>Python</h2>
+        <pre class="code-block"><code><span class="c"># comment · string · builtin · selector</span>
+<span class="kw">import</span> <span class="fn">requests</span>
+<span class="kw">from</span> <span class="fn">typing</span> <span class="kw">import</span> <span class="cls">Optional</span>
+
+<span class="kw">def</span> <span class="fn">fetch_user</span>(<span class="var">user_id</span>: <span class="builtin">int</span>) <span class="op">-&gt;</span> <span class="cls">Optional</span>[<span class="builtin">dict</span>]<span class="p">:</span>
+    <span class="str">"""Docstring: attr-name, string, char, builtin"""</span>
+    <span class="var">url</span> <span class="op">=</span> <span class="str">f"https://api.example.com/users/{user_id}"</span>
+    <span class="kw">try</span><span class="p">:</span>
+        <span class="var">r</span> <span class="op">=</span> <span class="fn">requests</span><span class="p">.</span><span class="fn">get</span>(<span class="var">url</span>)<span class="p">;</span>
+        <span class="kw">return</span> <span class="var">r</span><span class="p">.</span><span class="fn">json</span>() <span class="kw">if</span> <span class="var">r</span><span class="p">.</span><span class="prop">status_code</span> <span class="op">==</span> <span class="num">200</span> <span class="kw">else</span> <span class="const">None</span>
+    <span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> <span class="var">e</span><span class="p">:</span>
+        <span class="kw">return</span> <span class="const">None</span>
+<span class="var">pattern</span> <span class="op">=</span> <span class="fn">re</span><span class="p">.</span><span class="fn">compile</span>(<span class="str">r'\d{3}-\d{2}-\d{4}'</span>)<span class="p">;</span>  <span class="c"># regex</span></code></pre>
+      </div>
+
+      <div class="code-section">
+        <h2>Java</h2>
+        <pre class="code-block"><code><span class="c">// comment · punctuation · property · keyword</span>
+<span class="kw">import</span> <span class="fn">java.util</span><span class="p">.</span><span class="cls">Optional</span><span class="p">;</span>
+
+<span class="kw">public class</span> <span class="cls">UserService</span> <span class="p">{</span>
+    <span class="kw">private final</span> <span class="cls">String</span> <span class="var">baseUrl</span><span class="p">;</span>
+    <span class="kw">public</span> <span class="fn">UserService</span>(<span class="cls">String</span> <span class="var">baseUrl</span>) <span class="p">{</span> <span class="kw">this</span><span class="p">.</span><span class="prop">baseUrl</span> <span class="op">=</span> <span class="var">baseUrl</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kw">public</span> <span class="cls">Optional</span><span class="p">&lt;</span><span class="cls">User</span><span class="p">&gt;</span> <span class="fn">getUser</span>(<span class="builtin">int</span> <span class="var">id</span>) <span class="p">{</span>
+        <span class="cls">String</span> <span class="var">url</span> <span class="op">=</span> <span class="str">"https://api.example.com/users/"</span> <span class="op">+</span> <span class="var">id</span><span class="p">;</span>
+        <span class="kw">return</span> <span class="cls">Optional</span><span class="p">.</span><span class="fn">ofNullable</span>(<span class="fn">fetch</span>(<span class="var">url</span>))<span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+      </div>
+
+      <div class="code-section">
+        <h2>C#</h2>
+        <pre class="code-block"><code><span class="c">// comment · operator · function · class</span>
+<span class="kw">using</span> <span class="fn">System</span><span class="p">.</span><span class="cls">Net</span><span class="p">.</span><span class="cls">Http</span><span class="p">;</span>
+
+<span class="kw">namespace</span> <span class="fn">ApiClient</span> <span class="p">{</span>
+    <span class="kw">public class</span> <span class="cls">UserService</span> <span class="p">{</span>
+        <span class="kw">private readonly</span> <span class="cls">HttpClient</span> <span class="var">_client</span><span class="p">;</span>
+        <span class="kw">public</span> <span class="fn">UserService</span>() <span class="p">{</span> <span class="var">_client</span> <span class="op">=</span> <span class="kw">new</span> <span class="cls">HttpClient</span>()<span class="p">;</span> <span class="p">}</span>
+        <span class="kw">public async</span> <span class="cls">Task</span><span class="p">&lt;</span><span class="cls">User</span><span class="p">&gt;</span> <span class="fn">GetUserAsync</span>(<span class="builtin">int</span> <span class="var">id</span>) <span class="p">{</span>
+            <span class="var">var</span> <span class="var">url</span> <span class="op">=</span> <span class="str">$"https://api.example.com/users/{id}"</span><span class="p">;</span>
+            <span class="kw">var</span> <span class="var">res</span> <span class="op">=</span> <span class="kw">await</span> <span class="var">_client</span><span class="p">.</span><span class="fn">GetAsync</span>(<span class="var">url</span>)<span class="p">;</span>
+            <span class="kw">return</span> <span class="kw">await</span> <span class="var">res</span><span class="p">.</span><span class="fn">Content</span><span class="p">.</span><span class="fn">ReadAsAsync</span><span class="p">&lt;</span><span class="cls">User</span><span class="p">&gt;</span>()<span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+      </div>
+
+      <div class="code-section">
+        <h2>Go</h2>
+        <pre class="code-block"><code><span class="c">// comment · number · constant · regex</span>
+<span class="kw">package</span> <span class="fn">main</span>
+
+<span class="kw">import</span> <span class="p">(</span> <span class="str">"net/http"</span><span class="p">;</span> <span class="str">"regexp"</span><span class="p">;</span> <span class="str">"strconv"</span> <span class="p">)</span>
+
+<span class="kw">func</span> <span class="fn">getUser</span>(<span class="var">id</span> <span class="builtin">int</span>) <span class="p">(</span><span class="cls">User</span><span class="p">,</span> <span class="cls">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="var">url</span> <span class="op">:=</span> <span class="str">"https://api.example.com/users/"</span> <span class="op">+</span> <span class="fn">strconv</span><span class="p">.</span><span class="fn">Itoa</span>(<span class="var">id</span>)<span class="p">;</span>
+    <span class="var">resp</span><span class="p">,</span> <span class="var">err</span> <span class="op">:=</span> <span class="fn">http</span><span class="p">.</span><span class="fn">Get</span>(<span class="var">url</span>)<span class="p">;</span>
+    <span class="kw">if</span> <span class="var">err</span> <span class="op">!=</span> <span class="const">nil</span> <span class="p">{</span> <span class="kw">return</span> <span class="cls">User</span><span class="p">{},</span> <span class="var">err</span> <span class="p">}</span>
+    <span class="kw">defer</span> <span class="var">resp</span><span class="p">.</span><span class="fn">Body</span><span class="p">.</span><span class="fn">Close</span>()<span class="p">;</span>
+    <span class="var">re</span> <span class="op">:=</span> <span class="fn">regexp</span><span class="p">.</span><span class="fn">MustCompile</span>(<span class="str">`^\d+$`</span>)<span class="p">;</span>
+    <span class="kw">return</span> <span class="fn">parseUser</span>(<span class="var">resp</span><span class="p">.</span><span class="prop">Body</span>)<span class="p">;</span>
+<span class="p">}</span></code></pre>
+      </div>
+
+      <div class="code-section">
+        <h2>PHP</h2>
+        <pre class="code-block"><code><span class="c">// comment · atrule · attr-value · boolean</span>
+<span class="p">&lt;?php</span>
+<span class="kw">namespace</span> <span class="fn">App</span><span class="p">\</span><span class="cls">Services</span><span class="p">;</span>
+
+<span class="kw">class</span> <span class="cls">UserService</span> <span class="p">{</span>
+    <span class="kw">public function</span> <span class="fn">getUser</span>(<span class="builtin">int</span> <span class="var">$id</span>)<span class="p">:</span> <span class="p">?</span><span class="cls">User</span> <span class="p">{</span>
+        <span class="var">$url</span> <span class="op">=</span> <span class="str">"https://api.example.com/users/$id"</span><span class="p">;</span>
+        <span class="var">$ch</span> <span class="op">=</span> <span class="fn">curl_init</span>(<span class="var">$url</span>)<span class="p">;</span>
+        <span class="fn">curl_setopt</span>(<span class="var">$ch</span><span class="p">,</span> <span class="const">CURLOPT_RETURNTRANSFER</span><span class="p">,</span> <span class="bool">true</span>)<span class="p">;</span>
+        <span class="var">$res</span> <span class="op">=</span> <span class="fn">curl_exec</span>(<span class="var">$ch</span>)<span class="p">;</span>
+        <span class="kw">return</span> <span class="var">$res</span> <span class="op">!==</span> <span class="bool">false</span> <span class="op">?</span> <span class="fn">json_decode</span>(<span class="var">$res</span>) <span class="op">:</span> <span class="const">null</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre>
+      </div>
+
+      <div class="code-section">
+        <h2>Ruby</h2>
+        <pre class="code-block"><code><span class="c"># comment · selector · symbol · inserted</span>
+<span class="kw">require</span> <span class="str">'net/http'</span>
+
+<span class="kw">class</span> <span class="cls">UserService</span>
+  <span class="kw">def</span> <span class="fn">initialize</span>(<span class="var">base_url</span>)
+    <span class="var">@base_url</span> <span class="op">=</span> <span class="var">base_url</span>
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">get_user</span>(<span class="var">id</span>)
+    <span class="var">uri</span> <span class="op">=</span> <span class="cls">URI</span>(<span class="str">"#{@base_url}/users/#{id}"</span>)
+    <span class="var">res</span> <span class="op">=</span> <span class="fn">Net::HTTP</span><span class="p">.</span><span class="fn">get_response</span>(<span class="var">uri</span>)
+    <span class="kw">return</span> <span class="const">nil</span> <span class="kw">unless</span> <span class="var">res</span><span class="p">.</span><span class="prop">is_a?</span>(<span class="cls">Net::HTTPSuccess</span>)
+    <span class="fn">JSON</span><span class="p">.</span><span class="fn">parse</span>(<span class="var">res</span><span class="p">.</span><span class="prop">body</span>)
+  <span class="kw">end</span>
+<span class="kw">end</span></code></pre>
+      </div>
+
+      <div class="code-section">
+        <h2>CSS (atrule, selector, property, !important)</h2>
+        <pre class="code-block"><code><span class="atrule">@media</span> <span class="p">(</span><span class="prop">max-width</span><span class="op">:</span> <span class="num">768px</span><span class="p">)</span> <span class="p">{</span>
+  <span class="sel">.card</span> <span class="p">{</span>
+    <span class="prop">color</span><span class="op">:</span> <span class="str">#333</span><span class="p">;</span>
+    <span class="prop">font-weight</span><span class="op">:</span> <span class="important">bold</span> <span class="important">!important</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre>
+      </div>
+
+      <div class="code-section">
+        <h2>JSON (punctuation, attr, string, number, boolean)</h2>
+        <pre class="code-block"><code><span class="p">{</span>
+  <span class="attr">"name"</span><span class="p">:</span> <span class="str">"Alice"</span><span class="p">,</span>
+  <span class="attr">"active"</span><span class="p">:</span> <span class="bool">true</span><span class="p">,</span>
+  <span class="attr">"count"</span><span class="p">:</span> <span class="num">42</span><span class="p">,</span>
+  <span class="attr">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="str">"a"</span><span class="p">,</span> <span class="str">"b"</span><span class="p">]</span>
+<span class="p">}</span></code></pre>
+      </div>
+    </main>
+  </div>
+
+  <script>
+(function () {
+  var STORAGE_THEME = 'code-demo-theme';
+  var STORAGE_PALETTE = 'code-demo-palette';
+  var root = document.documentElement;
+  var themeInput = document.getElementById('themeSwitch');
+  var editingLabel = document.getElementById('editingLabel');
+  var paletteEditor = document.getElementById('paletteEditor');
+  var overlayStyle = document.getElementById('palette-overrides');
+  var resetBtn = document.getElementById('resetPalette');
+
+  var tokenKeys = [
+    { key: 'comment', label: 'Comment', var: '--token-comment' },
+    { key: 'punctuation', label: 'Punctuation', var: '--token-punctuation' },
+    { key: 'property', label: 'Property / Tag / Number', var: '--token-property' },
+    { key: 'selector', label: 'Selector / String', var: '--token-selector' },
+    { key: 'operator', label: 'Operator', var: '--token-operator' },
+    { key: 'keyword', label: 'Keyword / Attr-value', var: '--token-keyword' },
+    { key: 'function', label: 'Function / Class', var: '--token-function' },
+    { key: 'regex', label: 'Regex / Variable', var: '--token-regex' }
+  ];
+
+  var defaultPalette = {
+    light: {
+      comment: '#132F7C',
+      punctuation: '#D02670',
+      property: '#7C1FCB',
+      selector: '#8F6905',
+      operator: '#1A6CDA',
+      keyword: '#BC11D6',
+      function: '#007C7A',
+      regex: '#BB4E00'
+    },
+    dark: {
+      comment: '#6386E7',
+      punctuation: '#EF4B92',
+      property: '#B978F4',
+      selector: '#C18D07',
+      operator: '#71AAF4',
+      keyword: '#E15CF6',
+      function: '#03A7A4',
+      regex: '#FB6800'
+    }
+  };
+
+  function getTheme() {
+    return localStorage.getItem(STORAGE_THEME) ||
+      (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  }
+
+  function setTheme(theme) {
+    root.setAttribute('data-theme', theme);
+    localStorage.setItem(STORAGE_THEME, theme);
+    if (themeInput) themeInput.checked = (theme === 'dark');
+    if (editingLabel) editingLabel.textContent = 'Editing: ' + (theme === 'dark' ? 'Dark' : 'Light');
+    renderPaletteInputs();
+    applyPalette();
+  }
+
+  function loadPalette() {
+    try {
+      var raw = localStorage.getItem(STORAGE_PALETTE);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        return {
+          light: { ...defaultPalette.light, ...parsed.light },
+          dark: { ...defaultPalette.dark, ...parsed.dark }
+        };
+      }
+    } catch (e) {}
+    return { light: { ...defaultPalette.light }, dark: { ...defaultPalette.dark } };
+  }
+
+  function savePalette(palette) {
+    try { localStorage.setItem(STORAGE_PALETTE, JSON.stringify(palette)); } catch (e) {}
+  }
+
+  function hexValid(str) {
+    return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(str);
+  }
+
+  function applyPalette() {
+    var palette = loadPalette();
+    var theme = root.getAttribute('data-theme') || 'light';
+    var colors = palette[theme];
+    var buf = [];
+    buf.push('[data-theme="light"] {');
+    Object.keys(palette.light).forEach(function (k) {
+      var v = palette.light[k];
+      var cssVar = tokenKeys.find(function (t) { return t.key === k; });
+      if (cssVar && hexValid(v)) buf.push('  ' + cssVar.var + ': ' + v + ';');
+    });
+    buf.push('}');
+    buf.push('[data-theme="dark"] {');
+    Object.keys(palette.dark).forEach(function (k) {
+      var v = palette.dark[k];
+      var cssVar = tokenKeys.find(function (t) { return t.key === k; });
+      if (cssVar && hexValid(v)) buf.push('  ' + cssVar.var + ': ' + v + ';');
+    });
+    buf.push('}');
+    overlayStyle.textContent = buf.join('\n');
+  }
+
+  function renderPaletteInputs() {
+    var palette = loadPalette();
+    var theme = root.getAttribute('data-theme') || 'light';
+    var colors = palette[theme];
+    var html = '';
+    function toSixHex(h) {
+      if (!h || !hexValid(h)) return '#000000';
+      h = h.replace(/^#/, '');
+      if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+      return '#' + h.slice(0, 6);
+    }
+
+    tokenKeys.forEach(function (t) {
+      var val = colors[t.key] || defaultPalette[theme][t.key];
+      var hex6 = toSixHex(val);
+      var id = 'palette-' + theme + '-' + t.key;
+      html += '<div class="palette-item">';
+      html += '<div class="palette-swatch" id="swatch-' + id + '" style="background:' + hex6 + '"></div>';
+      html += '<label for="' + id + '">' + t.label + '</label>';
+      html += '<input type="color" id="picker-' + id + '" value="' + hex6 + '" data-theme="' + theme + '" data-token="' + t.key + '" title="Pick colour">';
+      html += '<input type="text" id="' + id + '" value="' + val + '" data-theme="' + theme + '" data-token="' + t.key + '" maxlength="7" placeholder="#fff">';
+      html += '</div>';
+    });
+    paletteEditor.innerHTML = html;
+
+    function updateFromValue(theme, token, val) {
+      val = val.trim() || '#000000';
+      var palette = loadPalette();
+      if (!palette[theme]) palette[theme] = {};
+      palette[theme][token] = val;
+      savePalette(palette);
+      var id = 'palette-' + theme + '-' + token;
+      var swatch = document.getElementById('swatch-' + id);
+      if (swatch) swatch.style.background = hexValid(val) ? val : 'transparent';
+      var picker = document.getElementById('picker-' + id);
+      if (picker && hexValid(val)) picker.value = toSixHex(val);
+      applyPalette();
+    }
+
+    paletteEditor.querySelectorAll('input[type="text"]').forEach(function (input) {
+      input.addEventListener('input', function () {
+        updateFromValue(this.getAttribute('data-theme'), this.getAttribute('data-token'), this.value);
+      });
+    });
+    paletteEditor.querySelectorAll('input[type="color"]').forEach(function (input) {
+      input.addEventListener('input', function () {
+        var theme = this.getAttribute('data-theme');
+        var token = this.getAttribute('data-token');
+        var val = this.value;
+        var textEl = document.getElementById('palette-' + theme + '-' + token);
+        if (textEl) textEl.value = val;
+        updateFromValue(theme, token, val);
+      });
+    });
+  }
+
+  if (themeInput) {
+    themeInput.addEventListener('change', function () {
+      setTheme(this.checked ? 'dark' : 'light');
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function () {
+      try { localStorage.removeItem(STORAGE_PALETTE); } catch (e) {}
+      loadPalette();
+      renderPaletteInputs();
+      applyPalette();
+    });
+  }
+
+  setTheme(getTheme());
+  applyPalette();
+})();
+  </script>
+</body>
+</html>
