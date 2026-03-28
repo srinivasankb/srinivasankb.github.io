@@ -5,7 +5,7 @@ Based in Bangalore, India.
 > I build developer platforms that eliminate friction and unlock velocity.
 
 - Role: Software Product Owner at Candescent
-- Expertise: Product Strategy, Growth Engineering, Techincal Product Management, Developer Experience (DX), n8n automations.
+- Expertise: Product Strategy, Growth Engineering, Analytics, Technical Product Management, Developer Experience (DX), AI, n8n automations.
 - LinkedIn: https://www.linkedin.com/in/srinivasan-kb/
 - GitHub: https://github.com/srinivasankb
 

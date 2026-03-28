@@ -195,6 +195,63 @@ nav {
     margin-bottom: 2.5rem;
 }
 
+.hero-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    flex-wrap: wrap-reverse;
+}
+
+.hero-content {
+    flex: 1;
+    min-width: 320px;
+}
+
+.hero-btn-container {
+    display: flex;
+    gap: 1rem;
+}
+
+.hero-image {
+    flex-shrink: 0;
+}
+
+.hero-image img {
+    width: 250px;
+    height: 250px;
+    border-radius: 20px;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding-top: 5rem;
+    }
+
+    .hero-wrapper {
+        gap: 2rem;
+        flex-direction: column-reverse;
+        align-items: center;
+        text-align: center;
+    }
+
+    .hero-btn-container {
+        justify-content: center;
+    }
+
+    .hero-image {
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-image img {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+    }
+}
+
 /* Reveal Animation */
 .reveal {
     opacity: 0;
@@ -345,6 +402,27 @@ h2 {
         min-width: 85vw;
         max-width: 85vw;
     }
+}
+
+.nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+
+.nav-btn:hover {
+    background: var(--text-color);
+    color: var(--bg-color);
+    border-color: var(--text-color);
 }
 
 .rec-content {
@@ -568,4 +646,56 @@ footer {
 .footer-text {
     font-size: 0.9rem;
     color: var(--text-muted);
+}
+
+/* Responsive Chat Modal for Mobile */
+@media (max-width: 768px) {
+    .chat-modal-overlay {
+        align-items: flex-start;
+        padding: 0;
+        background: var(--bg-color);
+        /* fully opaque background to hide everything behind */
+        backdrop-filter: none;
+    }
+
+    .chat-window {
+        width: 100%;
+        max-width: 100%;
+        height: 100dvh;
+        /* Full viewport height natively */
+        max-height: 100dvh;
+        border-radius: 0;
+        transform: translateY(20px);
+        opacity: 0;
+        box-shadow: none;
+        /* Flat design */
+    }
+
+    .chat-modal-overlay.active .chat-window {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .chat-header {
+        border-radius: 0;
+        padding: 1.25rem 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .chat-messages {
+        padding: 1.25rem;
+    }
+
+    .chat-footer {
+        padding: 0.75rem 1.25rem;
+        padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+        /* Accommodate iPhone home bar securely */
+        border-radius: 0;
+    }
+
+    .chat-message {
+        max-width: 90%;
+        font-size: 1rem;
+        /* Slightly larger for mobile readability */
+    }
 }

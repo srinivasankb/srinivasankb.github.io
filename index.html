@@ -85,34 +85,33 @@
     </header>
 
     <div class="container">
-        <section class="hero reveal">
-            <h1>I build developer platforms that <span>eliminate friction</span> and <span>unlock velocity</span>.</h1>
-            <p>Product professional based in Bangalore. I specialize in turning complex technical systems into intuitive
-                products and in building <span>platforms, not features</span>.</p>
-            <div style="display: flex; gap: 1rem;">
-                <a href="mailto:hello@srinivasan.online" class="btn">Get in Touch</a>
-                <a href="https://www.linkedin.com/in/srinivasan-kb/" target="_blank" rel="noopener noreferrer"
-                    class="btn btn-secondary"><i class="fab fa-linkedin" style="margin-right: 8px;"></i>LinkedIn
-                    Profile</a>
+        <section class="hero reveal hero-wrapper">
+            <div class="hero-content">
+                <h1>I build developer platforms that <span>eliminate friction</span> and <span>unlock velocity</span>.
+                </h1>
+                <p>Product professional based in Bangalore. I specialize in turning complex technical systems into
+                    intuitive products and in building <span>platforms, not features</span>.</p>
+                <div class="hero-btn-container">
+                    <a href="mailto:hello@srinivasan.online" class="btn">Get in Touch</a>
+                    <a href="https://www.linkedin.com/in/srinivasan-kb/" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-secondary"><i class="fab fa-linkedin" style="margin-right: 8px;"></i>LinkedIn
+                        Profile</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="images/avatars/srinivasan_kb.png" alt="Srinivasan KB" decoding="async">
             </div>
         </section>
 
         <section id="about" class="reveal">
             <h2>About</h2>
-            <div style="display: flex; align-items: flex-start; gap: 3.5rem; flex-wrap: wrap;">
-                <div class="about-image">
-                    <img src="images/avatars/srinivasan_kb.png" alt="Srinivasan KB" decoding="async"
-                        style="width: 140px; height: 140px; border-radius: 16px; object-fit: cover; border: 1px solid var(--border-color); box-shadow: var(--card-shadow);">
-                </div>
-                <div class="about-content"
-                    style="flex: 1; min-width: 320px; color: var(--text-muted); font-size: 1.1rem; line-height: 1.7;">
-                    <p style="margin-bottom: 1.5rem;">At <span
-                            style="font-weight: 600; color: var(--text-color);">Candescent</span>, I focus on developer
-                        experience as a product surface, especially documentation and community. I design systems that
-                        help developers build, test, and deploy faster.</p>
-                    <p>I believe great developer experience starts with how developers learn. Pushing for reduced
-                        time-to-first-success and improved discoverability through robust developer communities.</p>
-                </div>
+            <div class="about-content" style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.7;">
+                <p style="margin-bottom: 1.5rem;">At <span
+                        style="font-weight: 600; color: var(--text-color);">Candescent</span>, I focus on developer
+                    experience as a product surface, especially documentation and community. I design systems that
+                    help developers build, test, and deploy faster.</p>
+                <p>I believe great developer experience starts with how developers learn. Pushing for reduced
+                    time-to-first-success and improved discoverability through robust developer communities.</p>
             </div>
         </section>
 
@@ -134,6 +133,7 @@
                     <p>Scaling user bases through data-driven experiments and localized user research.</p>
                     <div class="skill-tags">
                         <span class="tag">A/B Testing</span>
+                        <span class="tag">Analytics</span>
                         <span class="tag">Research</span>
                         <span class="tag">CPA Optimization</span>
                         <span class="tag">Community</span>
@@ -146,6 +146,7 @@
                         <span class="tag">DevExp (DX)</span>
                         <span class="tag">APIs</span>
                         <span class="tag">SDK Strategy</span>
+                        <span class="tag">AI</span>
                         <span class="tag">n8n Automation</span>
                     </div>
                 </div>
@@ -253,7 +254,16 @@
         </section>
 
         <section id="recommendations" class="reveal" style="max-width: 100vw; margin-left: auto; margin-right: auto;">
-            <h2>Reviews</h2>
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; padding: 0 1.5rem; max-width: 960px; margin-left: auto; margin-right: auto;">
+                <h2 style="margin-bottom: 0;">Reviews</h2>
+                <div class="carousel-nav" style="display: flex; gap: 0.5rem;">
+                    <button id="scroll-prev" class="nav-btn" aria-label="Previous review"><i
+                            class="fas fa-angle-left"></i></button>
+                    <button id="scroll-next" class="nav-btn" aria-label="Next review"><i
+                            class="fas fa-angle-right"></i></button>
+                </div>
+            </div>
             <div class="recommendations-wrapper">
                 <div class="recommendations-carousel">
                     <!-- Review 1 -->
@@ -509,6 +519,22 @@
             } else {
                 // Fallback for older browsers
                 document.querySelectorAll('.reveal').forEach(el => el.classList.add('active'));
+            }
+
+            // Carousel Navigation
+            const carousel = document.querySelector('.recommendations-carousel');
+            const scrollPrev = document.getElementById('scroll-prev');
+            const scrollNext = document.getElementById('scroll-next');
+
+            if (carousel && scrollPrev && scrollNext) {
+                scrollPrev.addEventListener('click', () => {
+                    const cardWidth = carousel.querySelector('.rec-card').offsetWidth + 24; // Width + Gap
+                    carousel.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+                });
+                scrollNext.addEventListener('click', () => {
+                    const cardWidth = carousel.querySelector('.rec-card').offsetWidth + 24;
+                    carousel.scrollBy({ left: cardWidth, behavior: 'smooth' });
+                });
             }
         });
     </script>

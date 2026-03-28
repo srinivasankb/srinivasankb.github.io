@@ -9,8 +9,8 @@ I believe great developer experience starts with how developers learn. Pushing f
 
 ## Expertise
 - Product Strategy: Roadmap Planning, Stakeholder Management, Value Prop Design, PLG.
-- Growth & Retention: A/B Testing, User Research, CPA Optimization, Community.
-- Technical Product: Developer Experience (DX), APIs, SDK Strategy, n8n Automation.
+- Growth & Retention: A/B Testing, Analytics, User Research, CPA Optimization, Community.
+- Technical Product: Developer Experience (DX), APIs, SDK Strategy, AI, n8n Automation.
 
 ## Professional Experience
 ### Software Product Owner at Candescent
