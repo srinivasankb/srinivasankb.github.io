@@ -1,0 +1,43 @@
+# Srinivasan KB - Professional Profile
+
+## About
+Product professional based in Bangalore specializing in Developer Platforms and B2B SaaS.
+
+At Candescent, I focus on developer experience as a product surface, especially documentation and community. I design systems that help developers build, test, and deploy faster by ensuring they can quickly find answers and stay up to date with the tools and capabilities they rely on.
+
+I believe great developer experience starts with how developers learn. Pushing for reduced time-to-first-success and improved discoverability through robust developer communities.
+
+## Expertise
+- Product Strategy: Roadmap Planning, Stakeholder Management, Value Prop Design, PLG.
+- Growth & Retention: A/B Testing, User Research, CPA Optimization, Community.
+- Technical Product: Developer Experience (DX), APIs, SDK Strategy, n8n Automation.
+
+## Professional Experience
+### Software Product Owner at Candescent
+Sept 2025 - Present
+Focusing on developer experience as a product surface, especially documentation and community.
+
+### Product Manager at SurveySparrow
+Jan 2023 - Sept 2025
+Scaled core products and platform capabilities, from workflow automation to ecosystem integrations, driving product-led growth and enabling extensibility for large-scale enterprise organizations.
+
+### Associate Product Manager at OkCredit
+Dec 2021 - Jan 2023
+Scaled BNPL financial products to 12,000+ active users. Managed growth and retention strategies for a merchant base of 200,000+ across South India.
+
+### Community Expert at ShareChat
+June 2019 - June 2020
+Contributor to the product team for the PAN-India launch of Group and Audio Chat features for 14M daily active users.
+
+## Education
+- MBA (Marketing & Operations), University of Madras (Apr 2018)
+- BE (Electrical & Electronics Engineering), PSR Engineering College (Apr 2016)
+
+## Automation Work
+Verified n8n Creator. I build and share open-source automation templates on the n8n library to help teams automate repetitive tasks and leverage AI workflows in their daily operations.
+Link: https://n8n.io/creators/srinivasankb/
+
+## Contact & Links
+- LinkedIn: https://www.linkedin.com/in/srinivasan-kb/
+- GitHub: https://github.com/srinivasankb
+- Email: hello@srinivasan.online
