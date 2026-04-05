@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,8 +32,14 @@
       --token-regex: #FB6800;
     }
 
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; }
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    }
 
     .app {
       display: flex;
@@ -41,19 +48,31 @@
       color: var(--code-fg);
       transition: background 0.2s, color 0.2s;
     }
-    [data-theme="light"] .app { background: #f0f2f5; color: #24292e; }
-    [data-theme="dark"] .app { background: #0d1117; color: #d4d4d4; }
+
+    [data-theme="light"] .app {
+      background: #f0f2f5;
+      color: #24292e;
+    }
+
+    [data-theme="dark"] .app {
+      background: #0d1117;
+      color: #d4d4d4;
+    }
 
     /* Sidebar */
     .sidebar {
       width: 280px;
       flex-shrink: 0;
       padding: 1rem;
-      border-right: 1px solid rgba(0,0,0,0.08);
+      border-right: 1px solid rgba(0, 0, 0, 0.08);
       background: var(--code-bg);
       overflow-y: auto;
     }
-    [data-theme="dark"] .sidebar { border-color: rgba(255,255,255,0.1); background: #161b22; }
+
+    [data-theme="dark"] .sidebar {
+      border-color: rgba(255, 255, 255, 0.1);
+      background: #161b22;
+    }
 
     .sidebar h2 {
       font-size: 0.75rem;
@@ -70,13 +89,19 @@
       gap: 0.5rem;
       margin-bottom: 1rem;
     }
-    .theme-row span { font-size: 0.85rem; font-weight: 500; }
+
+    .theme-row span {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
     .switch-wrap {
       position: relative;
       width: 48px;
       height: 26px;
       flex-shrink: 0;
     }
+
     .switch-wrap input {
       position: absolute;
       width: 100%;
@@ -86,6 +111,7 @@
       cursor: pointer;
       z-index: 2;
     }
+
     .switch-track {
       position: absolute;
       inset: 0;
@@ -93,7 +119,11 @@
       border-radius: 26px;
       transition: background 0.2s;
     }
-    [data-theme="dark"] .switch-track { background: #495057; }
+
+    [data-theme="dark"] .switch-track {
+      background: #495057;
+    }
+
     .switch-knob {
       position: absolute;
       width: 20px;
@@ -102,75 +132,117 @@
       left: 3px;
       background: #fff;
       border-radius: 50%;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
       transition: transform 0.2s;
       pointer-events: none;
     }
-    .switch-wrap input:checked + .switch-track .switch-knob { transform: translateX(22px); }
-    .theme-label { font-size: 0.8rem; }
 
-    .palette-section { margin-top: 1.5rem; }
-    .palette-section .editing { font-size: 0.7rem; opacity: 0.8; margin-bottom: 0.5rem; }
+    .switch-wrap input:checked+.switch-track .switch-knob {
+      transform: translateX(22px);
+    }
+
+    .theme-label {
+      font-size: 0.8rem;
+    }
+
+    .palette-section {
+      margin-top: 1.5rem;
+    }
+
+    .palette-section .editing {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
+
     .palette-item {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       margin-bottom: 0.6rem;
     }
+
     .palette-swatch {
       width: 28px;
       height: 28px;
       border-radius: 6px;
       flex-shrink: 0;
-      border: 1px solid rgba(0,0,0,0.15);
+      border: 1px solid rgba(0, 0, 0, 0.15);
     }
-    [data-theme="dark"] .palette-swatch { border-color: rgba(255,255,255,0.2); }
+
+    [data-theme="dark"] .palette-swatch {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
     .palette-item label {
       min-width: 90px;
       font-size: 0.75rem;
       opacity: 0.9;
     }
+
     .palette-item input[type="text"] {
       width: 72px;
       font-size: 0.75rem;
       font-family: inherit;
       padding: 4px 6px;
-      border: 1px solid rgba(0,0,0,0.2);
+      border: 1px solid rgba(0, 0, 0, 0.2);
       border-radius: 4px;
       background: #fff;
       color: #222;
     }
+
     [data-theme="dark"] .palette-item input[type="text"] {
       background: #21262d;
-      border-color: rgba(255,255,255,0.2);
+      border-color: rgba(255, 255, 255, 0.2);
       color: #e6edf3;
     }
-    .palette-item input[type="text"]:invalid { border-color: #dc3545; }
+
+    .palette-item input[type="text"]:invalid {
+      border-color: #dc3545;
+    }
+
     .palette-item input[type="color"] {
       width: 28px;
       height: 28px;
       padding: 2px;
-      border: 1px solid rgba(0,0,0,0.2);
+      border: 1px solid rgba(0, 0, 0, 0.2);
       border-radius: 6px;
       cursor: pointer;
       background: transparent;
       flex-shrink: 0;
     }
-    [data-theme="dark"] .palette-item input[type="color"] { border-color: rgba(255,255,255,0.2); }
-    .palette-item input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
-    .palette-item input[type="color"]::-webkit-color-swatch { border-radius: 4px; border: none; }
+
+    [data-theme="dark"] .palette-item input[type="color"] {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .palette-item input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 2px;
+    }
+
+    .palette-item input[type="color"]::-webkit-color-swatch {
+      border-radius: 4px;
+      border: none;
+    }
+
     .reset-btn {
       margin-top: 0.75rem;
       font-size: 0.75rem;
       padding: 6px 10px;
       cursor: pointer;
       border-radius: 6px;
-      border: 1px solid rgba(0,0,0,0.2);
+      border: 1px solid rgba(0, 0, 0, 0.2);
       background: transparent;
       color: inherit;
     }
-    [data-theme="dark"] .reset-btn { border-color: rgba(255,255,255,0.2); }
-    .reset-btn:hover { opacity: 0.9; }
+
+    [data-theme="dark"] .reset-btn {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .reset-btn:hover {
+      opacity: 0.9;
+    }
 
     /* Main content */
     .main {
@@ -178,6 +250,7 @@
       overflow: auto;
       padding: 1.5rem 2rem 2rem;
     }
+
     .header {
       display: flex;
       align-items: center;
@@ -186,51 +259,138 @@
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
-    .header h1 { font-size: 1.25rem; font-weight: 600; margin: 0; }
-    .code-section { margin-bottom: 1.5rem; }
+
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .code-section {
+      margin-bottom: 1.5rem;
+    }
+
     .code-section h2 {
       font-size: 0.9rem;
       font-weight: 600;
       margin: 0 0 0.4rem 0;
       opacity: 0.9;
     }
+
     .code-block {
       background: var(--code-bg);
-      border: 1px solid rgba(0,0,0,0.08);
+      border: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 8px;
       padding: 0.9rem 1.1rem;
       overflow-x: auto;
       font-size: 0.8rem;
       line-height: 1.5;
     }
-    [data-theme="light"] .code-block { background: #fff; }
-    [data-theme="dark"] .code-block { background: #161b22; border-color: rgba(255,255,255,0.08); }
 
-    .c { color: var(--token-comment); }
-    .p { color: var(--token-punctuation); }
-    .prop { color: var(--token-property); }
-    .tag { color: var(--token-property); }
-    .bool { color: var(--token-property); }
-    .num { color: var(--token-property); }
-    .const { color: var(--token-property); }
-    .del { color: var(--token-property); }
-    .sel { color: var(--token-selector); }
-    .attr { color: var(--token-selector); }
-    .str { color: var(--token-selector); }
-    .builtin { color: var(--token-selector); }
-    .ins { color: var(--token-selector); }
-    .op { color: var(--token-operator); }
-    .kw { color: var(--token-keyword); }
-    .atrule { color: var(--token-keyword); }
-    .attrval { color: var(--token-keyword); }
-    .fn { color: var(--token-function); }
-    .cls { color: var(--token-function); }
-    .re { color: var(--token-regex); }
-    .important { color: var(--token-regex); }
-    .var { color: var(--token-regex); }
+    [data-theme="light"] .code-block {
+      background: #fff;
+    }
+
+    [data-theme="dark"] .code-block {
+      background: #161b22;
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .c {
+      color: var(--token-comment);
+    }
+
+    .p {
+      color: var(--token-punctuation);
+    }
+
+    .prop {
+      color: var(--token-property);
+    }
+
+    .tag {
+      color: var(--token-property);
+    }
+
+    .bool {
+      color: var(--token-property);
+    }
+
+    .num {
+      color: var(--token-property);
+    }
+
+    .const {
+      color: var(--token-property);
+    }
+
+    .del {
+      color: var(--token-property);
+    }
+
+    .sel {
+      color: var(--token-selector);
+    }
+
+    .attr {
+      color: var(--token-selector);
+    }
+
+    .str {
+      color: var(--token-selector);
+    }
+
+    .builtin {
+      color: var(--token-selector);
+    }
+
+    .ins {
+      color: var(--token-selector);
+    }
+
+    .op {
+      color: var(--token-operator);
+    }
+
+    .kw {
+      color: var(--token-keyword);
+    }
+
+    .atrule {
+      color: var(--token-keyword);
+    }
+
+    .attrval {
+      color: var(--token-keyword);
+    }
+
+    .fn {
+      color: var(--token-function);
+    }
+
+    .cls {
+      color: var(--token-function);
+    }
+
+    .re {
+      color: var(--token-regex);
+    }
+
+    .important {
+      color: var(--token-regex);
+    }
+
+    .var {
+      color: var(--token-regex);
+    }
   </style>
   <style id="palette-overrides"></style>
+  <!-- Analytics -->
+  <script defer data-domain="srinivasan.online"
+    src="https://analytics.srinikb.in/js/script.file-downloads.hash.outbound-links.pageview-props.tagged-events.js"></script>
+  <script>window.plausible = window.plausible || function () { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
 </head>
+
 <body>
   <div class="app">
     <aside class="sidebar">
@@ -268,7 +428,8 @@
 
       <div class="code-section">
         <h2>JavaScript</h2>
-        <pre class="code-block"><code><span class="c">// comment, prolog, doctype, cdata</span>
+        <pre
+          class="code-block"><code><span class="c">// comment, prolog, doctype, cdata</span>
 <span class="kw">const</span> <span class="var">API_URL</span> <span class="op">=</span> <span class="str">'https://api.example.com'</span><span class="p">;</span>
 <span class="kw">let</span> <span class="var">count</span> <span class="op">=</span> <span class="num">0</span><span class="p">;</span>
 
@@ -282,7 +443,8 @@
 
       <div class="code-section">
         <h2>Python</h2>
-        <pre class="code-block"><code><span class="c"># comment · string · builtin · selector</span>
+        <pre
+          class="code-block"><code><span class="c"># comment · string · builtin · selector</span>
 <span class="kw">import</span> <span class="fn">requests</span>
 <span class="kw">from</span> <span class="fn">typing</span> <span class="kw">import</span> <span class="cls">Optional</span>
 
@@ -406,182 +568,183 @@
   </div>
 
   <script>
-(function () {
-  var STORAGE_THEME = 'code-demo-theme';
-  var STORAGE_PALETTE = 'code-demo-palette';
-  var root = document.documentElement;
-  var themeInput = document.getElementById('themeSwitch');
-  var editingLabel = document.getElementById('editingLabel');
-  var paletteEditor = document.getElementById('paletteEditor');
-  var overlayStyle = document.getElementById('palette-overrides');
-  var resetBtn = document.getElementById('resetPalette');
+      (function () {
+        var STORAGE_THEME = 'code-demo-theme';
+        var STORAGE_PALETTE = 'code-demo-palette';
+        var root = document.documentElement;
+        var themeInput = document.getElementById('themeSwitch');
+        var editingLabel = document.getElementById('editingLabel');
+        var paletteEditor = document.getElementById('paletteEditor');
+        var overlayStyle = document.getElementById('palette-overrides');
+        var resetBtn = document.getElementById('resetPalette');
 
-  var tokenKeys = [
-    { key: 'comment', label: 'Comment', var: '--token-comment' },
-    { key: 'punctuation', label: 'Punctuation', var: '--token-punctuation' },
-    { key: 'property', label: 'Property / Tag / Number', var: '--token-property' },
-    { key: 'selector', label: 'Selector / String', var: '--token-selector' },
-    { key: 'operator', label: 'Operator', var: '--token-operator' },
-    { key: 'keyword', label: 'Keyword / Attr-value', var: '--token-keyword' },
-    { key: 'function', label: 'Function / Class', var: '--token-function' },
-    { key: 'regex', label: 'Regex / Variable', var: '--token-regex' }
-  ];
+        var tokenKeys = [
+          { key: 'comment', label: 'Comment', var: '--token-comment' },
+          { key: 'punctuation', label: 'Punctuation', var: '--token-punctuation' },
+          { key: 'property', label: 'Property / Tag / Number', var: '--token-property' },
+          { key: 'selector', label: 'Selector / String', var: '--token-selector' },
+          { key: 'operator', label: 'Operator', var: '--token-operator' },
+          { key: 'keyword', label: 'Keyword / Attr-value', var: '--token-keyword' },
+          { key: 'function', label: 'Function / Class', var: '--token-function' },
+          { key: 'regex', label: 'Regex / Variable', var: '--token-regex' }
+        ];
 
-  var defaultPalette = {
-    light: {
-      comment: '#132F7C',
-      punctuation: '#D02670',
-      property: '#7C1FCB',
-      selector: '#8F6905',
-      operator: '#1A6CDA',
-      keyword: '#BC11D6',
-      function: '#007C7A',
-      regex: '#BB4E00'
-    },
-    dark: {
-      comment: '#6386E7',
-      punctuation: '#EF4B92',
-      property: '#B978F4',
-      selector: '#C18D07',
-      operator: '#71AAF4',
-      keyword: '#E15CF6',
-      function: '#03A7A4',
-      regex: '#FB6800'
-    }
-  };
-
-  function getTheme() {
-    return localStorage.getItem(STORAGE_THEME) ||
-      (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  }
-
-  function setTheme(theme) {
-    root.setAttribute('data-theme', theme);
-    localStorage.setItem(STORAGE_THEME, theme);
-    if (themeInput) themeInput.checked = (theme === 'dark');
-    if (editingLabel) editingLabel.textContent = 'Editing: ' + (theme === 'dark' ? 'Dark' : 'Light');
-    renderPaletteInputs();
-    applyPalette();
-  }
-
-  function loadPalette() {
-    try {
-      var raw = localStorage.getItem(STORAGE_PALETTE);
-      if (raw) {
-        var parsed = JSON.parse(raw);
-        return {
-          light: { ...defaultPalette.light, ...parsed.light },
-          dark: { ...defaultPalette.dark, ...parsed.dark }
+        var defaultPalette = {
+          light: {
+            comment: '#132F7C',
+            punctuation: '#D02670',
+            property: '#7C1FCB',
+            selector: '#8F6905',
+            operator: '#1A6CDA',
+            keyword: '#BC11D6',
+            function: '#007C7A',
+            regex: '#BB4E00'
+          },
+          dark: {
+            comment: '#6386E7',
+            punctuation: '#EF4B92',
+            property: '#B978F4',
+            selector: '#C18D07',
+            operator: '#71AAF4',
+            keyword: '#E15CF6',
+            function: '#03A7A4',
+            regex: '#FB6800'
+          }
         };
-      }
-    } catch (e) {}
-    return { light: { ...defaultPalette.light }, dark: { ...defaultPalette.dark } };
-  }
 
-  function savePalette(palette) {
-    try { localStorage.setItem(STORAGE_PALETTE, JSON.stringify(palette)); } catch (e) {}
-  }
+        function getTheme() {
+          return localStorage.getItem(STORAGE_THEME) ||
+            (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        }
 
-  function hexValid(str) {
-    return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(str);
-  }
+        function setTheme(theme) {
+          root.setAttribute('data-theme', theme);
+          localStorage.setItem(STORAGE_THEME, theme);
+          if (themeInput) themeInput.checked = (theme === 'dark');
+          if (editingLabel) editingLabel.textContent = 'Editing: ' + (theme === 'dark' ? 'Dark' : 'Light');
+          renderPaletteInputs();
+          applyPalette();
+        }
 
-  function applyPalette() {
-    var palette = loadPalette();
-    var theme = root.getAttribute('data-theme') || 'light';
-    var colors = palette[theme];
-    var buf = [];
-    buf.push('[data-theme="light"] {');
-    Object.keys(palette.light).forEach(function (k) {
-      var v = palette.light[k];
-      var cssVar = tokenKeys.find(function (t) { return t.key === k; });
-      if (cssVar && hexValid(v)) buf.push('  ' + cssVar.var + ': ' + v + ';');
-    });
-    buf.push('}');
-    buf.push('[data-theme="dark"] {');
-    Object.keys(palette.dark).forEach(function (k) {
-      var v = palette.dark[k];
-      var cssVar = tokenKeys.find(function (t) { return t.key === k; });
-      if (cssVar && hexValid(v)) buf.push('  ' + cssVar.var + ': ' + v + ';');
-    });
-    buf.push('}');
-    overlayStyle.textContent = buf.join('\n');
-  }
+        function loadPalette() {
+          try {
+            var raw = localStorage.getItem(STORAGE_PALETTE);
+            if (raw) {
+              var parsed = JSON.parse(raw);
+              return {
+                light: { ...defaultPalette.light, ...parsed.light },
+                dark: { ...defaultPalette.dark, ...parsed.dark }
+              };
+            }
+          } catch (e) { }
+          return { light: { ...defaultPalette.light }, dark: { ...defaultPalette.dark } };
+        }
 
-  function renderPaletteInputs() {
-    var palette = loadPalette();
-    var theme = root.getAttribute('data-theme') || 'light';
-    var colors = palette[theme];
-    var html = '';
-    function toSixHex(h) {
-      if (!h || !hexValid(h)) return '#000000';
-      h = h.replace(/^#/, '');
-      if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
-      return '#' + h.slice(0, 6);
-    }
+        function savePalette(palette) {
+          try { localStorage.setItem(STORAGE_PALETTE, JSON.stringify(palette)); } catch (e) { }
+        }
 
-    tokenKeys.forEach(function (t) {
-      var val = colors[t.key] || defaultPalette[theme][t.key];
-      var hex6 = toSixHex(val);
-      var id = 'palette-' + theme + '-' + t.key;
-      html += '<div class="palette-item">';
-      html += '<div class="palette-swatch" id="swatch-' + id + '" style="background:' + hex6 + '"></div>';
-      html += '<label for="' + id + '">' + t.label + '</label>';
-      html += '<input type="color" id="picker-' + id + '" value="' + hex6 + '" data-theme="' + theme + '" data-token="' + t.key + '" title="Pick colour">';
-      html += '<input type="text" id="' + id + '" value="' + val + '" data-theme="' + theme + '" data-token="' + t.key + '" maxlength="7" placeholder="#fff">';
-      html += '</div>';
-    });
-    paletteEditor.innerHTML = html;
+        function hexValid(str) {
+          return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(str);
+        }
 
-    function updateFromValue(theme, token, val) {
-      val = val.trim() || '#000000';
-      var palette = loadPalette();
-      if (!palette[theme]) palette[theme] = {};
-      palette[theme][token] = val;
-      savePalette(palette);
-      var id = 'palette-' + theme + '-' + token;
-      var swatch = document.getElementById('swatch-' + id);
-      if (swatch) swatch.style.background = hexValid(val) ? val : 'transparent';
-      var picker = document.getElementById('picker-' + id);
-      if (picker && hexValid(val)) picker.value = toSixHex(val);
-      applyPalette();
-    }
+        function applyPalette() {
+          var palette = loadPalette();
+          var theme = root.getAttribute('data-theme') || 'light';
+          var colors = palette[theme];
+          var buf = [];
+          buf.push('[data-theme="light"] {');
+          Object.keys(palette.light).forEach(function (k) {
+            var v = palette.light[k];
+            var cssVar = tokenKeys.find(function (t) { return t.key === k; });
+            if (cssVar && hexValid(v)) buf.push('  ' + cssVar.var + ': ' + v + ';');
+          });
+          buf.push('}');
+          buf.push('[data-theme="dark"] {');
+          Object.keys(palette.dark).forEach(function (k) {
+            var v = palette.dark[k];
+            var cssVar = tokenKeys.find(function (t) { return t.key === k; });
+            if (cssVar && hexValid(v)) buf.push('  ' + cssVar.var + ': ' + v + ';');
+          });
+          buf.push('}');
+          overlayStyle.textContent = buf.join('\n');
+        }
 
-    paletteEditor.querySelectorAll('input[type="text"]').forEach(function (input) {
-      input.addEventListener('input', function () {
-        updateFromValue(this.getAttribute('data-theme'), this.getAttribute('data-token'), this.value);
-      });
-    });
-    paletteEditor.querySelectorAll('input[type="color"]').forEach(function (input) {
-      input.addEventListener('input', function () {
-        var theme = this.getAttribute('data-theme');
-        var token = this.getAttribute('data-token');
-        var val = this.value;
-        var textEl = document.getElementById('palette-' + theme + '-' + token);
-        if (textEl) textEl.value = val;
-        updateFromValue(theme, token, val);
-      });
-    });
-  }
+        function renderPaletteInputs() {
+          var palette = loadPalette();
+          var theme = root.getAttribute('data-theme') || 'light';
+          var colors = palette[theme];
+          var html = '';
+          function toSixHex(h) {
+            if (!h || !hexValid(h)) return '#000000';
+            h = h.replace(/^#/, '');
+            if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+            return '#' + h.slice(0, 6);
+          }
 
-  if (themeInput) {
-    themeInput.addEventListener('change', function () {
-      setTheme(this.checked ? 'dark' : 'light');
-    });
-  }
+          tokenKeys.forEach(function (t) {
+            var val = colors[t.key] || defaultPalette[theme][t.key];
+            var hex6 = toSixHex(val);
+            var id = 'palette-' + theme + '-' + t.key;
+            html += '<div class="palette-item">';
+            html += '<div class="palette-swatch" id="swatch-' + id + '" style="background:' + hex6 + '"></div>';
+            html += '<label for="' + id + '">' + t.label + '</label>';
+            html += '<input type="color" id="picker-' + id + '" value="' + hex6 + '" data-theme="' + theme + '" data-token="' + t.key + '" title="Pick colour">';
+            html += '<input type="text" id="' + id + '" value="' + val + '" data-theme="' + theme + '" data-token="' + t.key + '" maxlength="7" placeholder="#fff">';
+            html += '</div>';
+          });
+          paletteEditor.innerHTML = html;
 
-  if (resetBtn) {
-    resetBtn.addEventListener('click', function () {
-      try { localStorage.removeItem(STORAGE_PALETTE); } catch (e) {}
-      loadPalette();
-      renderPaletteInputs();
-      applyPalette();
-    });
-  }
+          function updateFromValue(theme, token, val) {
+            val = val.trim() || '#000000';
+            var palette = loadPalette();
+            if (!palette[theme]) palette[theme] = {};
+            palette[theme][token] = val;
+            savePalette(palette);
+            var id = 'palette-' + theme + '-' + token;
+            var swatch = document.getElementById('swatch-' + id);
+            if (swatch) swatch.style.background = hexValid(val) ? val : 'transparent';
+            var picker = document.getElementById('picker-' + id);
+            if (picker && hexValid(val)) picker.value = toSixHex(val);
+            applyPalette();
+          }
 
-  setTheme(getTheme());
-  applyPalette();
-})();
+          paletteEditor.querySelectorAll('input[type="text"]').forEach(function (input) {
+            input.addEventListener('input', function () {
+              updateFromValue(this.getAttribute('data-theme'), this.getAttribute('data-token'), this.value);
+            });
+          });
+          paletteEditor.querySelectorAll('input[type="color"]').forEach(function (input) {
+            input.addEventListener('input', function () {
+              var theme = this.getAttribute('data-theme');
+              var token = this.getAttribute('data-token');
+              var val = this.value;
+              var textEl = document.getElementById('palette-' + theme + '-' + token);
+              if (textEl) textEl.value = val;
+              updateFromValue(theme, token, val);
+            });
+          });
+        }
+
+        if (themeInput) {
+          themeInput.addEventListener('change', function () {
+            setTheme(this.checked ? 'dark' : 'light');
+          });
+        }
+
+        if (resetBtn) {
+          resetBtn.addEventListener('click', function () {
+            try { localStorage.removeItem(STORAGE_PALETTE); } catch (e) { }
+            loadPalette();
+            renderPaletteInputs();
+            applyPalette();
+          });
+        }
+
+        setTheme(getTheme());
+        applyPalette();
+      })();
   </script>
 </body>
+
 </html>
