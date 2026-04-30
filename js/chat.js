@@ -17,14 +17,22 @@ document.addEventListener('DOMContentLoaded', () => {
         content.className = 'chat-content';
 
         if (type.includes('thinking')) {
-            content.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
+            const loadingMessages = [
+                'Eliminating friction...',
+                'Building a response platform...',
+                'Optimizing for velocity...',
+                'Syncing with Srini\'s brain...',
+                'Scaling insights...'
+            ];
+            const msg = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+            content.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> ${msg}`;
         } else {
             content.innerHTML = marked.parse(text || '');
         }
 
         msgDiv.appendChild(content);
         messagesContainer.appendChild(msgDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' });
         return msgDiv;
     }
 
@@ -44,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chatStarters) chatStarters.style.display = 'none';
 
         // Thinking Bubble
-        const thinkingBubble = addMessage('', 'bot thinking');
+        const thinkingBubble = addMessage('', 'thinking');
 
         try {
             const res = await fetch(`https://n8n.srinikb.in/webhook/srini-ai?q=${encodeURIComponent(query)}`);
@@ -72,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (data.type === 'item') {
                             accumulatedResponse += data.content;
                             botContent.innerHTML = marked.parse(accumulatedResponse.trim());
-                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                            messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' });
                         } else if (data.type === 'end') {
                             thinkingInProgress = false;
                             return;
@@ -81,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Log fallback for raw streaming
                         accumulatedResponse += line;
                         botContent.innerHTML = marked.parse(accumulatedResponse.trim());
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                        messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' });
                     }
                 }
             }
@@ -118,4 +126,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 350); // wait for anim
         });
     }
+
+    // Escape to close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
 });
