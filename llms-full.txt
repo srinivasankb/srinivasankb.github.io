@@ -37,6 +37,10 @@ Contributor to the product team for the PAN-India launch of Group and Audio Chat
 Verified n8n Creator. I build and share open-source automation templates on the n8n library to help teams automate repetitive tasks and leverage AI workflows in their daily operations.
 Link: https://n8n.io/creators/srinivasankb/
 
+## HAM Radio
+Amateur Radio Operator (VU35KB) exploring the magic of radio waves. Focused on QRP operations, station building, and documenting the technical journey from Rajapalayam and Bangalore.
+Link: https://ham.srinikb.in
+
 ## Contact & Links
 - LinkedIn: https://www.linkedin.com/in/srinivasan-kb/
 - GitHub: https://github.com/srinivasankb

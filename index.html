@@ -10,6 +10,39 @@
     <meta name="keywords"
         content="Product Manager, Product Owner, Candescent, B2B SaaS, Developer Experience, Platforms, n8n Creator">
     <meta name="author" content="Srinivasan KB">
+    <link rel="canonical" href="https://srinivasan.online/">
+    <meta name="robots" content="index, follow">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Srinivasan KB",
+      "url": "https://srinivasan.online/",
+      "image": "https://srinivasankb.github.io/images/avatars/srinivasan_kb.png",
+      "jobTitle": "Product Manager",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Candescent"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/in/srinivasan-kb/",
+        "https://github.com/srinivasankb"
+      ],
+      "description": "Product professional specializing in Developer Platforms, B2B SaaS, and Growth Engineering. Licensed HAM Radio Operator (VU35KB).",
+      "knowsAbout": ["Developer Platforms", "B2B SaaS", "Developer Experience", "Growth Engineering", "n8n Automation", "Amateur Radio", "VU35KB"]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Srinivasan KB Portfolio",
+      "url": "https://srinivasan.online/",
+      "description": "Portfolio of Srinivasan KB, Product Manager at Candescent."
+    }
+    </script>
 
     <!-- Open Graph / Social Sharing -->
     <meta property="og:type" content="profile">
@@ -31,8 +64,10 @@
     <link rel="preload" href="css/minimal.css" as="style">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        as="style">
+        as="style" crossorigin>
 
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -74,6 +109,7 @@
                     <a href="#about">About</a>
                     <a href="#expertise">Expertise</a>
                     <a href="#experience">Experience</a>
+                    <a href="#ham">HAM Radio</a>
                     <a href="#recommendations">Reviews</a>
                     <a href="javascript:void(0)" id="ai-nav-trigger" class="ai-nav-btn"><i class="fas fa-sparkles"
                             style="margin-right: 6px;"></i>Ask Srini's AI</a>
@@ -87,7 +123,7 @@
         </div>
     </header>
 
-    <div class="container">
+    <main class="container">
         <section class="hero reveal hero-wrapper">
             <div class="hero-content">
                 <h1>I build developer platforms that <span>eliminate friction</span> and <span>unlock velocity</span>.
@@ -102,7 +138,8 @@
                 </div>
             </div>
             <div class="hero-image">
-                <img src="images/avatars/srinivasan_kb.png" alt="Srinivasan KB" decoding="async">
+                <img src="images/avatars/srinivasan_kb.png" alt="Srinivasan KB" width="250" height="250"
+                    fetchpriority="high">
             </div>
         </section>
 
@@ -256,6 +293,27 @@
             </div>
         </section>
 
+        <section id="ham" class="reveal">
+            <h2>HAM Radio</h2>
+            <div class="expertise-card"
+                style="background: #FAFAFA; border: 1px solid #E0E0E0; border-left: 4px solid var(--accent-color); padding: 2.5rem; color: #1A1A1A;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+                    <div
+                        style="background: var(--accent-color); color: white; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-broadcast-tower" style="font-size: 0.9rem;"></i>
+                    </div>
+                    <span style="font-weight: 800; font-size: 1.1rem; color: var(--accent-color);">Licensed
+                        Operator: VU35KB</span>
+                </div>
+                <p style="font-size: 1rem; color: #5F6368; margin-bottom: 1.5rem;">Amateur Radio Operator
+                    exploring the magic of radio waves. Focused on QRP operations, station building, and
+                    documenting the technical journey.</p>
+                <a href="https://ham.srinikb.in" target="_blank" rel="noopener noreferrer"
+                    style="font-size: 0.9rem; font-weight: 600; color: var(--accent-color); display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">View
+                    HAM Profile <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i></a>
+            </div>
+        </section>
+
         <section id="recommendations" class="reveal" style="max-width: 100vw; margin-left: auto; margin-right: auto;">
             <div
                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; padding: 0 1.5rem; max-width: 960px; margin-left: auto; margin-right: auto;">
@@ -384,17 +442,18 @@
 
         <footer>
             <div class="footer-social">
-                <a href="https://www.linkedin.com/in/srinivasan-kb/" target="_blank" rel="noopener noreferrer"><i
-                        class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/srinivasankb" target="_blank" rel="noopener noreferrer"><i
-                        class="fab fa-github"></i></a>
-                <a href="mailto:hello@srinivasan.online"><i class="fas fa-envelope"></i></a>
+                <a href="https://www.linkedin.com/in/srinivasan-kb/" target="_blank" rel="noopener noreferrer"
+                    aria-label="LinkedIn Profile"><i class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/srinivasankb" target="_blank" rel="noopener noreferrer"
+                    aria-label="GitHub Profile"><i class="fab fa-github"></i></a>
+                <a href="mailto:hello@srinivasan.online" aria-label="Email Srinivasan"><i
+                        class="fas fa-envelope"></i></a>
             </div>
             <p class="footer-text">©
                 <script>document.write(new Date().getFullYear())</script> Srinivasan KB.
             </p>
         </footer>
-    </div>
+    </main>
 
     <!-- Chat Bot Modal Overlay -->
     <div class="chat-modal-overlay" id="chat-overlay">
