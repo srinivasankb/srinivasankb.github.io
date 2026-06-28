@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1d4ed8">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>VU35KB HT Web Program Tool</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+    :root {
+      --bg:#f4f6fb;--card:#fff;--border:#e4e9f2;--text:#111827;--muted:#6b7280;
+      --primary:#1d4ed8;--primary-hover:#1e40af;--accent:#0d9488;--accent-soft:#ecfdf5;
+      --vhf:#059669;--uhf:#d97706;--warn:#b45309;--danger:#dc2626;
+      --radius:16px;--shadow:0 1px 2px rgba(17,24,39,.04),0 8px 24px rgba(17,24,39,.06);
+      --sidebar-w:248px;--detail-w:360px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+    body.sidebar-open,body.panel-open{overflow:hidden;touch-action:none}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer;border:none;border-radius:12px;padding:.6rem 1rem;font-weight:600;transition:background .15s,transform .1s,box-shadow .15s}
+    button:active:not(:disabled){transform:scale(.98)}
+    .btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(29,78,216,.25)}
+    .btn-primary:hover:not(:disabled){background:var(--primary-hover)}
+    .btn-primary:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+    .btn-ghost{background:var(--card);border:1px solid var(--border);color:var(--text)}
+    .btn-ghost:hover:not(:disabled){background:#f9fafb;border-color:#d1d5db}
+    .btn-accent{background:var(--accent);color:#fff}
+    .btn-accent:hover{background:#0f766e}
+    .btn-danger{background:#fef2f2;color:var(--danger);border:1px solid #fecaca}
+    .app-frame{display:flex;flex-direction:column;min-height:100vh}
+    .top-header{background:var(--card);border-bottom:1px solid var(--border);padding:.85rem 1.5rem;padding-top:max(.85rem, env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:.75rem;position:sticky;top:0;z-index:20}
+    .top-header-actions{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+    .menu-toggle{display:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--card);font-size:1.25rem;line-height:1;color:var(--text);flex-shrink:0}
+    .top-brand{display:flex;align-items:center;gap:.75rem;min-width:0}
+    .top-logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1d4ed8,#0d9488);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.7rem;letter-spacing:-.03em;line-height:1.1;text-align:center;flex-shrink:0}
+    .top-title{font-weight:700;font-size:1.05rem;letter-spacing:-.02em;min-width:0}
+    .top-title span{display:block;font-size:.72rem;font-weight:500;color:var(--muted);margin-top:.1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .shell{display:grid;grid-template-columns:var(--sidebar-w) 1fr;flex:1;min-height:0;position:relative;transition:grid-template-columns .2s ease}
+    .shell.panel-open{grid-template-columns:var(--sidebar-w) 1fr var(--detail-w)}
+    .detail-panel{display:none;min-width:0}
+    .shell.panel-open .detail-panel{display:flex}
+    .sidebar-backdrop,.panel-backdrop{display:none}
+    @media(min-width:901px){
+      .panel-backdrop{display:none!important}
+    }
+    @media(max-width:900px){
+      .shell,.shell.panel-open{grid-template-columns:1fr}
+      .shell.panel-open .detail-panel:not(.open){display:none}
+      .detail-panel.open{display:flex!important;position:fixed;left:0;right:0;bottom:0;top:auto;width:100%;max-height:min(92dvh, calc(100dvh - env(safe-area-inset-top)));z-index:60;border-radius:20px 20px 0 0;box-shadow:0 -8px 32px rgba(17,24,39,.18);transform:translateY(105%);transition:transform .28s ease;padding-bottom:env(safe-area-inset-bottom);border-left:none}
+      body.panel-open .detail-panel.open{transform:translateY(0)}
+      .panel-backdrop{display:block;position:fixed;inset:0;background:rgba(17,24,39,.4);z-index:55;opacity:0;pointer-events:none;transition:opacity .2s}
+      .panel-backdrop.visible{opacity:1;pointer-events:auto}
+      .menu-toggle{display:inline-flex;align-items:center;justify-content:center}
+      .sidebar{position:fixed;top:0;left:0;bottom:0;width:min(88vw,300px);z-index:50;transform:translateX(-105%);transition:transform .25s ease;box-shadow:var(--shadow);padding-top:max(1rem, env(safe-area-inset-top))}
+      .sidebar.open{transform:translateX(0)}
+      .sidebar-backdrop{display:block;position:fixed;inset:0;background:rgba(17,24,39,.45);z-index:45;opacity:0;pointer-events:none;transition:opacity .2s}
+      .sidebar-backdrop.visible{opacity:1;pointer-events:auto}
+      .detail-panel{border-left:none}
+    }
+    @media(max-width:600px){
+      .top-header{padding:.65rem .85rem;padding-top:max(.65rem, env(safe-area-inset-top))}
+      .top-logo{width:36px;height:36px;font-size:.62rem}
+      .top-title{font-size:.92rem}
+      .top-title span{font-size:.68rem}
+      .status-pill{font-size:.68rem;padding:.35rem .55rem}
+      .status-pill .status-text-short{display:inline}
+      .status-pill .status-text-full{display:none}
+    }
+    @media(min-width:601px){
+      .status-pill .status-text-short{display:none}
+      .status-pill .status-text-full{display:inline}
+    }
+  </style>
+</head>
+<body>
+  <div class="app-frame">
+    <header class="top-header">
+      <div class="top-brand">
+        <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">☰</button>
+        <div class="top-logo">VU35<br>KB</div>
+        <div class="top-title">VU35KB HT Web Program Tool<span>Browser-based handheld radio programmer</span></div>
+      </div>
+      <div class="top-header-actions" id="header-status"></div>
+    </header>
+    <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+    <div class="panel-backdrop" id="panel-backdrop" aria-hidden="true"></div>
+    <div class="shell" id="app">
+      <aside class="sidebar" id="sidebar"></aside>
+      <main class="main" id="main"></main>
+      <aside class="detail-panel" id="detail"></aside>
+    </div>
+  </div>
+  <div class="toast-wrap" id="toasts"></div>
+  <input type="file" id="file-input" hidden accept=".csv,.img,.data,.bin">
+  <script>
+/* VU35KB HT Web Program Tool */
+'use strict';
+
+const APP_NAME = 'VU35KB HT Web Program Tool';
+const APP_CALLSIGN = 'VU35KB';
+
+const DTCS_CODES = [23,25,26,31,32,43,47,51,54,65,71,72,73,74,114,115,116,125,131,132,134,143,152,155,156,162,165,172,174,205,223,226,243,244,245,251,261,263,265,271,306,311,315,331,343,346,351,364,365,371,411,412,413,423,431,432,445,464,465,466,503,506,516,532,546,565,606,612,624,627,631,632,654,662,664,703,712,723,731,732,734,743,754,212,225,241,246,252,255,261,263,265,266,271,306,311,315,331,343,346,351,364,365,371,411,412,413,423,431,432,445,464,465,466,503,506,516,532,546,565,606,612,624,627,631,645];
+
+const MODELS = {
+  uv5r: { id:'uv5r', name:'UV-5R', family:'uv5r', channels:128, nameLen:7, baud:9600, powers:['High','Low'], ext:'.img' },
+  f8hp: { id:'f8hp', name:'BF-F8HP', family:'uv5r', channels:128, nameLen:7, baud:9600, triPower:true, powers:['High','Mid','Low'], ext:'.img' },
+  uv82: { id:'uv82', name:'UV-82', family:'uv5r', channels:128, nameLen:7, baud:9600, powers:['High','Low'], ext:'.img', magic:'uv82' },
+  uv13: { id:'uv13', name:'UV-13 Pro / M13 Pro', family:'uv17', channels:999, nameLen:11, baud:57600, powers:['High','Low'], ext:'.data' },
+  mini: { id:'mini', name:'UV-5R Mini', family:'uv17pro', channels:999, nameLen:12, baud:115200, powers:['High','Low'], ext:'.data' },
+};
+
+const UV5R_MAGIC = {
+  default: [0x50,0xBB,0xFF,0x20,0x12,0x07,0x25],
+  orig: [0x50,0xBB,0xFF,0x01,0x25,0x98,0x4D],
+  uv82: [0x50,0xBB,0xFF,0x20,0x13,0x01,0x05],
+};
+
+const state = {
+  model: MODELS.uv5r,
+  connected: false,
+  serial: null,
+  image: null,
+  channels: [],
+  settings: {},
+  backupAt: null,
+  view: 'cards',
+  filter: '',
+  filterMode: 'all',
+  page: 0,
+  pageSize: 48,
+  selected: new Set(),
+  detailCh: null,
+  progress: null,
+  licenseGrade: 'general',
+  showFreqMap: true,
+  sidebarOpen: false,
+};
+
+function serialSupported() { return 'serial' in navigator; }
+function isMobileLayout() { return window.matchMedia('(max-width: 900px)').matches; }
+function isNarrowLayout() { return window.matchMedia('(max-width: 600px)').matches; }
+function layoutPageSize() {
+  if (window.matchMedia('(max-width: 480px)').matches) return 24;
+  if (window.matchMedia('(max-width: 900px)').matches) return 36;
+  return 48;
+}
+function openSidebar() {
+  state.sidebarOpen = true;
+  $('sidebar')?.classList.add('open');
+  $('sidebar-backdrop')?.classList.add('visible');
+  $('menu-toggle')?.setAttribute('aria-expanded', 'true');
+  document.body.classList.add('sidebar-open');
+}
+function closeSidebar() {
+  state.sidebarOpen = false;
+  $('sidebar')?.classList.remove('open');
+  $('sidebar-backdrop')?.classList.remove('visible');
+  $('menu-toggle')?.setAttribute('aria-expanded', 'false');
+  document.body.classList.remove('sidebar-open');
+}
+function toggleSidebar() {
+  state.sidebarOpen ? closeSidebar() : openSidebar();
+}
+function closeSidebarOnMobile() { if (isMobileLayout()) closeSidebar(); }
+function openDetailPanel() {
+  $('app')?.classList.add('panel-open');
+  $('detail')?.classList.add('open');
+  if (isMobileLayout()) {
+    $('panel-backdrop')?.classList.add('visible');
+    document.body.classList.add('panel-open');
+    closeSidebar();
+  }
+}
+function bindLayoutChrome() {
+  $('menu-toggle')?.addEventListener('click', toggleSidebar);
+  $('sidebar-backdrop')?.addEventListener('click', closeSidebar);
+  $('panel-backdrop')?.addEventListener('click', closePanel);
+  $('detail')?.addEventListener('click', e => {
+    if (e.target.closest('[data-panel-close]')) {
+      e.preventDefault();
+      closePanel();
+    }
+  });
+  if (!window._layoutBound) {
+    window._layoutBound = true;
+    window.addEventListener('resize', () => {
+      if (!isMobileLayout()) {
+        closeSidebar();
+        $('panel-backdrop')?.classList.remove('visible');
+        document.body.classList.remove('panel-open');
+      } else if (state.sidebarOpen) openSidebar();
+      if (state.detailCh != null) openDetailPanel();
+      renderMain();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && state.detailCh != null) closePanel();
+    });
+  }
+}
+
+// ─── India band plan (HT-relevant segments) ───────────────────
+const INDIA_HAM_TX_BANDS = [
+  { id: '2m', name: '2 m', lo: 144e6, hi: 146e6, type: 'VHF' },
+  { id: '70cm', name: '70 cm', lo: 434e6, hi: 438e6, type: 'UHF' },
+];
+const HT_RX_RANGES = [
+  { name: 'FM broadcast', lo: 65e6, hi: 108e6, tx: false },
+  { name: 'Airband', lo: 108e6, hi: 136e6, tx: false },
+  { name: 'VHF', lo: 136e6, hi: 174e6, tx: 'partial' },
+  { name: '220 MHz', lo: 220e6, hi: 260e6, tx: false },
+  { name: 'UHF', lo: 400e6, hi: 520e6, tx: 'partial' },
+];
+const BACKUP_KEY = 'vu35kb_backup_history';
+const MAX_BACKUPS = 10;
+
+function getTxFreq(ch) {
+  if (ch.empty || ch.duplex === 'off') return 0;
+  if (ch.duplex === 'split') return ch.offset;
+  if (ch.duplex === '+') return ch.freq + ch.offset;
+  if (ch.duplex === '-') return ch.freq - ch.offset;
+  return ch.freq;
+}
+
+function validateChannelIndia(ch) {
+  if (ch.empty) return { level: 'ok', msg: '' };
+  const tx = getTxFreq(ch);
+  if (!tx) return { level: 'rx', msg: 'RX only — no transmit' };
+  for (const b of INDIA_HAM_TX_BANDS) {
+    if (tx >= b.lo && tx <= b.hi) return { level: 'ok', msg: `TX in India ${b.name} ham band` };
+  }
+  if (tx >= 136e6 && tx <= 174e6) return { level: 'error', msg: 'TX outside India 2 m (144–146 MHz)' };
+  if (tx >= 400e6 && tx <= 520e6) return { level: 'error', msg: 'TX outside India 70 cm (434–438 MHz)' };
+  return { level: 'error', msg: 'TX not in recognised India amateur HT segment' };
+}
+
+function channelIssuesSummary() {
+  const issues = state.channels.filter(c => !c.empty).map(c => ({ ch: c, v: validateChannelIndia(c) }))
+    .filter(x => x.v.level === 'error' || x.v.level === 'warn');
+  const errors = issues.filter(x => x.v.level === 'error').length;
+  const warns = issues.filter(x => x.v.level === 'warn').length;
+  return { issues, errors, warns };
+}
+
+function findFreqCollisions() {
+  const map = new Map();
+  const collisions = [];
+  for (const c of state.channels.filter(x => !x.empty)) {
+    const k = Math.round(c.freq / 6250);
+    if (!map.has(k)) map.set(k, []);
+    map.get(k).push(c);
+  }
+  for (const [, arr] of map) if (arr.length > 1) collisions.push(arr);
+  return collisions;
+}
+
+// ─── Backup timeline ─────────────────────────────────────────
+function uint8ToB64(u8) {
+  let bin = '';
+  for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
+  return btoa(bin);
+}
+function b64ToUint8(b64) {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+function loadBackupList() {
+  try { return JSON.parse(localStorage.getItem(BACKUP_KEY) || '[]'); } catch { return []; }
+}
+
+function saveBackupSnapshot(label) {
+  if (!state.channels.length) return;
+  syncChannelsToImage();
+  const entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    ts: Date.now(),
+    modelId: state.model.id,
+    modelName: state.model.name,
+    label: label || 'Snapshot',
+    channels: JSON.parse(JSON.stringify(state.channels)),
+    settings: JSON.parse(JSON.stringify(state.settings || {})),
+    imageB64: state.image ? uint8ToB64(state.image) : null,
+  };
+  let list = loadBackupList();
+  list.unshift(entry);
+  if (list.length > MAX_BACKUPS) list = list.slice(0, MAX_BACKUPS);
+  localStorage.setItem(BACKUP_KEY, JSON.stringify(list));
+  return entry.id;
+}
+
+function restoreBackup(id) {
+  const entry = loadBackupList().find(b => b.id === id);
+  if (!entry) return toast('Backup not found', 'error');
+  if (entry.modelId !== state.model.id && !confirm(`Backup is for ${entry.modelName}. Restore anyway?`)) return;
+  state.model = MODELS[entry.modelId] || state.model;
+  state.channels = entry.channels;
+  state.settings = entry.settings || {};
+  if (entry.imageB64) state.image = b64ToUint8(entry.imageB64);
+  else syncChannelsToImage();
+  state.backupAt = new Date(entry.ts);
+  toast('Backup restored', 'success');
+  closePanel();
+  render();
+}
+
+function diffChannelSnapshots(a, b) {
+  const changes = [];
+  const len = Math.max(a?.length || 0, b?.length || 0);
+  for (let i = 0; i < len; i++) {
+    const ca = a[i], cb = b[i];
+    if (!ca || !cb) continue;
+    const sa = JSON.stringify(ca), sb = JSON.stringify(cb);
+    if (sa !== sb) {
+      const parts = [];
+      if (ca.empty !== cb.empty) parts.push(cb.empty ? 'cleared' : 'programmed');
+      if (ca.name !== cb.name) parts.push(`name "${ca.name||'—'}" → "${cb.name||'—'}"`);
+      if (ca.freq !== cb.freq) parts.push(`RX ${freqMHz(ca.freq)} → ${freqMHz(cb.freq)} MHz`);
+      if (ca.duplex !== cb.duplex || ca.offset !== cb.offset) parts.push('duplex/offset changed');
+      changes.push({ number: ca.number ?? i, summary: parts.join('; ') || 'fields changed' });
+    }
+  }
+  return changes;
+}
+
+function bootLcdInner(line1, line2, maxLen) {
+  const pad = (s, n) => (s || '').slice(0, n).padEnd(n, ' ');
+  const l1 = pad(line1, maxLen);
+  const l2 = pad(line2, maxLen);
+  return `<div class="lcd-screen">
+      <div class="lcd-line">${esc(l1).replace(/ /g, '·')}</div>
+      <div class="lcd-line">${esc(l2).replace(/ /g, '·')}</div>
+    </div>
+    <p class="hint lcd-hint">${maxLen} characters per line · dots = spaces</p>`;
+}
+
+function renderBootLcdPreview(line1, line2, maxLen) {
+  return `<div class="lcd-preview" aria-label="Power-on message preview">${bootLcdInner(line1, line2, maxLen)}</div>`;
+}
+
+function bindBootPreview(maxLen) {
+  const upd = () => {
+    const el = $('lcd-live');
+    if (!el) return;
+    el.innerHTML = bootLcdInner($('s-b1')?.value || '', $('s-b2')?.value || '', maxLen);
+  };
+  $('s-b1')?.addEventListener('input', upd);
+  $('s-b2')?.addEventListener('input', upd);
+}
+
+function renderFreqMap() {
+  const programmed = state.channels.filter(c => !c.empty);
+  if (!programmed.length) return '';
+  const segments = [
+    { id: 'vhf', label: 'VHF 136 – 174 MHz', lo: 136e6, hi: 174e6, ham: [144e6, 146e6], color: 'var(--vhf)' },
+    { id: 'uhf', label: 'UHF 400 – 470 MHz', lo: 400e6, hi: 470e6, ham: [434e6, 438e6], color: 'var(--uhf)' },
+  ];
+  const collisions = findFreqCollisions();
+  let html = `<section class="freq-map-card"><div class="freq-map-head"><strong>Frequency map</strong><span class="hint">${programmed.length} channels · click a dot to edit</span></div>`;
+  for (const seg of segments) {
+    const hamL = ((seg.ham[0] - seg.lo) / (seg.hi - seg.lo)) * 100;
+    const hamW = ((seg.ham[1] - seg.ham[0]) / (seg.hi - seg.lo)) * 100;
+    html += `<div class="freq-seg-label">${seg.label}</div><div class="freq-track" data-seg="${seg.id}">`;
+    html += `<div class="freq-ham-zone" style="left:${hamL}%;width:${hamW}%"></div>`;
+    for (const c of programmed) {
+      if (c.freq < seg.lo || c.freq > seg.hi) continue;
+      const pct = ((c.freq - seg.lo) / (seg.hi - seg.lo)) * 100;
+      const v = validateChannelIndia(c);
+      const cls = v.level === 'error' ? 'dot-bad' : v.level === 'warn' ? 'dot-warn' : v.level === 'rx' ? 'dot-rx' : 'dot-ok';
+      html += `<button type="button" class="freq-dot ${cls}" style="left:${pct}%;transform:translate(-50%,-50%)" data-n="${c.number}" title="CH ${c.number} ${freqMHz(c.freq)} MHz — ${v.msg}"></button>`;
+    }
+    html += `</div>`;
+  }
+  if (collisions.length) {
+    html += `<p class="freq-collision warn-banner" style="margin-top:.75rem;margin-bottom:0"><span>⚠</span><span><strong>${collisions.length} duplicate RX frequency</strong> — channels share the same frequency.</span></p>`;
+  }
+  html += `<div class="freq-legend"><span><i class="ldot dot-ok"></i> Ham TX OK</span><span><i class="ldot dot-rx"></i> RX only</span><span><i class="ldot dot-warn"></i> Review</span><span><i class="ldot dot-bad"></i> Band issue</span></div></section>`;
+  return html;
+}
+
+function bindFreqMap() {
+  document.querySelectorAll('.freq-dot').forEach(el => {
+    el.onclick = () => {
+      state.detailCh = +el.dataset.n;
+      renderDetail();
+      openDetailPanel();
+    };
+  });
+}
+
+function $(id) { return document.getElementById(id); }
+function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function toast(msg, type='info') {
+  const w = $('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + type;
+  el.textContent = msg;
+  w.appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+function freqMHz(hz) { return (hz/1e6).toFixed(3).replace(/\.?0+$/,'') || '0'; }
+function parseFreqMHz(s) {
+  const n = parseFloat(String(s).replace(/[^\d.]/g,''));
+  return isNaN(n) ? 0 : Math.round(n * 1e6);
+}
+function bandOf(hz) {
+  if (hz >= 136e6 && hz <= 174e6) return 'VHF';
+  if (hz >= 400e6 && hz <= 520e6) return 'UHF';
+  if (hz >= 220e6 && hz <= 260e6) return '220';
+  return '—';
+}
+
+function lbcdDecode(bytes) {
+  let s = '';
+  for (const b of bytes) {
+    s += ((b>>4)&0xf).toString();
+    s += (b&0xf).toString();
+  }
+  return parseInt(s, 10) * 10;
+}
+function lbcdEncode(hz) {
+  let s = String(Math.floor(hz / 10)).padStart(8, '0').slice(-8);
+  const out = new Uint8Array(4);
+  for (let i = 0; i < 4; i++) out[i] = (parseInt(s[i*2],10)<<4) | parseInt(s[i*2+1],10);
+  return out;
+}
+
+function emptyChannel(n) {
+  return { number:n, empty:true, name:'', freq:0, duplex:'', offset:0, tmode:'', rtone:88.5, ctone:88.5,
+    dtcs:23, rx_dtcs:23, power:'High', mode:'FM', skip:'' };
+}
+
+// ─── Serial ──────────────────────────────────────────────────
+class RadioSerial {
+  constructor() { this.port=null; this.reader=null; this.writer=null; this._buf=new Uint8Array(0); }
+  get supported() { return 'serial' in navigator; }
+
+  async connect(baud) {
+    if (!this.supported) throw new Error('Web Serial not supported. Use Chrome or Edge.');
+    this.port = await navigator.serial.requestPort();
+    await this.port.open({ baudRate: baud, dataBits:8, stopBits:1, parity:'none', flowControl:'none' });
+    this._buf = new Uint8Array(0);
+    this.reader = this.port.readable.getReader();
+    this.writer = this.port.writable.getWriter();
+    this._readLoop();
+    state.connected = true;
+  }
+
+  async disconnect() {
+    state.connected = false;
+    try { if (this.reader) { await this.reader.cancel(); this.reader.releaseLock(); } } catch(e){}
+    try { if (this.writer) { this.writer.releaseLock(); } } catch(e){}
+    try { if (this.port) await this.port.close(); } catch(e){}
+    this.port = this.reader = this.writer = null;
+    this._buf = new Uint8Array(0);
+  }
+
+  async _readLoop() {
+    try {
+      while (this.reader) {
+        const { value, done } = await this.reader.read();
+        if (done) break;
+        if (value?.length) {
+          const nb = new Uint8Array(this._buf.length + value.length);
+          nb.set(this._buf); nb.set(value, this._buf.length);
+          this._buf = nb;
+        }
+      }
+    } catch(e) { /* port closed */ }
+  }
+
+  async readExact(n, timeout=3000) {
+    const t0 = Date.now();
+    while (this._buf.length < n) {
+      if (Date.now() - t0 > timeout) throw new Error('Radio timeout — check cable, volume, quiet channel.');
+      await sleep(20);
+    }
+    const out = this._buf.slice(0, n);
+    this._buf = this._buf.slice(n);
+    return out;
+  }
+
+  async write(bytes) {
+    if (!this.writer) throw new Error('Not connected');
+    await this.writer.write(bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes));
+  }
+
+  async writeByte(b) { await this.write([b]); }
+}
+
+// ─── UV-5R Family ────────────────────────────────────────────
+const UV5R = {
+  async ident(serial, model) {
+    const tries = model.magic === 'uv82' ? [UV5R_MAGIC.uv82] : [UV5R_MAGIC.default, UV5R_MAGIC.orig];
+    for (const magic of tries) {
+      try {
+        for (const b of magic) { await serial.writeByte(b); await sleep(10); }
+        const ack = await serial.readExact(1);
+        if (ack[0] !== 0x06) continue;
+        await serial.writeByte(0x02);
+        let resp = new Uint8Array(0);
+        for (let i = 0; i < 13; i++) {
+          const b = await serial.readExact(1);
+          resp = new Uint8Array([...resp, ...b]);
+          if (b[0] === 0xDD) break;
+        }
+        let ident;
+        if (resp.length === 12) ident = new Uint8Array([resp[0],resp[3],resp[5],...resp.slice(7)]);
+        else ident = resp;
+        await serial.writeByte(0x06);
+        const ack2 = await serial.readExact(1);
+        if (ack2[0] !== 0x06) throw new Error('Radio refused clone mode');
+        return ident;
+      } catch(e) { await sleep(500); }
+    }
+    throw new Error('Could not identify radio. Check model, cable, and that radio is on a quiet channel.');
+  },
+
+  async readBlock(serial, start, size, first) {
+    const hdr = new Uint8Array([0x53, (start>>8)&0xff, start&0xff, size]);
+    await serial.write(hdr);
+    if (!first) {
+      const ack = await serial.readExact(1);
+      if (ack[0] !== 0x06) throw new Error('Radio refused block 0x'+start.toString(16));
+    }
+    const ans = await serial.readExact(4);
+    const cmd=ans[0], addr=(ans[1]<<8)|ans[2], len=ans[3];
+    if (cmd !== 0x58 || addr !== start || len !== size) throw new Error('Bad block response');
+    const chunk = await serial.readExact(size);
+    await serial.writeByte(0x06);
+    await sleep(50);
+    return chunk;
+  },
+
+  async download(serial, model, onProgress) {
+    const ident = await this.ident(serial, model);
+    let data = new Uint8Array(ident);
+    const total = 0x1800;
+    for (let i = 0; i < total; i += 0x40) {
+      const block = await this.readBlock(serial, i, 0x40, i === 0);
+      const nd = new Uint8Array(data.length + block.length);
+      nd.set(data); nd.set(block, data.length);
+      data = nd;
+      if (onProgress) onProgress(i + 0x40, total);
+    }
+  try {
+      let hasDropped = false;
+      const b0 = await this.readBlock(serial, 0x1e80, 0x40, true);
+      const b1 = await this.readBlock(serial, 0x1ec0, 0x40, false);
+      const b2 = await this.readBlock(serial, 0x1fc0, 0x40, false);
+      hasDropped = b2[15] === 0xff;
+      const auxRanges = hasDropped
+        ? { start: 0x1ec0, end: 0x1fc0, step: 0x40, tail: [0x1fc0,0x2000,0x10] }
+        : { start: 0x1ec0, end: 0x2000, step: 0x40, tail: null };
+      for (let i = auxRanges.start; i < auxRanges.end; i += auxRanges.step) {
+        const block = await this.readBlock(serial, i, 0x40, false);
+        const nd = new Uint8Array(data.length + block.length);
+        nd.set(data); nd.set(block, data.length); data = nd;
+      }
+      if (auxRanges.tail) {
+        for (let i = auxRanges.tail[0]; i < auxRanges.tail[1]; i += auxRanges.tail[2]) {
+          const block = await this.readBlock(serial, i, 0x10, false);
+          const nd = new Uint8Array(data.length + block.length);
+          nd.set(data); nd.set(block, data.length); data = nd;
+        }
+      }
+    } catch(e) { /* aux optional on old firmware */ }
+    return data;
+  },
+
+  async sendBlock(serial, addr, block) {
+    const hdr = new Uint8Array([0x58, (addr>>8)&0xff, addr&0xff, block.length]);
+    await serial.write(hdr);
+    await serial.write(block);
+    await sleep(50);
+    const ack = await serial.readExact(1);
+    if (ack[0] !== 0x06) throw new Error('Upload refused at 0x'+addr.toString(16));
+  },
+
+  async upload(serial, image, model, onProgress) {
+    await this.ident(serial, model);
+    const ranges = [[0x0008,0x0cf8],[0x0d08,0x0df8],[0x0e08,0x1808]];
+    let done = 0, total = 0;
+    for (const [a,b] of ranges) total += b - a;
+    for (const [start, end] of ranges) {
+      for (let addr = start; addr < end; addr += 0x40) {
+        const block = image.slice(addr, addr + 0x40);
+        await this.sendBlock(serial, addr, block);
+        done += 0x40;
+        if (onProgress) onProgress(done, total);
+      }
+    }
+  },
+
+  parseChannels(image, model) {
+    const chs = [];
+    for (let n = 0; n < model.channels; n++) {
+      const off = 0x0008 + n * 16;
+      const raw = image.slice(off, off + 16);
+      if (raw[0] === 0xff) { chs.push(emptyChannel(n)); continue; }
+      const ch = emptyChannel(n);
+      ch.empty = false;
+      ch.freq = lbcdDecode(raw.slice(0,4));
+      const txRaw = raw.slice(4,8);
+      const txAllFf = txRaw.every(b => b === 0xff);
+      if (txAllFf) { ch.duplex = 'off'; ch.offset = 0; }
+      else {
+        const tx = lbcdDecode(txRaw);
+        if (tx === ch.freq) { ch.duplex = ''; ch.offset = 0; }
+        else if (Math.abs(ch.freq - tx) > 70e6) { ch.duplex = 'split'; ch.offset = tx; }
+        else if (tx > ch.freq) { ch.duplex = '+'; ch.offset = tx - ch.freq; }
+        else { ch.duplex = '-'; ch.offset = ch.freq - tx; }
+      }
+      const rxt = (raw[9]<<8)|raw[8], txt = (raw[11]<<8)|raw[10];
+      Object.assign(ch, decodeTones(txt, rxt));
+      ch.power = model.triPower ? ['High','Mid','Low'][raw[14]&3] || 'High' : ['High','Low'][(raw[14]>>2)&3] || 'High';
+      ch.mode = (raw[15]>>1)&1 ? 'FM' : 'NFM';
+      ch.skip = (raw[15]>>2)&1 ? '' : 'S';
+      const noff = 0x1008 + n * 16;
+      let name = '';
+      for (let i = 0; i < model.nameLen; i++) {
+        const c = image[noff+i];
+        if (c === 0xff || c === 0) break;
+        name += String.fromCharCode(c);
+      }
+      ch.name = name.trim();
+      chs.push(ch);
+    }
+    return chs;
+  },
+
+  encodeChannels(image, channels, model) {
+    const img = new Uint8Array(image);
+    for (const ch of channels) {
+      const off = 0x0008 + ch.number * 16;
+      const noff = 0x1008 + ch.number * 16;
+      if (ch.empty) {
+        img.fill(0xff, off, off+16);
+        img.fill(0xff, noff, noff+16);
+        continue;
+      }
+      img.fill(0, off, off+16);
+      img.set(lbcdEncode(ch.freq), off);
+      let tx;
+      if (ch.duplex === 'off') tx = new Uint8Array([0xff,0xff,0xff,0xff]);
+      else if (ch.duplex === 'split') tx = lbcdEncode(ch.offset);
+      else if (ch.duplex === '+') tx = lbcdEncode(ch.freq + ch.offset);
+      else if (ch.duplex === '-') tx = lbcdEncode(ch.freq - ch.offset);
+      else tx = lbcdEncode(ch.freq);
+      img.set(tx, off+4);
+      const [txt, rxt] = encodeTones(ch);
+      img[off+8]=rxt&0xff; img[off+9]=(rxt>>8)&0xff;
+      img[off+10]=txt&0xff; img[off+11]=(txt>>8)&0xff;
+      const lp = model.triPower ? ['High','Mid','Low'].indexOf(ch.power) : ['High','Low'].indexOf(ch.power);
+      img[off+14] = ((lp&3)<<2);
+      img[off+15] = (ch.mode==='FM'?2:0) | (ch.skip==='S'?0:4);
+      img.fill(0, noff, noff+16);
+      const nm = (ch.name||'').slice(0, model.nameLen);
+      for (let i = 0; i < nm.length; i++) img[noff+i] = nm.charCodeAt(i);
+    }
+    return img;
+  },
+
+  parseSettings(image) {
+    const o = 0x0e28;
+    return {
+      squelch: image[o] ?? 5,
+      vox: image[o+4] ?? 0,
+      beep: image[o+9] ?? 1,
+      voice: image[o+0xd] ?? 0,
+      backlight: image[o+6] ?? 5,
+      timeout: image[o+0xa] ?? 0,
+      boot1: readStr(image, 0x1818, 7),
+      boot2: readStr(image, 0x181f, 7),
+    };
+  },
+
+  applySettings(image, s) {
+    const img = new Uint8Array(image);
+    const o = 0x0e28;
+    if (s.squelch != null) img[o] = +s.squelch;
+    if (s.vox != null) img[o+4] = +s.vox;
+    if (s.beep != null) img[o+9] = s.beep ? 1 : 0;
+    if (s.voice != null) img[o+0xd] = +s.voice;
+    if (s.backlight != null) img[o+6] = +s.backlight;
+    writeStr(img, 0x1818, 7, s.boot1||'');
+    writeStr(img, 0x181f, 7, s.boot2||'');
+    return img;
+  },
+};
+
+function readStr(img, off, len) {
+  let s=''; for (let i=0;i<len;i++){const c=img[off+i];if(!c||c===0xff)break;s+=String.fromCharCode(c);} return s;
+}
+function writeStr(img, off, len, s) {
+  for (let i=0;i<len;i++) img[off+i] = i < s.length ? s.charCodeAt(i) : 0xff;
+}
+
+function decodeTones(txt, rxt) {
+  const dec = v => {
+    if (!v || v === 0xffff) return ['',0];
+    if (v >= 0x258) return ['Tone', v/10];
+    const inv = v > 0x69; const idx = inv ? v-0x6a : v-1;
+    return ['DTCS', DTCS_CODES[idx]||23, inv?'R':'N'];
+  };
+  const [txm,txv,txp] = [...dec(txt), 'N'].slice(0,3);
+  const [rxm,rxv,rxp] = [...dec(rxt), 'N'].slice(0,3);
+  const ch = { tmode:'', rtone:88.5, ctone:88.5, dtcs:23, rx_dtcs:23 };
+  if (txm==='Tone'&&!rxm) ch.tmode='Tone';
+  else if (txm==='Tone'&&rxm==='Tone'&&txv===rxv) { ch.tmode='TSQL'; ch.ctone=txv; ch.rtone=txv; }
+  else if (txm==='DTCS'&&rxm==='DTCS'&&txv===rxv) { ch.tmode='DTCS'; ch.dtcs=txv; ch.rx_dtcs=rxv; }
+  else if (txm||rxm) ch.tmode='TSQL';
+  if (txm==='Tone') ch.rtone=txv;
+  if (rxm==='Tone') ch.ctone=rxv;
+  return ch;
+}
+
+function encodeTones(ch) {
+  const enc = (mode, val, pol) => {
+    if (mode==='Tone'||mode==='TSQL') return Math.round((val||88.5)*10);
+    if (mode==='DTCS') { let i=DTCS_CODES.indexOf(val||23); if(i<0)i=0; return (pol==='R'?0x6a:0)+i+1; }
+    return 0;
+  };
+  if (ch.tmode==='Tone') return [enc('Tone',ch.rtone), 0];
+  if (ch.tmode==='TSQL') return [enc('Tone',ch.ctone), enc('Tone',ch.ctone)];
+  if (ch.tmode==='DTCS') return [enc('DTCS',ch.dtcs), enc('DTCS',ch.dtcs)];
+  return [0, 0];
+}
+
+// ─── UV-17 / UV-13 Pro ───────────────────────────────────────
+const UV17 = {
+  async sendMagic(serial, magic, respLen) {
+    await serial.write(new TextEncoder().encode(magic));
+    return await serial.readExact(respLen);
+  },
+
+  async ident(serial) {
+    serial._buf = new Uint8Array(0);
+    const ack = await this.sendMagic(serial, 'PSEARCH', 9);
+    if (!String.fromCharCode(...ack).includes('UV15999') && ack[0] !== 0x06) {
+      throw new Error('UV-13 Pro not responding. Try OEM P15UV CPS as fallback.');
+    }
+    const steps = [
+      ['PASSSTA',3],['SYSINFO',1],
+      [new Uint8Array([0x56,0,0,0x0a,0x0d]),13],
+      [new Uint8Array([6]),1],
+      [new Uint8Array([0x56,0,0x10,0x0a,0x0d]),13],
+      [new Uint8Array([6]),1],
+      [new Uint8Array([0x56,0,0x20,0x0a,0x0d]),13],
+      [new Uint8Array([6]),1],
+    ];
+    for (const [m,l] of steps) {
+      const msg = typeof m === 'string' ? new TextEncoder().encode(m) : m;
+      await this.sendMagic(serial, msg, l);
+    }
+    const ms = await this.sendMagic(serial, new Uint8Array([0x56,0,0,0,0x0a]), 11);
+    const memSize = ms[7]|(ms[8]<<8)|(ms[9]<<16)|(ms[10]<<24);
+    if (memSize !== 0x31fff && memSize !== 0xffff) console.warn('Unexpected mem size', memSize);
+    await this.sendMagic(serial, new Uint8Array([6]), 1);
+    await this.sendMagic(serial, new Uint8Array([0xff,0xff,0xff,0xff,0x0c,0x55,0x56,0x31,0x35,0x39,0x39,0x39]), 1);
+    await this.sendMagic(serial, new Uint8Array([2]), 8);
+    await this.sendMagic(serial, new Uint8Array([6]), 1);
+    return memSize;
+  },
+
+  async getMemoryMap(serial, memSize) {
+    const map = [];
+    for (let addr = 0x1fff; addr <= memSize + 0x1000; addr += 0x1000) {
+      const frame = new Uint8Array([0x52, (addr>>16)&0xff, (addr>>8)&0xff, addr&0xff, 1]);
+      await serial.write(frame);
+      const r = await serial.readExact(6);
+      let bn = r[5];
+      bn = ((bn>>4)&0xf)*10 + (bn&0xf);
+      map.push(bn);
+      await this.sendMagic(serial, new Uint8Array([6]), 1);
+    }
+    return map;
+  },
+
+  async readChunk(serial, addr, size) {
+    const frame = new Uint8Array([0x52, (addr>>16)&0xff, (addr>>8)&0xff, addr&0xff, size]);
+    await serial.write(frame);
+    const d = await serial.readExact(size + 5);
+    return d.slice(5);
+  },
+
+  async download(serial, onProgress) {
+    await this.ident(serial);
+    const memMap = await this.getMemoryMap(serial, 0x31fff);
+    const blockOrder = [16,17,18,19,24,25,26,4,6];
+    let data = new Uint8Array(0);
+    let total = blockOrder.length * 0x1000, done = 0;
+    for (const bn of blockOrder) {
+      if (!memMap.includes(bn)) throw new Error('Radio memory map corrupted. Upload a factory backup via OEM CPS first.');
+      const bi = memMap.indexOf(bn) + 1;
+      const start = bi * 0x1000;
+      for (let addr = start; addr < start + 0x1000; addr += 0x40) {
+        const chunk = await this.readChunk(serial, addr, 0x40);
+        const nd = new Uint8Array(data.length + chunk.length);
+        nd.set(data); nd.set(chunk, data.length); data = nd;
+        done += 0x40;
+        if (onProgress) onProgress(done, total);
+      }
+      await this.sendMagic(serial, new Uint8Array([6]), 1);
+    }
+    return data;
+  },
+
+  async upload(serial, image, onProgress) {
+    await this.ident(serial);
+    const memMap = await this.getMemoryMap(serial, 0x31fff);
+    const blockOrder = [16,17,18,19,24,25,26,4,6];
+    let done = 0, total = image.length;
+    for (const bn of blockOrder) {
+      let bi = memMap.indexOf(bn);
+      if (bi < 0) { bi = memMap.indexOf(165); if (bi >= 0) memMap[bi] = bn; else throw new Error('Cannot map memory block'); }
+      bi += 1;
+      const start = bi * 0x1000;
+      const dataStart = blockOrder.indexOf(bn) * 0x1000;
+      for (let addr = start; addr < start + 0x1000; addr += 0x40) {
+        const da = dataStart + (addr - start);
+        const block = image.slice(da, da + 0x40);
+        const frame = new Uint8Array([0x57, (addr>>16)&0xff, (addr>>8)&0xff, addr&0xff, 0x40, ...block]);
+        await serial.write(frame);
+        const ack = await serial.readExact(1);
+        if (ack[0] !== 0x06) throw new Error('Upload failed at '+addr.toString(16));
+        done += 0x40;
+        if (onProgress) onProgress(done, total);
+      }
+    }
+  },
+
+  rawIndex(number) {
+    const n = number - 1;
+    if (n >= 762) return { base: 0x0030 + 0x10*3 + 0x10 + (n-762)*16, inline:false };
+    if (n >= 507) return { base: 0x0030 + 0x10*2 + 0x10 + (n-507)*16, inline:false };
+    if (n >= 252) return { base: 0x0030 + 0x10 + (n-252)*16, inline:false };
+    return { base: 0x0030 + n*16, inline:false };
+  },
+
+  nameIndex(number) {
+    const n = number - 1;
+    if (n >= 744) return 0x4000 + (n-744)*11 + 0x4*2 + 372*11*2;
+    if (n >= 372) return 0x4000 + 372*11 + 0x4 + (n-372)*11;
+    return 0x4000 + n*11;
+  },
+
+  parseChannels(image, model) {
+    const chs = [];
+    for (let n = 0; n < model.channels; n++) {
+      const num = n + 1;
+      const { base } = this.rawIndex(num);
+      const raw = image.slice(base, base+16);
+      if (!raw.length || raw[0]===0xff) { chs.push(emptyChannel(n)); continue; }
+      const ch = emptyChannel(n); ch.empty=false;
+      ch.freq = lbcdDecode(raw.slice(0,4));
+      const tx = lbcdDecode(raw.slice(4,8));
+      if (tx===0xffffff || raw[4]===0xff) { ch.duplex='off'; }
+      else if (tx===ch.freq) { ch.duplex=''; }
+      else if (Math.abs(ch.freq-tx)>70e6) { ch.duplex='split'; ch.offset=tx; }
+      else if (tx>ch.freq) { ch.duplex='+'; ch.offset=tx-ch.freq; }
+      else { ch.duplex='-'; ch.offset=ch.freq-tx; }
+      const rxt=(raw[9]<<8)|raw[8], txt=(raw[11]<<8)|raw[10];
+      Object.assign(ch, decodeTones(txt,rxt));
+      ch.power = ['High','Low'][(raw[14]>>2)&1]||'High';
+      ch.mode = (raw[15]>>1)&1 ? 'FM':'NFM';
+      ch.skip = (raw[15]>>3)&1 ? '' : 'S';
+      const noff = this.nameIndex(n);
+      ch.name = readStr(image, noff, model.nameLen);
+      chs.push(ch);
+    }
+    return chs;
+  },
+
+  encodeChannels(image, channels, model) {
+    const img = new Uint8Array(image);
+    for (const ch of channels) {
+      const num = ch.number + 1;
+      const off = this.rawIndex(num).base;
+      const noff = this.nameIndex(num);
+      if (ch.empty) { img.fill(0xff, off, off+16); continue; }
+      img.fill(0, off, off+16);
+      img.set(lbcdEncode(ch.freq), off);
+      let tx;
+      if (ch.duplex==='off') tx=new Uint8Array([0xff,0xff,0xff,0xff]);
+      else if (ch.duplex==='split') tx=lbcdEncode(ch.offset);
+      else if (ch.duplex==='+') tx=lbcdEncode(ch.freq+ch.offset);
+      else if (ch.duplex==='-') tx=lbcdEncode(ch.freq-ch.offset);
+      else tx=lbcdEncode(ch.freq);
+      img.set(tx, off+4);
+      const [txt,rxt]=encodeTones(ch);
+      img[off+8]=rxt&0xff; img[off+9]=(rxt>>8)&0xff;
+      img[off+10]=txt&0xff; img[off+11]=(txt>>8)&0xff;
+      const lp=['High','Low'].indexOf(ch.power);
+      img[off+14]=((lp&1)<<2);
+      img[off+15]=(ch.mode==='FM'?2:0)|((ch.skip==='S'?0:1)<<3);
+      writeStr(img, noff, model.nameLen, ch.name||'');
+    }
+    return img;
+  },
+
+  parseSettings(image) {
+    const o = 0x7000;
+    return {
+      squelch: image[o+1]??5, vox: image[o+2]??0, backlight: image[o+3]??5,
+      beep: image[o+5]??1, voice: image[o+7]??0,
+      boot1: readStr(image, o+0x10, 10), boot2: readStr(image, o+0x20, 10),
+    };
+  },
+};
+
+// ─── UV-17Pro / UV-5R Mini ───────────────────────────────────
+const ENC_TBL = ['BHT ','CO 7','A ES',' EIY','M PQ','XN Y','RVB ',' HQP','W RC','MS N',' SAT','K DH','ZO R','C SL','6RB ',' JCG','PN V','J PK','EK L','I LZ'];
+
+function crypt(sym, buf) {
+  const t = ENC_TBL[sym] || ENC_TBL[1];
+  const out = new Uint8Array(buf.length);
+  let i1 = 0;
+  for (let i = 0; i < buf.length; i++) {
+    const c = buf[i];
+    const enc = t.charCodeAt(i1) !== 32 && c && c !== 255 && c !== t.charCodeAt(i1) && c !== (t.charCodeAt(i1)^255);
+    out[i] = enc ? (c ^ t.charCodeAt(i1)) : c;
+    i1 = (i1+1)%4;
+  }
+  return out;
+}
+
+const UV17PRO = {
+  async ident(serial) {
+    serial._buf = new Uint8Array(0);
+    await serial.write(new TextEncoder().encode('PROGRAMCOLORPROU'));
+    let ack = await serial.readExact(16);
+    const steps = [
+      [new Uint8Array([0x46]),16],[new Uint8Array([0x4d]),15],
+      [new Uint8Array([0x53,0x45,0x4e,0x44,0x21,0x05,0x0d,0x01,0x01,0x01,0x04,0x11,0x08,0x05,0x0d,0x0d,0x01,0x11,0x0f,0x09,0x12,0x09,0x10,0x04,0x00]),1],
+    ];
+    for (const [m,l] of steps) await serial.write(m), await serial.readExact(l);
+    return true;
+  },
+
+  makeRead(addr, len) {
+    return new Uint8Array([0x52, (addr>>16)&0xff, (addr>>8)&0xff, addr&0xff, len]);
+  },
+
+  async download(serial, onProgress) {
+    await this.ident(serial);
+    const regions = [[0,0x8040],[0x9000,0x40],[0xa000,0x1c0]];
+    let data = new Uint8Array(0), total = 0x8240, done = 0;
+    for (const [start, size] of regions) {
+      for (let addr = start; addr < start+size; addr += 0x40) {
+        await serial.write(this.makeRead(addr, 0x40));
+        let d = await serial.readExact(0x44);
+        d = crypt(1, d.slice(4));
+        const nd = new Uint8Array(data.length + d.length);
+        nd.set(data); nd.set(d, data.length); data = nd;
+        done += 0x40;
+        if (onProgress) onProgress(done, total);
+      }
+    }
+    return data;
+  },
+
+  async upload(serial, image, onProgress) {
+    await this.ident(serial);
+    const regions = [[0,0x8040],[0x9000,0x40],[0xa000,0x1c0]];
+    let done=0, total=0x8240;
+    for (const [start,size] of regions) {
+      let da = start===0?0:(start===0x9000?0x8040:0x8080);
+      for (let addr=start; addr<start+size; addr+=0x40) {
+        let block = image.slice(da, da+0x40);
+        if (block.length<0x40) { const p=new Uint8Array(0x40); p.fill(0xff); p.set(block); block=p; }
+        block = crypt(1, block);
+        const frame = new Uint8Array([0x57,(addr>>16)&0xff,(addr>>8)&0xff,addr&0xff,0x40,...block]);
+        await serial.write(frame);
+        const ack = await serial.readExact(1);
+        if (ack[0]!==0x06) throw new Error('Mini upload failed');
+        da+=0x40; done+=0x40;
+        if (onProgress) onProgress(done,total);
+      }
+    }
+  },
+
+  parseChannels(image, model) {
+    const chs = [];
+    const STRIDE = 32;
+    for (let n = 0; n < model.channels; n++) {
+      const off = n * STRIDE;
+      const raw = image.slice(off, off+STRIDE);
+      if (!raw.length || raw[0]===0xff) { chs.push(emptyChannel(n)); continue; }
+      const ch = emptyChannel(n); ch.empty=false;
+      ch.freq = lbcdDecode(raw.slice(0,4));
+      const tx = lbcdDecode(raw.slice(4,8));
+      if (raw[4]===0xff) ch.duplex='off';
+      else if (tx===ch.freq) ch.duplex='';
+      else if (Math.abs(ch.freq-tx)>70e6) { ch.duplex='split'; ch.offset=tx; }
+      else if (tx>ch.freq) { ch.duplex='+'; ch.offset=tx-ch.freq; }
+      else { ch.duplex='-'; ch.offset=ch.freq-tx; }
+      const rxt=(raw[9]<<8)|raw[8], txt=(raw[11]<<8)|raw[10];
+      Object.assign(ch, decodeTones(txt,rxt));
+      ch.power=['High','Low'][raw[14]&3]||'High';
+      ch.mode=(raw[15]>>1)&1?'FM':'NFM';
+      ch.name=readStr(raw,20,model.nameLen);
+      chs.push(ch);
+    }
+    return chs;
+  },
+
+  encodeChannels(image, channels, model) {
+    const img = new Uint8Array(image);
+    const STRIDE=32;
+    for (const ch of channels) {
+      const off = ch.number * STRIDE;
+      if (ch.empty) { img.fill(0xff,off,off+STRIDE); continue; }
+      img.fill(0,off,off+STRIDE);
+      img.set(lbcdEncode(ch.freq),off);
+      let tx;
+      if (ch.duplex==='off') tx=new Uint8Array([0xff,0xff,0xff,0xff]);
+      else if (ch.duplex==='split') tx=lbcdEncode(ch.offset);
+      else if (ch.duplex==='+') tx=lbcdEncode(ch.freq+ch.offset);
+      else if (ch.duplex==='-') tx=lbcdEncode(ch.freq-ch.offset);
+      else tx=lbcdEncode(ch.freq);
+      img.set(tx,off+4);
+      const [txt,rxt]=encodeTones(ch);
+      img[off+8]=rxt&0xff; img[off+9]=(rxt>>8)&0xff;
+      img[off+10]=txt&0xff; img[off+11]=(txt>>8)&0xff;
+      writeStr(img,off+20,model.nameLen,ch.name||'');
+    }
+    return img;
+  },
+
+  parseSettings(image) {
+    const o=0x8000;
+    return { squelch:image[o]??5, vox:image[o+2]??0, backlight:image[o+3]??5, beep:image[o+5]??1, voice:image[o+7]??0 };
+  },
+};
+
+const DRIVERS = { uv5r: UV5R, uv17: UV17, uv17pro: UV17PRO };
+
+function getDriver(model) { return DRIVERS[model.family]; }
+
+async function downloadRadio() {
+  if (!state.serial) throw new Error('Connect first');
+  setProgress('Downloading from radio…', 0);
+  const drv = getDriver(state.model);
+  const img = await drv.download(state.serial, state.model, (c,m)=>setProgress('Downloading…',c/m));
+  state.image = img;
+  state.backupAt = new Date();
+  state.channels = drv.parseChannels(img, state.model);
+  state.settings = drv.parseSettings ? drv.parseSettings(img) : {};
+  setProgress(null);
+  saveBackupSnapshot('Download from radio');
+  toast('Download complete — backup ready','success');
+  render();
+}
+
+async function uploadRadio() {
+  if (!state.image) throw new Error('Download or load a backup first');
+  if (!state.backupAt && !confirm('No backup this session. Upload can brick mis-matched firmware. Continue?')) return;
+  const sum = channelIssuesSummary();
+  if (sum.errors && !confirm(`${sum.errors} channel(s) have India band-plan TX issues. Upload anyway?`)) return;
+  saveBackupSnapshot('Before upload');
+  syncChannelsToImage();
+  setProgress('Uploading to radio…', 0);
+  const drv = getDriver(state.model);
+  await drv.upload(state.serial, state.image, state.model, (c,m)=>setProgress('Uploading…',c/m));
+  setProgress(null);
+  toast('Upload complete. Restart radio and verify channels.','success');
+}
+
+function syncChannelsToImage() {
+  if (!state.image) {
+    const sizes = { uv5r: 0x1808, uv17: 0x9000, uv17pro: 0x8240 };
+    state.image = new Uint8Array(sizes[state.model.family] || 0x9000);
+    state.image.fill(0xff);
+  }
+  const drv = getDriver(state.model);
+  state.image = drv.encodeChannels(state.image, state.channels, state.model);
+  if (state.model.family === 'uv5r' && state.settings) state.image = UV5R.applySettings(state.image, state.settings);
+}
+
+// ─── CSV & Files ─────────────────────────────────────────────
+function channelsToCsv(channels) {
+  const hdr = 'Location,Name,Frequency,Duplex,Offset,Tone,rToneFreq,cToneFreq,DtcsCode,DtcsPolarity,Mode,Power,TStep,Skip';
+  const rows = channels.filter(c=>!c.empty).map(c=>{
+    const loc = c.number;
+    return [loc,c.name,freqMHz(c.freq),c.duplex||'',c.duplex&&(c.duplex==='split'?freqMHz(c.offset):(c.offset/1e6).toFixed(3))||'',
+      c.tmode||'',c.rtone||'',c.ctone||'',c.dtcs||'',c.tmode==='DTCS'?'NN':'',c.mode,c.power,'12.5',c.skip||''].join(',');
+  });
+  return hdr+'\n'+rows.join('\n');
+}
+
+function csvToChannels(text, model) {
+  const lines = text.trim().split(/\r?\n/);
+  const hdr = lines[0].toLowerCase().split(',');
+  const idx = n => hdr.indexOf(n.toLowerCase());
+  const chs = [];
+  for (let i=0;i<model.channels;i++) chs.push(emptyChannel(i));
+  for (let i=1;i<lines.length;i++) {
+    const cols = lines[i].split(',');
+    const loc = parseInt(cols[idx('location')]||cols[0],10);
+    if (isNaN(loc)||loc<0||loc>=model.channels) continue;
+    const ch = chs[loc] || emptyChannel(loc);
+    ch.number=loc; ch.empty=false;
+    ch.name=(cols[idx('name')]||'').trim();
+    ch.freq=parseFreqMHz(cols[idx('frequency')]);
+    ch.duplex=(cols[idx('duplex')]||'').trim();
+    const off=cols[idx('offset')]; ch.offset=ch.duplex==='split'?parseFreqMHz(off):parseFreqMHz(off)*1e6||600000;
+    ch.tmode=(cols[idx('tone')]||'').trim();
+    ch.rtone=parseFloat(cols[idx('rtonefreq')])||88.5;
+    ch.ctone=parseFloat(cols[idx('ctonefreq')])||88.5;
+    ch.dtcs=parseInt(cols[idx('dtcscode')],10)||23;
+    ch.mode=(cols[idx('mode')]||'FM').trim();
+    ch.power=(cols[idx('power')]||'High').trim();
+    ch.skip=(cols[idx('skip')]||'').trim();
+    chs[loc]=ch;
+  }
+  return chs;
+}
+
+function saveImageFile() {
+  if (!state.image) return;
+  syncChannelsToImage();
+  const blob = new Blob([state.image], {type:'application/octet-stream'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `vu35kb-backup-${state.model.id}-${Date.now()}${state.model.ext}`;
+  a.click();
+}
+
+function loadImageFile(buf) {
+  state.image = new Uint8Array(buf);
+  const drv = getDriver(state.model);
+  state.channels = drv.parseChannels(state.image, state.model);
+  state.settings = drv.parseSettings ? drv.parseSettings(state.image) : {};
+  state.backupAt = new Date();
+  saveBackupSnapshot('Loaded from file');
+  toast('Backup loaded','success');
+  render();
+}
+
+// ─── UI ──────────────────────────────────────────────────────
+function injectStyles() {
+  let s = $('dyn-styles');
+  if (!s) { s = document.createElement('style'); s.id = 'dyn-styles'; document.head.appendChild(s); }
+  s.textContent = `
+    .sidebar{background:var(--card);border-right:1px solid var(--border);padding:1rem 1rem 1.5rem;display:flex;flex-direction:column;gap:.35rem;overflow:auto}
+    .nav-section{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:1rem 0 .4rem;padding-left:.25rem}
+    .nav-section:first-child{margin-top:.25rem}
+    .sidebar .btn-ghost,.sidebar .btn-primary,.sidebar .btn-accent{width:100%;text-align:left;justify-content:flex-start;display:flex;align-items:center;gap:.5rem;padding:.55rem .75rem;font-size:.875rem;font-weight:600;border-radius:10px}
+    .sidebar .btn-primary{box-shadow:none}
+  .sidebar-icon{opacity:.7;width:1.1rem;text-align:center;flex-shrink:0}
+    .status-pill{font-size:.75rem;padding:.4rem .75rem;border-radius:999px;background:#f3f4f6;color:var(--muted);display:inline-flex;align-items:center;gap:.35rem;font-weight:600}
+    .status-pill.on{background:var(--accent-soft);color:#047857}
+    .status-dot{width:7px;height:7px;border-radius:50%;background:#9ca3af}
+    .status-pill.on .status-dot{background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,.25)}
+    .model-select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:10px;margin-bottom:.25rem;background:#fafbfc;font-weight:500}
+    .model-select:focus{outline:2px solid rgba(29,78,216,.2);border-color:var(--primary)}
+    .main{padding:1.25rem 1.75rem 2rem;overflow:auto;max-width:1200px}
+    .home{max-width:960px}
+    .home-header{margin-bottom:1.25rem}
+    .home-header h2{font-size:1.4rem;font-weight:700;letter-spacing:-.03em;margin-bottom:.35rem}
+    .home-lead{color:var(--muted);font-size:.9rem;line-height:1.5;margin-bottom:.65rem}
+    .home-foot{margin-top:.5rem}
+    .home-status{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.65rem;margin-bottom:1.25rem}
+    .home-status-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:.75rem .9rem}
+    .home-status-item span{display:block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.2rem}
+    .home-status-item b{font-size:.92rem;font-weight:700}
+    .home-status-item.ok{border-color:#a7f3d0;background:#f0fdf4}
+    .home-status-item.ok b{color:#047857}
+    .home-status-item.warn{border-color:#fde68a;background:#fffbeb}
+    .home-status-item.warn b{color:#b45309}
+    .home-section{margin-bottom:1.25rem}
+    .home-section h3{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.5rem}
+    .home-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem}
+    .home-tile{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding:.85rem 1rem;border-radius:14px;border:1px solid var(--border);background:var(--card);box-shadow:var(--shadow);min-height:88px;transition:border-color .15s,box-shadow .15s}
+    .home-tile:hover:not(:disabled){border-color:#93c5fd;box-shadow:0 4px 16px rgba(29,78,216,.08)}
+    .home-tile:disabled{opacity:.55;cursor:not-allowed}
+    .home-tile.primary{background:linear-gradient(135deg,#eff6ff,#ecfdf5);border-color:#93c5fd}
+    .home-tile-icon{font-size:1.15rem;line-height:1;margin-bottom:.35rem}
+    .home-tile-label{font-weight:700;font-size:.88rem;margin-bottom:.15rem}
+    .home-tile-hint{font-size:.72rem;color:var(--muted);line-height:1.35}
+    .home-columns{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:.25rem}
+    .home-table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px;background:var(--card)}
+    .home-table{width:100%;border-collapse:collapse;font-size:.82rem}
+    .home-table th,.home-table td{padding:.5rem .7rem;text-align:left;border-bottom:1px solid var(--border)}
+    .home-table th{background:#f9fafb;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+    .home-table tr:last-child td{border-bottom:none}
+    .home-models tbody tr{cursor:pointer}
+    .home-models tbody tr:hover td{background:#f8fafc}
+    .home-models tbody tr.sel td{background:#eff6ff;font-weight:600}
+    .home-specs{display:grid;gap:.45rem}
+    .home-specs div{display:flex;justify-content:space-between;gap:1rem;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.85rem}
+    .home-specs div:last-child{border-bottom:none}
+    .home-specs dt{color:var(--muted);font-weight:600;font-size:.78rem}
+    .home-specs dd{font-weight:600;text-align:right}
+    .home-callout{margin-top:.75rem;padding:.65rem .8rem;border-radius:10px;background:#f8fafc;border:1px solid var(--border);font-size:.8rem;line-height:1.45;color:var(--muted)}
+    .home-callout.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+    .home-backups{display:flex;flex-direction:column;gap:.5rem}
+    .home-backup-row{display:flex;justify-content:space-between;align-items:center;gap:.75rem;padding:.65rem .85rem;border:1px solid var(--border);border-radius:12px;background:var(--card)}
+    .home-backup-row span{display:block;font-size:.72rem;color:var(--muted);margin-top:.15rem}
+    .home-backup-row .btn-ghost{flex-shrink:0;padding:.4rem .65rem;font-size:.75rem}
+    .home-ref-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}
+    .home-ref-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:.9rem 1rem}
+    .home-ref-card strong{display:block;font-size:.82rem;margin-bottom:.35rem}
+    .home-ref-card p{font-size:.78rem;color:var(--muted);line-height:1.45;margin:0}
+    .stats{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem}
+    .stat{flex:1;min-width:120px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:.85rem 1rem}
+    .stat b{display:block;font-size:1.35rem;font-weight:700;letter-spacing:-.02em}
+    .stat small{font-size:.75rem;color:var(--muted)}
+    .topbar{display:flex;flex-wrap:wrap;gap:.65rem;align-items:center;margin-bottom:1rem}
+    .seg{display:inline-flex;background:#eef2f7;border-radius:12px;padding:3px;gap:2px}
+    .seg button{border-radius:9px;border:none;background:transparent;padding:.45rem .9rem;font-size:.8rem;font-weight:600;color:var(--muted)}
+    .seg button.active{background:var(--card);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+    .chip-row{display:flex;gap:.4rem;flex-wrap:wrap}
+    .chip{padding:.35rem .7rem;border-radius:999px;border:1px solid var(--border);background:var(--card);font-size:.75rem;font-weight:600;color:var(--muted);cursor:pointer}
+    .chip.active{background:#eff6ff;border-color:#93c5fd;color:var(--primary)}
+    .search{flex:1;min-width:180px;padding:.55rem .85rem;border:1px solid var(--border);border-radius:12px;background:var(--card)}
+    .search:focus{outline:2px solid rgba(29,78,216,.15);border-color:var(--primary)}
+    .grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.75rem}
+    .ch-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem;cursor:pointer;transition:transform .12s,box-shadow .15s;border-left:4px solid var(--border)}
+    .ch-card.vhf{border-left-color:var(--vhf)}.ch-card.uhf{border-left-color:var(--uhf)}
+    .ch-card.sel{outline:2px solid var(--primary);outline-offset:1px}
+    .ch-card.empty-card{opacity:.55;border-style:dashed}
+    .ch-card .row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:.35rem}
+    .ch-num{font-weight:700;font-size:.72rem;color:var(--muted);background:#f3f4f6;padding:.15rem .45rem;border-radius:6px}
+    .ch-name{font-weight:700;font-size:.95rem;margin-bottom:.15rem}
+    .badge{font-size:.62rem;padding:.18rem .45rem;border-radius:6px;background:#f3f4f6;color:var(--muted);font-weight:600}
+    .ch-freq{font-size:.92rem;font-weight:600;font-variant-numeric:tabular-nums}
+    .ch-meta{font-size:.75rem;color:var(--muted);margin-top:.3rem}
+    .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);box-shadow:var(--shadow)}
+    table{width:100%;border-collapse:collapse;font-size:.85rem}
+    th,td{padding:.55rem .7rem;text-align:left;border-bottom:1px solid var(--border)}
+    th{background:#f9fafb;font-weight:700;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0}
+    tr:hover td{background:#fafbfc}
+    td input,td select{width:100%;padding:.35rem .45rem;border:1px solid var(--border);border-radius:8px;font-size:.8rem}
+    .detail-panel{background:var(--card);border-left:1px solid var(--border);padding:0;flex-direction:column;overflow:hidden;box-shadow:-4px 0 24px rgba(17,24,39,.06)}
+    .panel-sheet{display:flex;flex-direction:column;height:100%;min-height:0}
+    .panel-drag{display:none}
+    .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;padding:1rem 1rem .85rem;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fafbfc,#fff);flex-shrink:0}
+    .panel-head-text{min-width:0;flex:1}
+    .panel-kicker{display:block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.15rem}
+    .panel-head h3{font-size:1.05rem;font-weight:700;line-height:1.25;margin:0}
+    .panel-body{padding:1rem 1rem 1.25rem;overflow:auto;flex:1;display:flex;flex-direction:column;gap:.75rem;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+    .panel-close{display:inline-flex;align-items:center;gap:.35rem;flex-shrink:0;padding:.45rem .7rem;border-radius:10px;border:1px solid var(--border);background:var(--card);font-size:.78rem;font-weight:700;color:var(--muted);line-height:1;cursor:pointer;touch-action:manipulation}
+    .panel-close:hover{background:#f3f4f6;color:var(--text);border-color:#d1d5db}
+    .panel-close-x{font-size:1.15rem;line-height:1;font-weight:400}
+    .panel-close-label{display:inline}
+    .panel-actions{display:flex;flex-direction:column;gap:.5rem;margin-top:.25rem}
+    .panel-actions .btn-primary,.panel-actions .btn-danger{width:100%}
+    .field label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.04em}
+    .field input,.field select{width:100%;padding:.55rem .7rem;border:1px solid var(--border);border-radius:10px;margin-bottom:.15rem;background:#fafbfc}
+    .field input:focus,.field select:focus{outline:2px solid rgba(29,78,216,.15);border-color:var(--primary);background:#fff}
+    .bulk-bar{position:sticky;bottom:.5rem;background:var(--primary);color:#fff;padding:.7rem 1rem;border-radius:14px;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:1rem;box-shadow:var(--shadow)}
+    .bulk-bar .btn-ghost{color:#fff;border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.1)}
+    .progress{height:5px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin:.35rem 0 .5rem}
+    .progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));width:0%;transition:width .25s}
+    .progress-label{font-size:.8rem;color:var(--muted);font-weight:500}
+    .toast-wrap{position:fixed;bottom:1.25rem;right:1.25rem;z-index:99;display:flex;flex-direction:column;gap:.5rem}
+    .toast{padding:.7rem 1.1rem;border-radius:12px;background:var(--text);color:#fff;font-size:.85rem;font-weight:500;box-shadow:var(--shadow);max-width:320px}
+    .toast-success{background:#047857}.toast-error{background:var(--danger)}
+    .warn-banner{background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:.75rem 1rem;border-radius:12px;font-size:.85rem;margin-bottom:1rem;display:flex;gap:.5rem;align-items:flex-start}
+    .hint{font-size:.78rem;color:var(--muted);margin-top:.5rem}
+    .cta-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+    .freq-map-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.15rem;margin-bottom:1rem;box-shadow:var(--shadow)}
+    .freq-map-head{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap}
+    .freq-seg-label{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:.5rem 0 .35rem}
+    .freq-track{position:relative;height:28px;background:#f1f5f9;border-radius:8px;border:1px solid var(--border);margin-bottom:.35rem}
+    .freq-ham-zone{position:absolute;top:0;bottom:0;background:rgba(16,185,129,.18);border-radius:6px;pointer-events:none}
+    .freq-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2);padding:0;cursor:pointer;touch-action:manipulation}
+    .freq-dot.dot-ok{background:var(--vhf)}.freq-dot.dot-bad{background:var(--danger)}.freq-dot.dot-warn{background:var(--warn)}.freq-dot.dot-rx{background:#6366f1}
+    .freq-legend{display:flex;flex-wrap:wrap;gap:.75rem;font-size:.72rem;color:var(--muted);margin-top:.65rem}
+    .ldot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.25rem;vertical-align:middle}
+    .ldot.dot-ok{background:var(--vhf)}.ldot.dot-bad{background:var(--danger)}.ldot.dot-warn{background:var(--warn)}.ldot.dot-rx{background:#6366f1}
+    .band-banner{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:.65rem 1rem;border-radius:12px;font-size:.85rem;margin-bottom:1rem}
+    .band-banner.warn-only{background:#fffbeb;border-color:#fde68a;color:#92400e}
+    .ch-badge-ok{background:#ecfdf5;color:#047857}.ch-badge-err{background:#fef2f2;color:#b91c1c}.ch-badge-warn{background:#fffbeb;color:#b45309}.ch-badge-rx{background:#eef2ff;color:#4338ca}
+    .lcd-preview{margin:.5rem 0 1rem}
+    .lcd-screen{background:linear-gradient(180deg,#1a3d2e,#0f2920);border:3px solid #2d4a3e;border-radius:10px;padding:.65rem .75rem;font-family:ui-monospace,'Courier New',monospace;color:#5fe89a;box-shadow:inset 0 2px 8px rgba(0,0,0,.35)}
+    .lcd-line{font-size:1.05rem;letter-spacing:.12em;line-height:1.45;white-space:pre}
+    .lcd-hint{margin-top:.35rem}
+    .backup-list{display:flex;flex-direction:column;gap:.5rem;max-height:50vh;overflow:auto}
+    .backup-item{border:1px solid var(--border);border-radius:12px;padding:.65rem .75rem;background:#fafbfc}
+    .backup-item strong{font-size:.85rem}
+    .backup-item small{display:block;color:var(--muted);font-size:.72rem;margin-top:.15rem}
+    .backup-actions{display:flex;gap:.35rem;margin-top:.45rem;flex-wrap:wrap}
+    .backup-actions button{padding:.35rem .55rem;font-size:.75rem}
+    .diff-list{font-size:.8rem;margin-top:.5rem;max-height:200px;overflow:auto}
+    .diff-list li{padding:.25rem 0;border-bottom:1px solid var(--border)}
+    .mobile-note{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:.65rem .85rem;border-radius:12px;font-size:.82rem;margin-bottom:1rem;line-height:1.45}
+    .mobile-note strong{display:block;margin-bottom:.15rem}
+    @media (hover:hover){
+      .ch-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+    }
+    @media (max-width:900px){
+      .main{padding:1rem 1rem calc(1.5rem + env(safe-area-inset-bottom));max-width:none}
+      .home-status{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .home-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .home-columns{grid-template-columns:1fr}
+      .home-ref-grid{grid-template-columns:1fr}
+      .home-tile{min-height:80px;padding:.75rem .85rem}
+      .home-backup-row{flex-direction:column;align-items:stretch}
+      .home-backup-row .btn-ghost{width:100%}
+      .stats{gap:.5rem}
+      .stat{min-width:calc(50% - .25rem);flex:1 1 calc(50% - .25rem)}
+      .topbar{flex-direction:column;align-items:stretch;gap:.5rem}
+      .topbar .seg,.topbar .chip-row{width:100%;justify-content:flex-start}
+      .search{min-width:0;width:100%;flex:none}
+      .grid-cards{grid-template-columns:repeat(auto-fill,minmax(min(100%, 168px), 1fr));gap:.6rem}
+      .ch-card{padding:.85rem .9rem;-webkit-tap-highlight-color:transparent}
+      .ch-card .row1{flex-wrap:wrap;gap:.35rem}
+      .ch-card .badge{font-size:.58rem}
+      .freq-track{height:36px;margin-bottom:.5rem}
+      .freq-dot{width:20px;height:20px;border-width:3px}
+      .freq-map-card{padding:.85rem}
+      .panel-drag{display:block;width:40px;height:4px;border-radius:99px;background:#d1d5db;margin:.55rem auto .15rem;flex-shrink:0}
+      .panel-head{padding:.65rem 1rem .75rem;padding-top:0}
+      .panel-close{min-height:44px;padding:.5rem .85rem}
+      .panel-close-label{display:none}
+      .panel-close-x{font-size:1.5rem}
+      .panel-body{padding:1rem;padding-bottom:calc(1rem + env(safe-area-inset-bottom))}
+      .sidebar .btn-ghost,.sidebar .btn-primary,.sidebar .btn-accent{min-height:44px;padding:.65rem .85rem}
+      .model-select{min-height:44px;font-size:16px}
+      .seg button{min-height:40px;padding:.5rem .75rem}
+      .chip{min-height:36px;padding:.45rem .75rem}
+      .bulk-bar{bottom:calc(.5rem + env(safe-area-inset-bottom));margin-bottom:env(safe-area-inset-bottom)}
+      .toast-wrap{left:1rem;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom));align-items:center}
+      .toast{max-width:none;width:100%;text-align:center}
+      .table-wrap{-webkit-overflow-scrolling:touch}
+      table{min-width:640px}
+      td input,td select{font-size:16px;min-height:40px;padding:.45rem .5rem}
+      .field input,.field select,.search{font-size:16px;min-height:44px}
+      .backup-list{max-height:40dvh}
+      .lcd-line{font-size:.92rem}
+      .cta-row .btn-primary,.cta-row .btn-ghost{flex:1;min-height:44px}
+    }
+    @media (max-width:600px){
+      .home-actions{grid-template-columns:1fr}
+      .home-header h2{font-size:1.15rem}
+      .grid-cards{grid-template-columns:1fr}
+      .stat{min-width:100%;flex:1 1 100%}
+      .stat b{font-size:1.15rem}
+      .ch-name{font-size:.9rem}
+      .ch-freq{font-size:.85rem}
+      .band-banner,.warn-banner,.mobile-note{font-size:.8rem}
+      .freq-legend{gap:.45rem .65rem}
+      .backup-actions button{flex:1;min-height:40px}
+    }
+    @media (max-width:900px) and (min-width:601px){
+      .grid-cards{grid-template-columns:repeat(2, minmax(0, 1fr))}
+    }
+  `;
+}
+
+function setProgress(msg, frac) {
+  state.progress = msg ? { msg, frac: frac||0 } : null;
+  const el = $('progress-bar');
+  if (el) {
+    el.style.display = msg ? 'block' : 'none';
+    const p = el.querySelector('.progress-label') || el.querySelector('p');
+    if (p) p.textContent = msg || '';
+    el.querySelector('i').style.width = ((frac||0)*100)+'%';
+  }
+}
+
+function closePanel() {
+  state.detailCh = null;
+  $('app')?.classList.remove('panel-open');
+  const p = $('detail');
+  if (p) {
+    p.classList.remove('open');
+    p.innerHTML = '';
+  }
+  $('panel-backdrop')?.classList.remove('visible');
+  document.body.classList.remove('panel-open');
+}
+
+function panelWrap(title, subtitle, bodyHtml) {
+  const sub = subtitle ? `<span class="panel-kicker">${subtitle}</span>` : '';
+  return `<div class="panel-sheet">
+    <div class="panel-drag" aria-hidden="true"></div>
+    <div class="panel-head">
+      <div class="panel-head-text">${sub}<h3>${title}</h3></div>
+      <button type="button" class="panel-close" data-panel-close aria-label="Close">
+        <span class="panel-close-x" aria-hidden="true">×</span>
+        <span class="panel-close-label">Close</span>
+      </button>
+    </div>
+    <div class="panel-body">${bodyHtml}</div>
+  </div>`;
+}
+
+function filteredChannels() {
+  const q = state.filter.toLowerCase();
+  return state.channels.filter(c => {
+    if (state.filterMode === 'programmed' && c.empty) return false;
+    if (state.filterMode === 'empty' && !c.empty) return false;
+    if (state.filterMode === 'issues' && (c.empty || validateChannelIndia(c).level === 'ok' || validateChannelIndia(c).level === 'rx')) return false;
+    if (!q) return true;
+    if (c.empty) return q === 'empty' || q === 'free';
+    return String(c.number).includes(q) || (c.name||'').toLowerCase().includes(q) || freqMHz(c.freq).includes(q);
+  });
+}
+
+function modelSpecLine(m) {
+  const family = m.family === 'uv5r' ? 'UV-5R clone' : m.family === 'uv17' ? 'UV-17 / P15' : 'UV-17Pro';
+  const risk = m.family === 'uv5r' ? 'Standard' : m.id === 'uv13' ? 'High — backup first' : 'Experimental';
+  return { family, risk, image: m.family === 'uv5r' ? '~6 KB' : m.id === 'uv13' ? '~200 KB' : '~33 KB' };
+}
+
+function renderHomePage() {
+  const m = state.model;
+  const spec = modelSpecLine(m);
+  const backups = loadBackupList().slice(0, 3);
+  const serialOk = serialSupported();
+  const cableLabel = state.connected ? 'Connected' : serialOk ? 'Not connected' : 'Desktop browser only';
+  const cableCls = state.connected ? 'ok' : serialOk ? '' : 'warn';
+
+  const modelRows = Object.values(MODELS).map(r => {
+    const s = modelSpecLine(r);
+    const sel = r.id === m.id ? ' class="sel"' : '';
+    return `<tr${sel} data-home-model="${r.id}"><td>${esc(r.name)}</td><td>${r.channels}</td><td>${(r.baud/1000).toFixed(r.baud>=10000?0:1)}k</td><td>${r.ext}</td><td>${s.risk}</td></tr>`;
+  }).join('');
+
+  const bandRows = INDIA_HAM_TX_BANDS.map(b =>
+    `<tr><td>${b.name}</td><td>${b.type}</td><td>${(b.lo/1e6).toFixed(3)} – ${(b.hi/1e6).toFixed(3)} MHz</td></tr>`
+  ).join('');
+
+  const backupBlock = backups.length ? `
+    <section class="home-section">
+      <h3>Recent snapshots</h3>
+      <p class="home-lead">Stored in this browser — open Backup history for diff &amp; restore.</p>
+      <div class="home-backups">${backups.map(b => `
+        <div class="home-backup-row">
+          <div><strong>${esc(b.label)}</strong><span>${new Date(b.ts).toLocaleString()} · ${esc(b.modelName)} · ${b.channels.filter(c => !c.empty).length} ch</span></div>
+          <button type="button" class="btn-ghost home-restore" data-restore="${b.id}">Restore</button>
+        </div>`).join('')}
+      </div>
+    </section>` : '';
+
+  return `
+    <div class="home">
+      <header class="home-header">
+        <h2>VU35KB HT programmer</h2>
+        <p class="home-lead">Edit Baofeng channel memories, validate against the India ham band plan, and sync via USB — no install.</p>
+      </header>
+
+      <div class="home-status">
+        <div class="home-status-item"><span>Model</span><b>${esc(m.name)}</b></div>
+        <div class="home-status-item ${cableCls}"><span>USB cable</span><b>${cableLabel}</b></div>
+        <div class="home-status-item"><span>Slots</span><b>${m.channels}</b></div>
+        <div class="home-status-item"><span>Baud</span><b>${m.baud.toLocaleString()}</b></div>
+      </div>
+
+      <section class="home-section">
+        <h3>Quick actions</h3>
+        <div class="home-actions">
+          <button type="button" class="home-tile primary" id="home-connect" ${!serialOk && !state.connected ? 'disabled' : ''}>
+            <span class="home-tile-icon">${state.connected ? '↓' : '⎈'}</span>
+            <span class="home-tile-label">${state.connected ? 'Download from radio' : serialOk ? 'Connect &amp; download' : 'Cable needs desktop'}</span>
+            <span class="home-tile-hint">${state.connected ? 'Read current codeplug' : serialOk ? 'Chrome/Edge + K1 cable' : 'Edit backups on this device'}</span>
+          </button>
+          <button type="button" class="home-tile" id="home-load">
+            <span class="home-tile-icon">📂</span>
+            <span class="home-tile-label">Load backup</span>
+            <span class="home-tile-hint">${m.ext} / .bin file</span>
+          </button>
+          <button type="button" class="home-tile" id="home-csv">
+            <span class="home-tile-icon">⇧</span>
+            <span class="home-tile-label">Import CSV</span>
+            <span class="home-tile-hint">CHIRP-compatible columns</span>
+          </button>
+          <button type="button" class="home-tile" id="home-wizard">
+            <span class="home-tile-icon">＋</span>
+            <span class="home-tile-label">Add repeater</span>
+            <span class="home-tile-hint">Offset &amp; tone wizard</span>
+          </button>
+          <button type="button" class="home-tile" id="home-history">
+            <span class="home-tile-icon">🕐</span>
+            <span class="home-tile-label">Backup history</span>
+            <span class="home-tile-hint">${loadBackupList().length} snapshot(s) saved</span>
+          </button>
+          <button type="button" class="home-tile" id="home-settings">
+            <span class="home-tile-icon">⚙</span>
+            <span class="home-tile-label">Radio settings</span>
+            <span class="home-tile-hint">Squelch, VOX, boot message</span>
+          </button>
+        </div>
+      </section>
+
+      <div class="home-columns">
+        <section class="home-section">
+          <h3>India HT transmit bands</h3>
+          <p class="home-lead">Licensed segments used by the band-plan checker before upload.</p>
+          <div class="home-table-wrap">
+            <table class="home-table">
+              <thead><tr><th>Band</th><th>Type</th><th>MHz</th></tr></thead>
+              <tbody>${bandRows}</tbody>
+            </table>
+          </div>
+          <p class="hint home-foot">VHF/UHF receive coverage is wider on these radios; only <strong>transmit</strong> frequencies are validated.</p>
+        </section>
+
+        <section class="home-section">
+          <h3>Current radio profile</h3>
+          <dl class="home-specs">
+            <div><dt>Protocol</dt><dd>${spec.family}</dd></div>
+            <div><dt>Image size</dt><dd>${spec.image}</dd></div>
+            <div><dt>Channel names</dt><dd>${m.nameLen} characters</dd></div>
+            <div><dt>Power levels</dt><dd>${m.powers.join(', ')}${m.triPower ? ' (tri-power)' : ''}</dd></div>
+            <div><dt>Upload risk</dt><dd>${spec.risk}</dd></div>
+            <div><dt>Boot message</dt><dd>${m.family === 'uv5r' ? '7' : '10'} chars × 2 lines</dd></div>
+          </dl>
+          ${m.id === 'uv13' ? '<p class="home-callout warn">UV-13 Pro uses wear-leveled memory. Always download and save a factory backup before the first upload.</p>' : ''}
+          ${!serialOk ? '<p class="home-callout">Web Serial is unavailable here. Load a file or CSV to edit; use desktop Chrome/Edge to program the radio.</p>' : isMobileLayout() ? '<p class="home-callout">On phone/tablet: editing works; USB programming needs a desktop browser.</p>' : ''}
+        </section>
+      </div>
+
+      <section class="home-section">
+        <h3>Supported radios</h3>
+        <p class="home-lead">Tap a row to select model (sidebar ☰ on mobile).</p>
+        <div class="home-table-wrap">
+          <table class="home-table home-models">
+            <thead><tr><th>Model</th><th>Ch</th><th>Baud</th><th>File</th><th>Notes</th></tr></thead>
+            <tbody>${modelRows}</tbody>
+          </table>
+        </div>
+      </section>
+
+      ${backupBlock}
+
+      <section class="home-section home-notes">
+        <h3>Reference</h3>
+        <div class="home-ref-grid">
+          <div class="home-ref-card">
+            <strong>Cable &amp; browser</strong>
+            <p>K1 programming cable (not USB-C data on most models). Web Serial in Chrome or Edge on Windows, macOS, Linux, or Chromium Android with OTG.</p>
+          </div>
+          <div class="home-ref-card">
+            <strong>Safe programming</strong>
+            <p>Match the exact model. Download before upload. Radio on, volume full, quiet channel or antenna removed during transfer.</p>
+          </div>
+          <div class="home-ref-card">
+            <strong>Offline &amp; private</strong>
+            <p>Runs from a single HTML file. Codeplug data stays in your browser unless you save a file. Snapshots use localStorage only.</p>
+          </div>
+        </div>
+      </section>
+    </div>`;
+}
+
+function bindHomePage() {
+  $('home-connect')?.addEventListener('click', () => heroStart());
+  $('home-load')?.addEventListener('click', () => { $('file-input').dataset.mode = 'image'; $('file-input').click(); });
+  $('home-csv')?.addEventListener('click', () => { $('file-input').dataset.mode = 'csv'; $('file-input').click(); });
+  $('home-wizard')?.addEventListener('click', () => { state.detailCh = 'wizard'; renderDetail(); openDetailPanel(); closeSidebarOnMobile(); });
+  $('home-history')?.addEventListener('click', () => { state.detailCh = 'history'; renderDetail(); openDetailPanel(); closeSidebarOnMobile(); });
+  $('home-settings')?.addEventListener('click', () => { state.detailCh = 'settings'; renderDetail(); openDetailPanel(); closeSidebarOnMobile(); });
+  document.querySelectorAll('.home-restore').forEach(btn => btn.addEventListener('click', () => restoreBackup(btn.dataset.restore)));
+  document.querySelectorAll('[data-home-model]').forEach(row => row.addEventListener('click', () => {
+    const id = row.dataset.homeModel;
+    if (!MODELS[id] || state.model.id === id) return;
+    state.model = MODELS[id];
+    state.channels = [];
+    state.image = null;
+    initChannels();
+    render();
+  }));
+}
+
+function renderHeader() {
+  const el = $('header-status');
+  if (!el) return;
+  const connected = state.connected;
+  const short = connected ? 'On' : 'Off';
+  const full = connected ? 'Radio connected' : 'Not connected';
+  el.innerHTML = `<div class="status-pill ${connected?'on':''}"><span class="status-dot"></span><span class="status-text-full">${full}</span><span class="status-text-short">${short}</span></div>`;
+}
+
+function renderSidebar() {
+  $('sidebar').innerHTML = `
+    <div class="nav-section">Your radio</div>
+    <select class="model-select" id="model-select" title="Select radio model">${Object.values(MODELS).map(m=>`<option value="${m.id}" ${m.id===state.model.id?'selected':''}>${m.name}</option>`).join('')}</select>
+    <button class="btn-primary" id="btn-connect" ${!serialSupported()?'disabled title="Needs Chrome/Edge on desktop"':''}><span class="sidebar-icon">${state.connected?'⏏':'⎈'}</span>${state.connected?'Disconnect':serialSupported()?'Connect cable':'Cable (desktop)'}</button>
+
+    <div class="nav-section">Sync with radio</div>
+    <button class="btn-ghost" id="btn-download" ${!state.connected?'disabled':''} title="Read channels from radio"><span class="sidebar-icon">↓</span>Download from radio</button>
+    <button class="btn-ghost" id="btn-upload" ${!state.connected||!state.image?'disabled':''} title="Write changes to radio"><span class="sidebar-icon">↑</span>Upload to radio</button>
+    ${state.backupAt?`<p class="hint" style="padding:0 .25rem">Last read: ${state.backupAt.toLocaleString()}</p>`:''}
+
+    <div class="nav-section">Files</div>
+    <button class="btn-ghost" id="btn-save"><span class="sidebar-icon">💾</span>Save backup</button>
+    <button class="btn-ghost" id="btn-load"><span class="sidebar-icon">📂</span>Load backup</button>
+    <button class="btn-ghost" id="btn-csv-export"><span class="sidebar-icon">⇩</span>Export CSV</button>
+    <button class="btn-ghost" id="btn-csv-import"><span class="sidebar-icon">⇧</span>Import CSV</button>
+
+    <div class="nav-section">Quick actions</div>
+    <button class="btn-accent" id="btn-wizard"><span class="sidebar-icon">＋</span>Add repeater</button>
+    <button class="btn-ghost" id="btn-settings"><span class="sidebar-icon">⚙</span>Radio settings</button>
+    <button class="btn-ghost" id="btn-history"><span class="sidebar-icon">🕐</span>Backup history</button>
+  `;
+  $('model-select').onchange = e => { state.model = MODELS[e.target.value]; state.channels=[]; state.image=null; initChannels(); render(); closeSidebarOnMobile(); };
+  const closeAfter = (fn) => () => { fn(); closeSidebarOnMobile(); };
+  $('btn-connect').onclick = closeAfter(toggleConnect);
+  $('btn-download').onclick = closeAfter(() => downloadRadio().catch(e=>toast(e.message,'error')));
+  $('btn-upload').onclick = closeAfter(() => uploadRadio().catch(e=>toast(e.message,'error')));
+  $('btn-save').onclick = closeAfter(saveImageFile);
+  $('btn-load').onclick = closeAfter(() => { $('file-input').dataset.mode='image'; $('file-input').click(); });
+  $('btn-csv-export').onclick = closeAfter(() => {
+    const blob = new Blob([channelsToCsv(state.channels)],{type:'text/csv'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='channels.csv'; a.click();
+  });
+  $('btn-csv-import').onclick = closeAfter(() => { $('file-input').dataset.mode='csv'; $('file-input').click(); });
+  $('btn-wizard').onclick = () => { state.detailCh='wizard'; renderDetail(); openDetailPanel(); closeSidebarOnMobile(); };
+  $('btn-settings').onclick = () => { state.detailCh='settings'; renderDetail(); openDetailPanel(); closeSidebarOnMobile(); };
+  $('btn-history').onclick = () => { state.detailCh='history'; renderDetail(); openDetailPanel(); closeSidebarOnMobile(); };
+  if (state.sidebarOpen && isMobileLayout()) $('sidebar').classList.add('open');
+}
+
+async function heroStart() {
+  if (!state.connected) {
+    await toggleConnect();
+    if (state.connected) downloadRadio().catch(e => toast(e.message, 'error'));
+  } else {
+    downloadRadio().catch(e => toast(e.message, 'error'));
+  }
+}
+
+function renderMain() {
+  const main = $('main');
+  const hasData = state.backupAt || state.channels.some(c => !c.empty);
+
+  if (!hasData) {
+    main.innerHTML = renderHomePage() + `<div id="progress-bar" style="display:none"><p class="progress-label"></p><div class="progress"><i></i></div></div>`;
+    bindHomePage();
+    return;
+  }
+
+  const programmed = state.channels.filter(c=>!c.empty).length;
+  const empty = state.model.channels - programmed;
+  const bandSum = channelIssuesSummary();
+  const list = filteredChannels();
+  const pageSize = layoutPageSize();
+  const pages = Math.max(1, Math.ceil(list.length / pageSize));
+  if (state.page >= pages) state.page = pages - 1;
+  const pageList = list.slice(state.page * pageSize, (state.page + 1) * pageSize);
+
+  main.innerHTML = `
+    ${!serialSupported() && hasData ? `<div class="mobile-note"><strong>View-only on this browser</strong>Load, edit, and save backups locally. Use desktop Chrome/Edge with a USB cable to sync with the radio.</div>` : ''}
+    ${state.model.id==='uv13'?'<div class="warn-banner"><span>⚠</span><span><strong>UV-13 Pro:</strong> Always save a factory backup first. Upload only after a successful download from the same radio.</span></div>':''}
+    ${bandSum.errors?`<div class="band-banner"><strong>India band plan:</strong> ${bandSum.errors} channel(s) transmit outside licensed HT segments (2 m: 144–146 MHz · 70 cm: 434–438 MHz). Fix before upload or use RX-only.</div>`:''}
+    ${!bandSum.errors && bandSum.warns?`<div class="band-banner warn-only"><strong>Review:</strong> ${bandSum.warns} channel(s) need license-grade or local-rule verification.</div>`:''}
+    ${state.showFreqMap ? renderFreqMap() : ''}
+    <div class="stats">
+      <div class="stat"><b>${programmed}</b><small>Channels programmed</small></div>
+      <div class="stat"><b>${empty}</b><small>Empty slots</small></div>
+      <div class="stat"><b>${state.model.name}</b><small>Selected model</small></div>
+    </div>
+    <div class="topbar">
+      <div class="seg">
+        <button class="${state.view==='cards'?'active':''}" data-view="cards">Cards</button>
+        <button class="${state.view==='table'?'active':''}" data-view="table">Table</button>
+      </div>
+      <div class="chip-row">
+        <button class="chip ${state.filterMode==='all'?'active':''}" data-fm="all">All</button>
+        <button class="chip ${state.filterMode==='programmed'?'active':''}" data-fm="programmed">Programmed</button>
+        <button class="chip ${state.filterMode==='empty'?'active':''}" data-fm="empty">Empty</button>
+        ${bandSum.errors || bandSum.warns ? `<button class="chip ${state.filterMode==='issues'?'active':''}" data-fm="issues">Band issues (${bandSum.errors + bandSum.warns})</button>` : ''}
+      </div>
+      <input class="search" placeholder="Search name or frequency…" value="${esc(state.filter)}" id="search-in">
+      ${pages>1?`<div class="seg"><button class="btn-ghost" id="pg-prev" ${state.page<=0?'disabled':''} style="padding:.35rem .6rem">‹</button><span style="padding:.35rem .5rem;font-size:.78rem;font-weight:600">${state.page+1} / ${pages}</span><button class="btn-ghost" id="pg-next" ${state.page>=pages-1?'disabled':''} style="padding:.35rem .6rem">›</button></div>`:''}
+    </div>
+    <div id="progress-bar" style="display:none"><p class="progress-label"></p><div class="progress"><i></i></div></div>
+    <div id="channel-area"></div>
+    ${state.selected.size?`<div class="bulk-bar"><span>${state.selected.size} selected</span>
+      <button class="btn-ghost" data-bulk="high">High power</button>
+      <button class="btn-ghost" data-bulk="skip">Skip scan</button>
+      <button class="btn-ghost" data-bulk="clear">Clear</button></div>`:''}
+  `;
+  main.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{state.view=b.dataset.view;renderMain();});
+  main.querySelectorAll('[data-fm]').forEach(b=>b.onclick=()=>{state.filterMode=b.dataset.fm;state.page=0;renderMain();});
+  $('search-in').oninput = e=>{state.filter=e.target.value;state.page=0;renderMain();};
+  const pgPrev=$('pg-prev'), pgNext=$('pg-next');
+  if (pgPrev) pgPrev.onclick=()=>{state.page--;renderMain();};
+  if (pgNext) pgNext.onclick=()=>{state.page++;renderMain();};
+  const area = $('channel-area');
+  if (state.view==='cards') {
+    area.innerHTML = '<div class="grid-cards">'+pageList.map(renderCard).join('')+'</div>';
+    area.querySelectorAll('.ch-card').forEach(el=>{
+      el.onclick = e=>{
+        if (e.shiftKey) { const n=+el.dataset.n; state.selected.has(n)?state.selected.delete(n):state.selected.add(n); renderMain(); return; }
+        state.detailCh=+el.dataset.n; renderDetail(); openDetailPanel();
+      };
+    });
+  } else {
+    area.innerHTML = renderTable(pageList);
+    area.querySelectorAll('[data-ch]').forEach(inp=>{ inp.onchange = ()=> applyTableEdit(inp); });
+  }
+  main.querySelectorAll('[data-bulk]').forEach(b=>b.onclick=()=>doBulk(b.dataset.bulk));
+  bindFreqMap();
+}
+
+function renderCard(c) {
+  if (c.empty) return `<div class="ch-card empty-card" data-n="${c.number}"><div class="row1"><span class="ch-num">CH ${c.number}</span></div><div class="ch-meta">Tap to program · Shift+click to select</div></div>`;
+  const band = bandOf(c.freq).toLowerCase();
+  const dup = c.duplex==='+'||c.duplex==='-'?` ${c.duplex}${(c.offset/1e6).toFixed(3)}` : c.duplex==='split'?` → ${freqMHz(c.offset)}`:'';
+  const v = validateChannelIndia(c);
+  const badgeCls = v.level === 'error' ? 'ch-badge-err' : v.level === 'warn' ? 'ch-badge-warn' : v.level === 'rx' ? 'ch-badge-rx' : 'ch-badge-ok';
+  const badgeTxt = v.level === 'ok' ? 'Ham OK' : v.level === 'rx' ? 'RX only' : v.level === 'warn' ? 'Review' : 'Band issue';
+  return `<div class="ch-card ${band} ${state.selected.has(c.number)?'sel':''}" data-n="${c.number}">
+    <div class="row1"><span class="ch-num">CH ${c.number}</span><span><span class="badge">${bandOf(c.freq)}</span> <span class="badge">${c.power}</span> <span class="badge ${badgeCls}" title="${esc(v.msg)}">${badgeTxt}</span></span></div>
+    <div class="ch-name">${esc(c.name||'—')}</div>
+    <div class="ch-freq">${freqMHz(c.freq)}${dup} MHz</div>
+    <div class="ch-meta">${c.tmode||'No tone'}${c.skip==='S'?' · Scan skip':''}</div></div>`;
+}
+
+function renderTable(list) {
+  const rows = list.map(c=>`<tr>
+    <td><input type="checkbox" data-sel="${c.number}" ${state.selected.has(c.number)?'checked':''}></td>
+    <td>${c.number}</td>
+    <td><input data-ch="${c.number}" data-f="name" value="${esc(c.name||'')}"></td>
+    <td><input data-ch="${c.number}" data-f="freq" value="${c.empty?'':freqMHz(c.freq)}"></td>
+    <td><select data-ch="${c.number}" data-f="duplex"><option ${c.duplex===''?'selected':''}></option><option value="+" ${c.duplex==='+'?'selected':''}>+</option><option value="-" ${c.duplex==='-'?'selected':''}>-</option><option value="split" ${c.duplex==='split'?'selected':''}>split</option></select></td>
+    <td><input data-ch="${c.number}" data-f="offset" value="${c.duplex==='split'?freqMHz(c.offset):(c.offset/1e6).toFixed(3)}"></td>
+    <td><select data-ch="${c.number}" data-f="tmode"><option value=""></option><option ${c.tmode==='Tone'?'selected':''}>Tone</option><option ${c.tmode==='TSQL'?'selected':''}>TSQL</option><option ${c.tmode==='DTCS'?'selected':''}>DTCS</option></select></td>
+    <td><select data-ch="${c.number}" data-f="power">${state.model.powers.map(p=>`<option ${c.power===p?'selected':''}>${p}</option>`).join('')}</select></td>
+  </tr>`).join('');
+  return `<div class="table-wrap"><table><thead><tr><th></th><th>#</th><th>Name</th><th>RX MHz</th><th>Dup</th><th>Offset</th><th>Tone</th><th>Pwr</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function applyTableEdit(inp) {
+  const n=+inp.dataset.ch, f=inp.dataset.f, ch=state.channels.find(c=>c.number===n);
+  if (!ch) return;
+  ch.empty=false;
+  if (f==='name') ch.name=inp.value;
+  if (f==='freq') ch.freq=parseFreqMHz(inp.value);
+  if (f==='duplex') ch.duplex=inp.value;
+  if (f==='offset') ch.offset=ch.duplex==='split'?parseFreqMHz(inp.value):parseFloat(inp.value)*1e6;
+  if (f==='tmode') ch.tmode=inp.value;
+  if (f==='power') ch.power=inp.value;
+}
+
+function doBulk(action) {
+  for (const n of state.selected) {
+    const ch = state.channels.find(c=>c.number===n);
+    if (!ch) continue;
+    if (action==='high') ch.power='High';
+    if (action==='skip') ch.skip='S';
+    if (action==='clear') Object.assign(ch, emptyChannel(n));
+  }
+  state.selected.clear();
+  render();
+}
+
+function renderDetail() {
+  const p = $('detail');
+  if (state.detailCh === null) { p.innerHTML = ''; return; }
+
+  if (state.detailCh==='wizard') {
+    p.innerHTML = panelWrap('Add repeater', 'Quick action', `
+      <p class="hint">We'll fill the next empty channel. Offset is calculated for you.</p>
+      <div class="field"><label>Receive frequency (MHz)</label><input id="w-rx" placeholder="e.g. 145.600"></div>
+      <div class="field"><label>Repeater offset</label><select id="w-off"><option value="600000">−600 kHz (VHF repeater)</option><option value="5000000">−5 MHz (UHF repeater)</option><option value="custom">Custom offset</option></select></div>
+      <div class="field" id="w-custom" style="display:none"><label>Custom offset (Hz)</label><input id="w-offval" value="600000"></div>
+      <div class="field"><label>CTCSS tone (Hz)</label><input id="w-tone" value="88.5"></div>
+      <div class="field"><label>Channel name</label><input id="w-name" maxlength="${state.model.nameLen}" placeholder="e.g. VU2RPT"></div>
+      <div class="panel-actions"><button class="btn-primary" id="w-go">Add channel</button></div>`);
+    $('w-off').onchange = e=>{ $('w-custom').style.display=e.target.value==='custom'?'block':'none'; };
+    $('w-go').onclick = ()=>{
+      const slot = state.channels.find(c=>c.empty);
+      if (!slot) return toast('No empty slots left','error');
+      const rx=parseFreqMHz($('w-rx').value);
+      if (!rx) return toast('Enter a valid frequency','error');
+      let off = $('w-off').value==='custom'?+($('w-offval').value):+($('w-off').value);
+      Object.assign(slot,{empty:false,name:$('w-name').value,freq:rx,duplex:'-',offset:off,tmode:'TSQL',ctone:+$('w-tone').value,rtone:+$('w-tone').value,power:'High',mode:'FM'});
+      state.detailCh=slot.number; render(); toast(`Repeater added to CH ${slot.number}`,'success');
+    };
+    return;
+  }
+  if (state.detailCh==='history') {
+    const list = loadBackupList();
+    const diffA = state._diffA || '';
+    const diffB = state._diffB || '';
+  const diffHtml = diffA && diffB ? (() => {
+      const ea = list.find(b => b.id === diffA), eb = list.find(b => b.id === diffB);
+      if (!ea || !eb) return '';
+      const changes = diffChannelSnapshots(ea.channels, eb.channels);
+      return `<div class="field"><label>Diff: ${esc(ea.label)} → ${esc(eb.label)}</label>
+        ${changes.length ? `<ul class="diff-list">${changes.slice(0, 40).map(c => `<li>CH ${c.number}: ${esc(c.summary)}</li>`).join('')}${changes.length > 40 ? `<li>…and ${changes.length - 40} more</li>` : ''}</ul>` : '<p class="hint">No channel differences</p>'}
+      </div>`;
+    })() : '';
+    p.innerHTML = panelWrap('Backup history', 'Snapshots', `
+      <p class="hint">Up to ${MAX_BACKUPS} snapshots stored in this browser. Select two to compare, or restore a previous state.</p>
+      ${list.length ? `<div class="backup-list">${list.map(b => `
+        <div class="backup-item">
+          <strong>${esc(b.label)}</strong>
+          <small>${new Date(b.ts).toLocaleString()} · ${esc(b.modelName)} · ${b.channels.filter(c => !c.empty).length} channels</small>
+          <div class="backup-actions">
+            <button class="btn-ghost" data-restore="${b.id}">Restore</button>
+            <button class="btn-ghost" data-diff-a="${b.id}">Diff A</button>
+            <button class="btn-ghost" data-diff-b="${b.id}">Diff B</button>
+          </div>
+        </div>`).join('')}</div>` : '<p class="hint">No snapshots yet. Download from radio or load a file to create one.</p>'}
+      ${diffHtml}
+      <button class="btn-ghost" id="hist-clear" style="margin-top:.75rem">Clear all history</button>`);
+    p.querySelectorAll('[data-restore]').forEach(btn => btn.onclick = () => restoreBackup(btn.dataset.restore));
+    p.querySelectorAll('[data-diff-a]').forEach(btn => btn.onclick = () => { state._diffA = btn.dataset.diffA; renderDetail(); });
+    p.querySelectorAll('[data-diff-b]').forEach(btn => btn.onclick = () => { state._diffB = btn.dataset.diffB; renderDetail(); });
+    const hc = $('hist-clear');
+    if (hc) hc.onclick = () => { if (confirm('Delete all local backup snapshots?')) { localStorage.removeItem(BACKUP_KEY); state._diffA = state._diffB = ''; renderDetail(); toast('History cleared', 'success'); } };
+    return;
+  }
+  if (state.detailCh==='settings') {
+    const s=state.settings;
+    const bootLen = state.model.family === 'uv5r' ? 7 : 10;
+    p.innerHTML = panelWrap('Radio settings', 'Codeplug', `
+      <p class="hint">Changes apply to the backup image. Upload to write them to the radio.</p>
+      <div class="field"><label>Squelch (0–9)</label><input type="number" id="s-sq" min="0" max="9" value="${s.squelch??5}"></div>
+      <div class="field"><label>VOX (0 = off)</label><input type="number" id="s-vox" min="0" max="10" value="${s.vox??0}"></div>
+      <div class="field"><label>Key beep</label><select id="s-beep"><option value="1" ${s.beep?'selected':''}>On</option><option value="0" ${!s.beep?'selected':''}>Off</option></select></div>
+      <div class="field"><label>Voice prompts</label><select id="s-voice"><option value="0" ${!s.voice?'selected':''}>Off</option><option value="1" ${s.voice===1?'selected':''}>On</option></select></div>
+      <div class="field"><label>Power-on line 1</label><input id="s-b1" maxlength="${bootLen}" value="${esc(s.boot1||'')}" placeholder="Your callsign"></div>
+      <div class="field"><label>Power-on line 2</label><input id="s-b2" maxlength="${bootLen}" value="${esc(s.boot2||'')}"></div>
+      <div class="lcd-preview" id="lcd-live" aria-label="Power-on message preview">${bootLcdInner(s.boot1||'', s.boot2||'', bootLen)}</div>
+      <div class="panel-actions"><button class="btn-primary" id="s-save">Save settings</button></div>`);
+    bindBootPreview(bootLen);
+    $('s-save').onclick = ()=>{
+      state.settings={...state.settings,squelch:+$('s-sq').value,vox:+$('s-vox').value,beep:+$('s-beep').value,voice:+$('s-voice').value,boot1:$('s-b1').value,boot2:$('s-b2').value};
+      syncChannelsToImage(); toast('Settings saved — upload to apply to radio','success');
+    };
+    return;
+  }
+  const ch = state.channels.find(c=>c.number===state.detailCh);
+  if (!ch) { closePanel(); return; }
+  const v = validateChannelIndia(ch);
+  const vBanner = ch.empty ? '' : v.level !== 'ok' ? `<div class="band-banner ${v.level==='warn'?'warn-only':''}" style="margin-bottom:.25rem">${esc(v.msg)}${v.level==='error'?' — consider RX-only or move TX into 144–146 / 434–438 MHz.':''}</div>` : '';
+  const chSub = ch.empty ? 'Empty slot' : `${freqMHz(ch.freq)} MHz · ${bandOf(ch.freq)}`;
+  p.innerHTML = panelWrap(`Channel ${ch.number}`, chSub, `
+    ${vBanner}
+    <div class="field"><label>Name</label><input id="d-name" maxlength="${state.model.nameLen}" value="${esc(ch.name||'')}"></div>
+    <div class="field"><label>Receive (MHz)</label><input id="d-freq" value="${ch.empty?'':freqMHz(ch.freq)}"></div>
+    <div class="field"><label>Duplex</label><select id="d-dup"><option value=""></option><option value="+" ${ch.duplex==='+'?'selected':''}>+ Repeater</option><option value="-" ${ch.duplex==='-'?'selected':''}>− Repeater</option><option value="split" ${ch.duplex==='split'?'selected':''}>Split</option><option value="off" ${ch.duplex==='off'?'selected':''}>RX only</option></select></div>
+    <div class="field"><label>Offset / TX (MHz or kHz offset)</label><input id="d-off" value="${ch.duplex==='split'?freqMHz(ch.offset):(ch.offset/1e6).toFixed(3)}"></div>
+    <div class="field"><label>Tone</label><select id="d-tm"><option value=""></option><option ${ch.tmode==='Tone'?'selected':''}>Tone</option><option ${ch.tmode==='TSQL'?'selected':''}>TSQL</option><option ${ch.tmode==='DTCS'?'selected':''}>DTCS</option></select></div>
+    <div class="field"><label>Tone frequency (Hz)</label><input id="d-tone" value="${ch.ctone||88.5}"></div>
+    <div class="field"><label>Power</label><select id="d-pwr">${state.model.powers.map(p=>`<option ${ch.power===p?'selected':''}>${p}</option>`).join('')}</select></div>
+    <div class="field"><label>Bandwidth</label><select id="d-mode"><option ${ch.mode==='FM'?'selected':''}>Wide (FM)</option><option ${ch.mode==='NFM'?'selected':''}>Narrow (NFM)</option></select></div>
+    <div class="panel-actions">
+      <button class="btn-primary" id="d-save">Save channel</button>
+      <button class="btn-danger" id="d-del">Clear this channel</button>
+    </div>`);
+  $('d-save').onclick = ()=>{
+    ch.empty=false; ch.name=$('d-name').value; ch.freq=parseFreqMHz($('d-freq').value);
+    ch.duplex=$('d-dup').value; ch.offset=ch.duplex==='split'?parseFreqMHz($('d-off').value):parseFloat($('d-off').value)*1e6;
+    ch.tmode=$('d-tm').value; ch.ctone=ch.rtone=+$('d-tone').value; ch.power=$('d-pwr').value; ch.mode=$('d-mode').value;
+    render(); toast('Channel saved','success');
+  };
+  $('d-del').onclick = ()=>{ Object.assign(ch,emptyChannel(ch.number)); closePanel(); render(); };
+}
+
+function render() {
+  renderHeader();
+  renderSidebar();
+  renderMain();
+  if (state.detailCh != null) {
+    renderDetail();
+    openDetailPanel();
+  } else {
+    closePanel();
+  }
+}
+
+async function toggleConnect() {
+  if (state.connected) {
+    await state.serial.disconnect();
+    state.serial = null;
+    render();
+    return;
+  }
+  if (!serialSupported()) {
+    toast('Web Serial needs Chrome or Edge on desktop. You can still edit backups on mobile.', 'error');
+    return;
+  }
+  try {
+    state.serial = new RadioSerial();
+    await state.serial.connect(state.model.baud);
+    toast('Connected on '+state.model.baud+' baud','success');
+    render();
+  } catch(e) { toast(e.message,'error'); state.serial=null; }
+}
+
+function initChannels() {
+  state.channels = [];
+  for (let i=0;i<state.model.channels;i++) state.channels.push(emptyChannel(i));
+}
+
+$('file-input').addEventListener('change', async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const buf=await f.arrayBuffer();
+  if (e.target.dataset.mode==='csv') { state.channels=csvToChannels(new TextDecoder().decode(buf),state.model); toast('CSV imported','success'); }
+  else loadImageFile(buf);
+  e.target.value='';
+  render();
+});
+
+injectStyles();
+bindLayoutChrome();
+initChannels();
+render();
+
+</script>
+</body>
+</html>
