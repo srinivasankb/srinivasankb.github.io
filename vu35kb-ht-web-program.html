@@ -441,15 +441,37 @@ class RadioSerial {
   constructor() { this.port=null; this.reader=null; this.writer=null; this._buf=new Uint8Array(0); }
   get supported() { return 'serial' in navigator; }
 
-  async connect(baud) {
-    if (!this.supported) throw new Error('Web Serial not supported. Use Chrome or Edge.');
-    this.port = await navigator.serial.requestPort();
-    await this.port.open({ baudRate: baud, dataBits:8, stopBits:1, parity:'none', flowControl:'none' });
+  static async getAuthorizedPorts() {
+    if (!('serial' in navigator)) return [];
+    return navigator.serial.getPorts();
+  }
+
+  static portLabel(port, index) {
+    const info = port.getInfo?.() || {};
+    const v = info.usbVendorId, p = info.usbProductId;
+    if (v != null && p != null) {
+      const names = { 0x1a86: 'CH340', 0x0403: 'FTDI', 0x067b: 'Prolific', 0x10c4: 'CP210x' };
+      const chip = names[v] || 'USB serial';
+      return `${chip} (${v.toString(16).padStart(4,'0')}:${p.toString(16).padStart(4,'0')})`;
+    }
+    return `Authorized cable ${index + 1}`;
+  }
+
+  async openPort(port, baud) {
+    if (!port) throw new Error('No port selected');
+    this.port = port;
+    await this.port.open({ baudRate: baud, dataBits: 8, stopBits: 1, parity: 'none', flowControl: 'none' });
     this._buf = new Uint8Array(0);
     this.reader = this.port.readable.getReader();
     this.writer = this.port.writable.getWriter();
     this._readLoop();
     state.connected = true;
+  }
+
+  async connect(baud) {
+    if (!this.supported) throw new Error('Web Serial not supported. Use Chrome or Edge.');
+    const port = await navigator.serial.requestPort();
+    await this.openPort(port, baud);
   }
 
   async disconnect() {
@@ -1456,6 +1478,7 @@ function renderHomePage() {
         <div class="home-status-item"><span>Slots</span><b>${m.channels}</b></div>
         <div class="home-status-item"><span>Baud</span><b>${m.baud.toLocaleString()}</b></div>
       </div>
+      ${state.connected && !state.backupAt ? `<div class="warn-banner" style="margin-bottom:1rem"><span>⎈</span><span><strong>Cable connected</strong> — click <strong>Download from radio</strong> below to load channels. Connect alone does not read the radio.</span></div>` : ''}
 
       <section class="home-section">
         <h3>Quick actions</h3>
@@ -1652,6 +1675,7 @@ function renderMain() {
 
   main.innerHTML = `
     ${!serialSupported() && hasData ? `<div class="mobile-note"><strong>View-only on this browser</strong>Load, edit, and save backups locally. Use desktop Chrome/Edge with a USB cable to sync with the radio.</div>` : ''}
+    ${state.connected && !state.backupAt ? `<div class="warn-banner"><span>⎈</span><span><strong>Cable connected</strong> — channels are not loaded yet. Open the menu and click <strong>Download from radio</strong>.</span></div>` : ''}
     ${state.model.id==='uv13'?'<div class="warn-banner"><span>⚠</span><span><strong>UV-13 Pro:</strong> Always save a factory backup first. Upload only after a successful download from the same radio.</span></div>':''}
     ${bandSum.errors?`<div class="band-banner"><strong>India band plan:</strong> ${bandSum.errors} channel(s) transmit outside licensed HT segments (2 m: 144–146 MHz · 70 cm: 434–438 MHz). Fix before upload or use RX-only.</div>`:''}
     ${!bandSum.errors && bandSum.warns?`<div class="band-banner warn-only"><strong>Review:</strong> ${bandSum.warns} channel(s) need license-grade or local-rule verification.</div>`:''}
@@ -1761,6 +1785,48 @@ function renderDetail() {
   const p = $('detail');
   if (state.detailCh === null) { p.innerHTML = ''; return; }
 
+  if (state.detailCh==='connect') {
+    p.innerHTML = panelWrap('Connect programming cable', 'USB serial', `
+      <p class="hint">The browser controls which USB devices appear — not this app. If the list is empty, check cable, drivers, and that no other app (CHIRP, etc.) has the port open.</p>
+      <div class="home-callout" style="margin:0">
+        <strong>Connected ≠ channels loaded</strong>
+        After connecting you must click <strong>Download from radio</strong> to read channels into the editor.
+      </div>
+      <div class="nav-section" style="margin-top:.75rem">Previously authorized cables</div>
+      <div id="connect-port-list"><p class="hint">Searching…</p></div>
+      <button type="button" class="btn-primary" id="connect-new" style="width:100%;margin-top:.5rem">Add new USB cable…</button>
+      <details class="connect-help" style="margin-top:.75rem">
+        <summary style="cursor:pointer;font-size:.82rem;font-weight:600;color:var(--muted)">Cable not showing?</summary>
+        <ul class="hint" style="margin:.5rem 0 0 1rem;line-height:1.5">
+          <li>Use a <strong>K1 programming cable</strong> (CH340/FTDI/CP210x), not a charge-only USB lead</li>
+          <li>Radio ON, volume at 100%, programming jack fully seated</li>
+          <li>Chrome or Edge on desktop (not Safari/Firefox)</li>
+          <li>Close CHIRP or other serial tools using the same port</li>
+          <li>macOS: install driver for your USB chip if the picker stays empty</li>
+          <li>Linux: add user to <code>dialout</code> group</li>
+        </ul>
+      </details>`);
+    RadioSerial.getAuthorizedPorts().then(ports => {
+      const list = $('connect-port-list');
+      if (!list) return;
+      if (!ports.length) {
+        list.innerHTML = '<p class="hint">No saved cables yet — use <strong>Add new USB cable</strong> and pick your adapter in the browser dialog.</p>';
+        return;
+      }
+      list.innerHTML = ports.map((port, i) =>
+        `<button type="button" class="btn-ghost connect-port-btn" data-port-idx="${i}" style="width:100%;justify-content:flex-start;display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem">
+          <span class="sidebar-icon">⎈</span>${esc(RadioSerial.portLabel(port, i))}
+        </button>`
+      ).join('');
+      list.querySelectorAll('[data-port-idx]').forEach(btn => {
+        btn.onclick = () => connectToPort(ports[+btn.dataset.portIdx]).catch(e => toast(e.message, 'error'));
+      });
+    });
+    $('connect-new').onclick = () => connectNewPort().catch(e => {
+      if (e?.name !== 'NotFoundError') toast(e.message, 'error');
+    });
+    return;
+  }
   if (state.detailCh==='wizard') {
     p.innerHTML = panelWrap('Add repeater', 'Quick action', `
       <p class="hint">We'll fill the next empty channel. Offset is calculated for you.</p>
@@ -1887,11 +1953,39 @@ async function toggleConnect() {
     return;
   }
   try {
-    state.serial = new RadioSerial();
-    await state.serial.connect(state.model.baud);
-    toast('Connected on '+state.model.baud+' baud','success');
+    await showConnectDialog();
+  } catch (e) {
+    if (e?.name !== 'NotFoundError' && e?.message !== 'cancelled') toast(e.message || String(e), 'error');
+    state.serial = null;
+    state.connected = false;
     render();
-  } catch(e) { toast(e.message,'error'); state.serial=null; }
+  }
+}
+
+async function connectToPort(port) {
+  state.serial = new RadioSerial();
+  await state.serial.openPort(port, state.model.baud);
+  closePanel();
+  toast('Connected on ' + state.model.baud + ' baud — now click Download from radio', 'success');
+  render();
+}
+
+async function connectNewPort() {
+  state.serial = new RadioSerial();
+  await state.serial.connect(state.model.baud);
+  closePanel();
+  toast('Connected on ' + state.model.baud + ' baud — now click Download from radio', 'success');
+  render();
+}
+
+async function showConnectDialog() {
+  const ports = await RadioSerial.getAuthorizedPorts();
+  if (!ports.length) {
+    await connectNewPort();
+    return;
+  }
+  state.detailCh = 'connect';
+  render();
 }
 
 function initChannels() {
